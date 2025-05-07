@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" style="--base-font-size: 10px;"> <!-- Default font size set to 10px -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bipolar Junction Transistor (BJT)</title>
+
+    <!-- Google Fonts - Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true, tags: 'ams' },
+          options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'], ignoreHtmlClass: 'tex2jax_ignore', processHtmlClass: 'tex2jax_process' },
+          svg: { fontCache: 'global' },
+          startup: {
+            ready: () => { console.log('MathJax ready.'); MathJax.startup.defaultReady(); MathJax.startup.promise.then(() => console.log('MathJax initial typeset complete.')); }
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Keyframes for Animations (FadeIn) */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Fonts & Base Styling */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            color: #e0e0e0;
+            line-height: 1.7;
+            padding: 25px;
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            font-size: var(--base-font-size); /* Controlled by JS */
+            transition: font-size 0.2s ease-in-out; /* Default smooth transition */
+            padding-bottom: 80px; /* Space for controls */
+            overflow-x: hidden;
+        }
+        /* Class to disable transition during rapid changes (e.g., hold) */
+        body.no-font-transition {
+            transition: none !important;
+        }
+
+        /* Headings */
+        h1, h2 { font-family: 'Roboto Mono', monospace; text-align: center; margin-bottom: 1.5em; }
+        h1 { font-size: 2.4em; color: #ffffff; font-weight: 700; padding-bottom: 12px; margin-top: 1.5em; margin-bottom: 1.5em; border-bottom: 2px solid #ffffff; animation: fadeIn 0.8s ease-out both; animation-delay: 0.1s; letter-spacing: -0.5px; }
+        h2 { font-size: 1.6em; color: #cccccc; font-weight: 500; margin-top: 30px; margin-bottom: 1.5em; border-bottom: 1px solid #555555; padding-bottom: 5px; animation: fadeIn 0.8s ease-out both; animation-delay: 0.3s; }
+        h3 { font-size: 1.2em; color: #bdbdbd; font-weight: 500; margin-top: 1.8em; margin-bottom: 0.8em; padding-bottom: 3px; border-bottom: 1px dotted #444; text-align: left; }
+        h4 { font-size: 1.1em; color: #b0b0b0; font-weight: 500; margin-top: 1.5em; margin-bottom: 0.7em; text-align: left; }
+
+
+        /* Main Content Area */
+        main { max-width: 800px; margin: 40px auto; background-color: rgba(30, 30, 30, 0.85); padding: 35px 45px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.1); animation: fadeIn 0.8s ease-out both; animation-delay: 0.2s; }
+        /* Paragraph and List styling */
+        p { margin-bottom: 1em; color: inherit; font-size: inherit; }
+        ul, ol { margin-left: 25px; list-style: disc; margin-bottom: 1em; }
+        ol { list-style: decimal; }
+        li { margin-bottom: 8px; font-size: inherit; }
+        strong { font-weight: 500; color: #ffffff; }
+
+        /* Formula Container Styling (with horizontal scroll) */
+        .formula-container {
+            margin: 15px 0 20px 0; padding: 10px 20px; background-color: rgba(45, 45, 45, 0.9);
+            border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto; overflow-y: hidden; /* Horizontal scroll, no vertical */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            cursor: pointer; color: #e0e0e0; border-left: 4px solid transparent;
+            font-family: 'Roboto Mono', monospace; position: relative; white-space: nowrap;
+        }
+        .formula-container:hover { background-color: rgba(60, 60, 60, 0.95); border-left-color: #a6e3a1; border-color: rgba(166, 227, 161, 0.5); }
+        .formula-container.copied { background-color: rgba(166, 227, 161, 0.2); border-color: #a6e3a1; border-left-color: #a6e3a1; }
+        /* Optional Scrollbar Style */
+        .formula-container::-webkit-scrollbar { height: 8px; }
+        .formula-container::-webkit-scrollbar-track { background: rgba(60, 60, 60, 0.5); border-radius: 4px; }
+        .formula-container::-webkit-scrollbar-thumb { background-color: #888; border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+        .formula-container::-webkit-scrollbar-thumb:hover { background-color: #aaa; }
+        /* MathJax display style */
+        .formula-container mjx-container[display="true"] { margin: 0.5em 0 !important; text-align: left !important; display: inline-block; vertical-align: middle; }
+        
+        table { border-collapse: collapse; margin: 1em auto; background-color: rgba(40,40,40,0.8); width: auto; }
+        th, td { border: 1px solid #555; padding: 8px 12px; text-align: center; }
+        th { background-color: rgba(60,60,60,0.9); color: #ddd; }
+
+        pre {
+            background-color: #2b2b2b; padding: 10px; border-radius: 5px; 
+            color: #ccc; overflow-x: auto; white-space: pre; 
+            font-family: 'Roboto Mono', monospace; font-size: 0.95em;
+            margin: 1em 0;
+        }
+
+
+        /* Footer Styling */
+        footer { text-align: center; margin-top: 70px; padding-bottom: 35px; font-size: 0.85em; color: #888888; animation: fadeIn 1s ease-out both; animation-delay: 0.7s; }
+
+        /* Simple Dark Theme Scrollbar for Page */
+        body::-webkit-scrollbar { width: 10px; }
+        body::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 5px; }
+        body::-webkit-scrollbar-thumb { background-color: #777; border-radius: 5px; border: 2px solid #2a2a2a; background-clip: content-box; }
+        body::-webkit-scrollbar-thumb:hover { background-color: #999; }
+        html { scrollbar-width: thin; scrollbar-color: #777 #2a2a2a; }
+        @supports (scrollbar-gutter: stable) { html { scrollbar-gutter: stable; } }
+
+        /* Font Control Icons CSS */
+        .font-control { position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+        .font-control-icon { font-size: 28px; font-weight: bold; color: #777; cursor: pointer; padding: 8px; transition: color 0.3s ease; pointer-events: auto; user-select: none; line-height: 1; display: inline-block; }
+        .font-control-icon:hover { color: #a6e3a1; }
+        #fontSizeDisplay { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(45, 45, 45, 0.9); color: #e0e0e0; padding: 6px 12px; border-radius: 5px; font-size: 13px; font-family: 'Roboto Mono', monospace; z-index: 11; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; white-space: nowrap; }
+        #fontSizeDisplay.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Bipolar Junction Transistor (BJT)</h1>
+        <p style="text-align: center; color: #aaa;">(Based on EEE F111 Lecture Slides)</p>
+    </header>
+
+    <main>
+        <h2>(Slide 2) Introduction</h2>
+        <ul>
+            <li><strong>Invention:</strong> Invented around 1948 at Bell Labs by Shockley, Bardeen, and Brattain (Nobel Prize 1956).</li>
+            <li><strong>Significance:</strong> Led to solid-state circuits, replacing vacuum tubes.</li>
+            <li><strong>Structure:</strong> A BJT is a <strong>three-terminal</strong> semiconductor device.</li>
+            <li>
+                <strong>Types & Terminals:</strong>
+                <ul>
+                    <li><strong>npn:</strong> A thin p-type layer (Base) sandwiched between two n-type layers (Emitter and Collector). (Fig. 6.1 shows npn structure).</li>
+                    <li><strong>pnp:</strong> A thin n-type layer (Base) sandwiched between two p-type layers (Emitter and Collector). (Fig. 6.2 shows pnp structure).</li>
+                    <li><strong>Terminals:</strong> Emitter (E), Base (B), Collector (C).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>(Slide 3) Modes of Operation</h2>
+        <p>The behavior of a BJT depends on how its two pn junctions are biased (forward or reverse).</p>
+        <ul>
+            <li><strong>Junctions:</strong> Emitter-Base Junction (EBJ), Collector-Base Junction (CBJ).</li>
+            <li><strong>Modes:</strong></li>
+        </ul>
+        <table>
+            <thead>
+                <tr><th>Mode</th><th>EBJ Biasing</th><th>CBJ Biasing</th><th>Typical Use</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Cutoff</strong></td><td>Reverse</td><td>Reverse</td><td>Switch OFF</td></tr>
+                <tr><td><strong>Active</strong></td><td>Forward</td><td>Reverse</td><td>Amplifier</td></tr>
+                <tr><td><strong>Saturation</strong></td><td>Forward</td><td>Forward</td><td>Switch ON</td></tr>
+                <tr><td>(Reverse Active)</td><td>Reverse</td><td>Forward</td><td>(Less common)</td></tr>
+            </tbody>
+        </table>
+        <ul>
+            <li><strong>Symbols:</strong> Shows standard circuit symbols for npn and pnp transistors. The arrow is on the emitter and indicates the direction of conventional current flow (points p -&gt; n).
+                <ul>
+                    <li><strong>npn:</strong> Arrow points OUT of the base.</li>
+                    <li><strong>pnp:</strong> Arrow points INTO the base.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>(Slide 4) npn BJT in Active Mode</h2>
+        <p>Focusing on how the npn BJT works when the EBJ is forward-biased and the CBJ is reverse-biased.</p>
+        <ul>
+            <li><strong>Doping:</strong> Emitter is <strong>highly doped</strong> ($n^+$), Base is <strong>lightly doped</strong> ($p$), Collector doping is moderate ($n$).</li>
+            <li>
+                <strong>Forward Bias EBJ:</strong> Causes current across the junction:
+                <ol>
+                    <li><strong>Electrons injected</strong> from Emitter (n+) into Base (p). Dominant component.</li>
+                    <li>Holes injected from Base (p) into Emitter (n+). Smaller component.</li>
+                </ol>
+                Total emitter current $i_E$ is mainly due to electrons moving E -&gt; B. (Conventional current flows out of E).
+            </li>
+            <li><strong>Electron Diffusion:</strong> The injected electrons become <strong>minority carriers</strong> in the p-type base. They <strong>diffuse</strong> across the narrow base towards the collector.</li>
+        </ul>
+
+        <h2>(Slide 5) Currents in BJT (npn Active Mode continued)</h2>
+        <ul>
+            <li><strong>Recombination:</strong> A small fraction of diffusing electrons recombines with holes in the base. This constitutes part of the base current ($i_B$).</li>
+            <li><strong>Collection:</strong> Most diffusing electrons reach the C-B depletion region (base is thin, lightly doped).</li>
+            <li>The <strong>reverse bias voltage $v_{CB}$</strong> creates an electric field that sweeps these electrons into the collector.</li>
+            <li>These collected electrons constitute the **collector current $i_C$**. (Conventional current $i_C$ flows INTO the collector).</li>
+        </ul>
+
+        <h2>(Slide 6) Collector Current in BJT (npn Active Mode)</h2>
+        <ul>
+            <li>Collector current $i_C$ is carried by electrons reaching the collector. Conventional current $i_C$ flows <strong>into</strong> the collector terminal.</li>
+            <li><strong>Approximation:</strong> $i_C \approx i_E$. (Refers to $i_C \approx \alpha i_E$ where $\alpha \approx 1$).</li>
+            <li><strong>Diode Equation Analogy:</strong> The relationship between $i_C$ and $v_{BE}$ is approximately exponential:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{i_C \\approx I_s (e^{(v_{BE} / V_T)} - 1) \\approx I_s e^{(v_{BE} / V_T)}}}')"
+             data-latex="i_C \\approx I_s (e^{(v_{BE} / V_T)} - 1) \\approx I_s e^{(v_{BE} / V_T)}"
+             title="Click to copy LaTeX">
+             $$ i_C \\approx I_s (e^{(v_{BE} / V_T)} - 1) \\approx I_s e^{(v_{BE} / V_T)} $$
+        </div>
+        <ul>
+            <li>$I_s$: Saturation current. $v_{BE}$: Base-Emitter voltage. $V_T$: Thermal voltage ($\approx 26\text{mV}$). $i_C$ is strongly controlled by $v_{BE}$.</li>
+        </ul>
+
+        <h2>(Slide 7) Base Current in BJT (npn Active Mode)</h2>
+        <ul>
+            <li>
+                The base current $i_B$ has two main components:
+                <ol>
+                    <li>$i_{B1}$: Current due to holes injected from Base into Emitter.</li>
+                    <li>$i_{B2}$: Current supplying holes for recombination in the base.</li>
+                </ol>
+            </li>
+            <li><strong>Beta ($\beta$):</strong> Ratio of collector current to base current (current gain):</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{\\beta = \\frac{i_C}{i_B}}}')"
+             data-latex="\beta = i_C / i_B \quad (\text{or } h_{FE})"
+             title="Click to copy LaTeX">
+             $$ \beta = \frac{i_C}{i_B} \quad (\text{or } h_{FE}) $$
+        </div>
+        <p>So, $i_B = i_C / \beta$. $\beta$ is typically large (50-200+).</p>
+
+        <h2>(Slide 8) Emitter Current in BJT (npn Active Mode)</h2>
+        <ul>
+            <li><strong>KCL:</strong> $i_E = i_B + i_C$.</li>
+            <li><strong>Relation to $i_C$:</strong> Substitute $i_B = i_C / \beta$:
+            $i_E = i_C / \beta + i_C = i_C (1/\beta + 1) = i_C \frac{1+\beta}{\beta}$.
+            Or, $i_C = \frac{\beta}{\beta+1} i_E$.</li>
+            <li><strong>Alpha ($\alpha$):</strong> Ratio $i_C / i_E$.</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{\\alpha = \\frac{\\beta}{\\beta+1}}}')"
+             data-latex="\alpha = \beta / (\beta+1)"
+             title="Click to copy LaTeX">
+             $$ \alpha = \frac{\beta}{\beta+1} $$
+        </div>
+        <p>Since $\beta$ is large, $\alpha$ is slightly less than 1. This confirms $i_C = \alpha i_E \approx i_E$.</p>
+
+        <h2>(Slide 9) Common Emitter (CE) Configuration</h2>
+        <ul>
+            <li>Shows CE circuit diagram and collector characteristic curves ($i_C$ vs $v_{CE}$ for different $i_B$).</li>
+            <li>
+                <strong>Active Mode Conditions (Recap for npn):</strong>
+                <ol>
+                    <li>EBJ forward biased: $i_B > 0$ and $v_{BE} \approx 0.7\text{V}$.</li>
+                    <li>CBJ reverse biased: $v_{CE} > 0.2\text{V}$ (approx).</li>
+                </ol>
+            </li>
+        </ul>
+
+        <h2>(Slide 10) Power Dissipation in BJT</h2>
+        <ul>
+            <li>Total power dissipated as heat within the BJT:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{P_{BJT} = i_B v_{BE} + i_C v_{CE}}}')"
+             data-latex="P_{BJT} = i_B v_{BE} + i_C v_{CE}"
+             title="Click to copy LaTeX">
+             $$ P_{BJT} = i_B v_{BE} + i_C v_{CE} $$
+        </div>
+        <p>(Note: Slide formula might differ slightly, standard is sum of power into base and collector ports).</p>
+
+        <h2>(Slides 11-12) Example 1 (Analysis)</h2>
+        <ul>
+            <li><strong>Circuit:</strong> CE amplifier with `V_{BB}=10V, V_{CC}=10V, R_B=330kΩ, R_C=2.7kΩ`. Si npn, `β=100`.</li>
+            <li><strong>Goal:</strong> Analyze assuming active region.</li>
+            <li><strong>Steps & Results:</strong> Assume $v_{BE}=0.7V$. Calculate $i_B = (10-0.7)/330k = 28.2 µA$. Calculate $i_C = β i_B = 2.82 mA$. Calculate $v_{CE} = V_{CC} - i_C R_C = 10 - (2.82m \times 2.7k) = 2.39V$. Verify assumptions: $i_B > 0$ (OK), $v_{CE} > 0.2V$ (OK). Conclusion: Active region operation confirmed.</li>
+        </ul>
+
+        <h2>(Slides 13-14) Example 2 (Analysis)</h2>
+        <ul>
+            <li><strong>Circuit:** Two-transistor circuit (Fig 7.12a from text). Q1, Q2 npn, `β=100`. `R1=150k, R2=75k, RC1=2k, RC2=1k`. `V_CC=6V`. Emitter of Q1 drives base of Q2.</li>
+            <li><strong>Goal:</strong> Analyze assuming active-region operation.</li>
+            <li><strong>Steps & Results (based on text/slide results):</strong>
+                Thevenin at Q1 base: `V_Th=2V, R_Th=50kΩ`. Assume $v_{BE1}=0.7V$. Calculate $i_{B1} = (2-0.7)/50k = 26µA$. Calculate $i_{C1} = 100 \times 26µA = 2.6mA$. Calculate $v_{C1} = V_{CC} - i_{C1}R_{C1} = 6 - 2.6m \times 2k = 0.8V$.
+                Assume $v_{BE2}=0.7V$. Base of Q2 is $v_{C1}$. $V_{B2} = 0.8V > 0.7V$, so Q2 is ON.
+                Using text results: $i_{B2}=50µA$, $i_{C2}=5mA$. Calculate $v_{CE2} = V_{CC} - i_{C2}R_{C2} = 6 - 5m \times 1k = 1V$.
+                Verify assumptions: $v_{CE1}=0.8V > 0.2V$, $v_{CE2}=1V > 0.2V$. Both active.
+            </li>
+        </ul>
+
+        <h2>(Slide 15) Example 3 (Design)</h2>
+        <ul>
+            <li><strong>Goal:</strong> Design CE fixed bias circuit for `I_C = 1 mA`, `V_{CE} = 6V` Q-point.</li>
+            <li><strong>Given:</strong> `V_CC=12V`, `V_{BE}=0.7V`, `β=100`. Find `R_B, R_C`.</li>
+            <li><strong>Steps & Results:</strong> Output loop: $12 = 1mA \times R_C + 6 \Rightarrow R_C = 6V/1mA = 6kΩ$. Input: $I_B = I_C/\beta = 1mA/100 = 10µA$. Input loop: $12 = 10µA \times R_B + 0.7 \Rightarrow R_B = 11.3V/10µA = 1.13 MΩ$.</li>
+        </ul>
+
+        <h2>(Slide 16) Example 4 (Analysis)</h2>
+        <ul>
+            <li><strong>Circuit:</strong> CE self-bias. `R1=56k, R2=12.2k, RC=2k, RE=0.4k, VCC=10V, VBE=0.7V, β=100`.</li>
+            <li><strong>Goal:</strong> Find Q-point (`I_CQ, V_CEQ`).</li>
+            <li><strong>Steps & Results:</strong> Thevenin base: $R_{Th}=10kΩ, V_{Th}=1.79V$. KVL B-E loop: $1.79 = I_B \times 10k + 0.7 + (101 I_B) \times 0.4k$. Solve for $I_B = 21.6 µA$. Then $I_C = β I_B = 2.16 mA$. KVL C-E loop: $V_{CE} = 10 - I_C R_C - I_E R_E = 10 - (2.16m \times 2k) - (101 \times 21.6µ \times 0.4k) = 4.81V$. Q-point is (2.16mA, 4.81V).</li>
+        </ul>
+
+        <h2>(Slide 17) BJT Amplifier Concept</h2>
+        <ul>
+            <li>Amplification uses BJT biased in active region.</li>
+            <li>Small input signal (`v_{be}` or `i_b`) causes larger output signal (`v_{ce}` or `i_c`) variations around Q-point.</li>
+            <li>Diagram shows signal swing on transfer characteristic.</li>
+        </ul>
+
+        <h2>(Slide 18) BJT Amplifier (Transfer Characteristic)</h2>
+        <ul>
+            <li>Shows typical CE VTC (`v_O = v_{CE}` vs `v_I = v_{BE}`).</li>
+            <li>Illustrates Cutoff, Active, and Saturation regions.</li>
+            <li>Amplification occurs in the steep Active region.</li>
+        </ul>
+
+        <h2>(Slide 19) Small-Signal Voltage Gain</h2>
+        <ul>
+            <li>Voltage gain $A_v = dv_{CE} / dv_{BE}$ at Q-point.</li>
+            <li>Derivation for simple CE: $v_{CE} = V_{CC} - i_C R_C \Rightarrow dv_{CE} = -R_C di_C$. $i_C \approx I_s e^{(v_{BE}/V_T)} \Rightarrow di_C = (I_C/V_T) dv_{BE}$.</li>
+            <li>Combining: $A_v = -I_C R_C / V_T = -(V_{CC} - V_{CE}) / V_T$.</li>
+            <li>Gain depends on Q-point.</li>
+        </ul>
+
+        <h2>(Slide 20) Example (Gain Calculation)</h2>
+        <ul>
+            <li><strong>Problem:</strong> Amplifier `I_s=10⁻¹⁵ A, R_C=6.8kΩ, V_CC=10V`. (a) Find `V_BE` and `I_C` for `V_CE=3.2V`. (b) Find `A_v` and output for 5mV peak sine input.</li>
+            <li><strong>Solution:</strong>
+                (a) $I_C = (10-3.2)/6.8k = 1mA$. $V_{BE} = V_T \ln(I_C/I_s) \approx 0.69V$ (using slide's value).
+                (b) $A_v = -(V_{CC}-V_{CE})/V_T \approx -(10-3.2)/0.025 = -272$ (using $V_T=25mV$).
+                Output amplitude = $|A_v| \times 5mV = 272 \times 5mV = 1.36V$. Output signal $v_{ce(ac)} = -1.36 \sin(\omega t) \text{ V}$.
+            </li>
+        </ul>
+
+    </main>
+
+    <footer>
+        <!-- Optional: Add footer text if needed -->
+    </footer>
+
+     <!-- Font Size Control Icons HTML -->
+     <div class="font-control">
+         <span class="font-control-icon" id="fontMinusBtn" title="Decrease font size">-</span>
+         <span class="font-control-icon" id="fontPlusBtn" title="Increase font size">+</span>
+     </div>
+     <div id="fontSizeDisplay">10px</div> <!-- Initial size display -->
+
+    <script>
+        // --- Formula Copy Function ---
+        function copyFormulaLatex(element, latexStringToCopy) { 
+            if (!latexStringToCopy) { 
+                console.error('No LaTeX string passed to copy function.');
+                return;
+            }
+
+            navigator.clipboard.writeText(latexStringToCopy).then(() => { 
+                element.classList.add('copied');
+                const originalTitle = element.title;
+                element.title = 'Copied: ' + latexStringToCopy; 
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                    element.title = originalTitle; 
+                 }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy LaTeX: ', err);
+                const originalTitle = element.title;
+                element.title = 'Copy failed!';
+                 setTimeout(() => { element.title = originalTitle; }, 1500);
+            });
+        }
+
+        // --- Font Size Control & Hold Functionality ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const minusBtn = document.getElementById('fontMinusBtn');
+            const plusBtn = document.getElementById('fontPlusBtn');
+            const display = document.getElementById('fontSizeDisplay');
+            const htmlEl = document.documentElement;
+            const bodyEl = document.body;
+
+            let currentSize = 10; 
+            const minSize = 10;
+            const maxSize = 28; 
+            const step = 1;
+            let displayTimeout = null;
+            let holdTimeout = null;
+            let holdInterval = null;
+            const initialHoldDelay = 400; 
+            const repeatInterval = 100;  
+            const mathJaxDebounceDelay = 350; 
+
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            const queueMathJaxTypeset = debounce(() => {
+                if (window.MathJax && MathJax.typesetPromise) {
+                    console.log("Debounced: Typesetting MathJax");
+                    MathJax.typesetPromise([bodyEl]).catch((err) => console.error('MathJax typesetting error:', err));
+                 }
+            }, mathJaxDebounceDelay);
+
+            function updateFontSize(newSize) {
+                const oldSize = currentSize;
+                currentSize = Math.max(minSize, Math.min(maxSize, newSize));
+
+                if (currentSize !== oldSize) {
+                    htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                    display.textContent = currentSize + 'px';
+                    display.classList.add('visible');
+
+                    if (displayTimeout) { clearTimeout(displayTimeout); }
+                    displayTimeout = setTimeout(() => {
+                        display.classList.remove('visible');
+                        displayTimeout = null;
+                    }, 1500);
+                    return true; 
+                }
+                return false; 
+            }
+
+            function stopHolding() {
+                bodyEl.classList.remove('no-font-transition'); 
+                if (holdTimeout) { clearTimeout(holdTimeout); holdTimeout = null; }
+                if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+                queueMathJaxTypeset();
+            }
+
+            function startHolding(direction) {
+                bodyEl.classList.add('no-font-transition');
+                updateFontSize(currentSize + direction * step);
+                if (holdTimeout) clearTimeout(holdTimeout);
+                if (holdInterval) clearInterval(holdInterval);
+
+                holdTimeout = setTimeout(() => {
+                    holdInterval = setInterval(() => {
+                        if (!updateFontSize(currentSize + direction * step)) {
+                            stopHolding(); 
+                        }
+                    }, repeatInterval);
+                }, initialHoldDelay);
+            }
+
+            if (minusBtn && plusBtn && display) {
+                minusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(-1); });
+                plusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(1); });
+                window.addEventListener('mouseup', stopHolding); 
+                minusBtn.addEventListener('mouseleave', stopHolding); 
+                plusBtn.addEventListener('mouseleave', stopHolding);
+
+                htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                display.textContent = currentSize + 'px';
+                console.log("Font control initialized. Current size:", currentSize);
+                 if (window.MathJax) {
+                     MathJax.startup.promise.then(() => {
+                         console.log("Queueing initial MathJax typeset");
+                         queueMathJaxTypeset(); 
+                     });
+                 }
+            } else {
+                console.error("Font control elements not found!");
+            }
+
+             const formulaContainers = document.querySelectorAll('.formula-container');
+             formulaContainers.forEach(container => {
+                 container.addEventListener('wheel', function(event) {
+                     const isScrollableHorizontally = this.scrollWidth > this.clientWidth;
+                     if (isScrollableHorizontally) {
+                         if (event.deltaY !== 0) { 
+                             event.preventDefault();
+                             this.scrollLeft += event.deltaY;
+                         }
+                     }
+                 }, { passive: false });
+             });
+             console.log("Horizontal scroll override applied to formula containers.");
+
+        });
+    </script>
+
+</body>
+</html>
