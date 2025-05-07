@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" style="--base-font-size: 10px;"> <!-- Default font size set to 10px -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 9: Transistor Amplifiers</title>
+
+    <!-- Google Fonts - Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true, tags: 'ams' },
+          options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'], ignoreHtmlClass: 'tex2jax_ignore', processHtmlClass: 'tex2jax_process' },
+          svg: { fontCache: 'global' },
+          startup: {
+            ready: () => { console.log('MathJax ready.'); MathJax.startup.defaultReady(); MathJax.startup.promise.then(() => console.log('MathJax initial typeset complete.')); }
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Keyframes for Animations (FadeIn) */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Fonts & Base Styling */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            color: #e0e0e0;
+            line-height: 1.7;
+            padding: 25px;
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            font-size: var(--base-font-size); /* Controlled by JS */
+            transition: font-size 0.2s ease-in-out; /* Default smooth transition */
+            padding-bottom: 80px; /* Space for controls */
+            overflow-x: hidden;
+        }
+        /* Class to disable transition during rapid changes (e.g., hold) */
+        body.no-font-transition {
+            transition: none !important;
+        }
+
+        /* Headings */
+        h1, h2 { font-family: 'Roboto Mono', monospace; text-align: center; margin-bottom: 1.5em; }
+        h1 { font-size: 2.4em; color: #ffffff; font-weight: 700; padding-bottom: 12px; margin-top: 1.5em; margin-bottom: 1.5em; border-bottom: 2px solid #ffffff; animation: fadeIn 0.8s ease-out both; animation-delay: 0.1s; letter-spacing: -0.5px; }
+        h2 { font-size: 1.6em; color: #cccccc; font-weight: 500; margin-top: 30px; margin-bottom: 1.5em; border-bottom: 1px solid #555555; padding-bottom: 5px; animation: fadeIn 0.8s ease-out both; animation-delay: 0.3s; }
+        h3 { font-size: 1.2em; color: #bdbdbd; font-weight: 500; margin-top: 1.8em; margin-bottom: 0.8em; padding-bottom: 3px; border-bottom: 1px dotted #444; text-align: left; }
+        h4 { font-size: 1.1em; color: #b0b0b0; font-weight: 500; margin-top: 1.5em; margin-bottom: 0.7em; text-align: left; }
+
+
+        /* Main Content Area */
+        main { max-width: 800px; margin: 40px auto; background-color: rgba(30, 30, 30, 0.85); padding: 35px 45px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.1); animation: fadeIn 0.8s ease-out both; animation-delay: 0.2s; }
+        /* Paragraph and List styling */
+        p { margin-bottom: 1em; color: inherit; font-size: inherit; }
+        ul, ol { margin-left: 25px; list-style: disc; margin-bottom: 1em; }
+        ol { list-style: decimal; }
+        li { margin-bottom: 8px; font-size: inherit; }
+        strong { font-weight: 500; color: #ffffff; }
+
+        /* Formula Container Styling (with horizontal scroll) */
+        .formula-container {
+            margin: 15px 0 20px 0; padding: 10px 20px; background-color: rgba(45, 45, 45, 0.9);
+            border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto; overflow-y: hidden; /* Horizontal scroll, no vertical */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            cursor: pointer; color: #e0e0e0; border-left: 4px solid transparent;
+            font-family: 'Roboto Mono', monospace; position: relative; white-space: nowrap;
+        }
+        .formula-container:hover { background-color: rgba(60, 60, 60, 0.95); border-left-color: #a6e3a1; border-color: rgba(166, 227, 161, 0.5); }
+        .formula-container.copied { background-color: rgba(166, 227, 161, 0.2); border-color: #a6e3a1; border-left-color: #a6e3a1; }
+        /* Optional Scrollbar Style */
+        .formula-container::-webkit-scrollbar { height: 8px; }
+        .formula-container::-webkit-scrollbar-track { background: rgba(60, 60, 60, 0.5); border-radius: 4px; }
+        .formula-container::-webkit-scrollbar-thumb { background-color: #888; border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+        .formula-container::-webkit-scrollbar-thumb:hover { background-color: #aaa; }
+        /* MathJax display style */
+        .formula-container mjx-container[display="true"] { margin: 0.5em 0 !important; text-align: left !important; display: inline-block; vertical-align: middle; }
+        
+        table { border-collapse: collapse; margin: 1em auto; background-color: rgba(40,40,40,0.8); width: auto; }
+        th, td { border: 1px solid #555; padding: 8px 12px; text-align: center; }
+        th { background-color: rgba(60,60,60,0.9); color: #ddd; }
+
+
+        /* Footer Styling */
+        footer { text-align: center; margin-top: 70px; padding-bottom: 35px; font-size: 0.85em; color: #888888; animation: fadeIn 1s ease-out both; animation-delay: 0.7s; }
+
+        /* Simple Dark Theme Scrollbar for Page */
+        body::-webkit-scrollbar { width: 10px; }
+        body::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 5px; }
+        body::-webkit-scrollbar-thumb { background-color: #777; border-radius: 5px; border: 2px solid #2a2a2a; background-clip: content-box; }
+        body::-webkit-scrollbar-thumb:hover { background-color: #999; }
+        html { scrollbar-width: thin; scrollbar-color: #777 #2a2a2a; }
+        @supports (scrollbar-gutter: stable) { html { scrollbar-gutter: stable; } }
+
+        /* Font Control Icons CSS */
+        .font-control { position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+        .font-control-icon { font-size: 28px; font-weight: bold; color: #777; cursor: pointer; padding: 8px; transition: color 0.3s ease; pointer-events: auto; user-select: none; line-height: 1; display: inline-block; }
+        .font-control-icon:hover { color: #a6e3a1; }
+        #fontSizeDisplay { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(45, 45, 45, 0.9); color: #e0e0e0; padding: 6px 12px; border-radius: 5px; font-size: 13px; font-family: 'Roboto Mono', monospace; z-index: 11; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; white-space: nowrap; }
+        #fontSizeDisplay.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Chapter 9: Transistor Amplifiers</h1>
+    </header>
+
+    <main>
+        <h2>Introduction (Page 570)</h2>
+        <ul>
+            <li><strong>Amplification:</strong> The process of enlarging signals (voltage, current, or power) that are too small to be directly useful.</li>
+            <li>
+                <strong>Types of Amplifiers:</strong>
+                <ul>
+                    <li><strong>Small-signal amplifiers:</strong> Used for initial amplification of weak signals. Can use BJTs, FETs, or both.</li>
+                    <li><strong>Power (large-signal) amplifiers:</strong> Further amplify signals to drive loads like loudspeakers, motors, etc.</li>
+                </ul>
+            </li>
+            <li><strong>Construction:</strong> Can be discrete components or Integrated Circuits (ICs).</li>
+            <li><strong>Frequency Range:</strong> Affected by coupling/bypass capacitors and inherent transistor capacitances.</li>
+            <li><strong>Operating Region for Amplification:</strong> Transistors operate in the <strong>active region</strong> (linear region) for amplification, unlike digital circuits where they're usually in cutoff or saturation.</li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>9.1 Bipolar Junction Transistor Amplifiers (Pages 570-589)</h2>
+
+        <h3>Principle of Amplification (Fig. 9.1)</h3>
+        <ul>
+            <li>A BJT biased in the active region amplifies.</li>
+            <li><strong>Quiescent Operating Point (Q-point):</strong> The DC (no AC signal) operating state defined by $I_{BQ}, I_{CQ}, V_{CEQ}$.</li>
+            <li><strong>AC Signal Superposition:</strong> A small AC signal added to $I_{BQ}$ causes variations in $i_B, i_C$, and $v_{CE}$ along the <strong>load line</strong>.</li>
+            <li>An AC base current ($i_b$) results in a larger AC collector current ($i_c$), demonstrating <strong>AC current gain ($h_{fe}$ or $\beta_{ac}$)</strong>.
+                $h_{fe} = i_c / i_b = \Delta i_C / \Delta i_B$. $h_{fe}$ is not necessarily identical to $h_{FE}$ (DC beta).</li>
+            <li><strong>Distortion (Clipping):</strong> If the Q-point is too close to cutoff/saturation, or AC signal too large, the output can be distorted.</li>
+        </ul>
+
+        <h3>Biasing the BJT</h3>
+        <p>Establishing a stable Q-point in the active region.</p>
+        <ol>
+            <li><strong>Fixed-Bias (Fig. 9.2):</strong> $I_B = (V_{CC} - V_{BE}) / R_B$. Simple but poor stability.</li>
+            <li><strong>Voltage-Divider Bias (Fig. 9.3 & 9.4):</strong> Uses voltage divider (R1, R2) to set base voltage. Can be reduced to a Thévenin equivalent.</li>
+            <li><strong>Self-Biasing (Emitter-Stabilized Bias) (Fig. 9.5 & 9.6):</strong> Includes emitter resistor $R_E$. Provides negative feedback, improving stability. $I_B = (V_{BB\_Th} - V_{BE}) / (R_{B\_Th} + (1 + h_{FE})R_E)$. Example 9.1 calculates Q-point.</li>
+        </ol>
+
+        <h3>Small-Signal AC Models for BJT</h3>
+        <p>Linear models for analyzing AC behavior around the Q-point. DC sources become AC grounds, coupling/bypass capacitors become AC shorts (at mid-band).</p>
+        <ul>
+            <li><strong>AC Equivalent Circuit (Fig. 9.8):</strong> Shows AC treatment of DC components.</li>
+            <li>
+                <strong>Models (Fig. 9.9 - BJT symbol with AC quantities):</strong>
+                <ol>
+                    <li><strong>$r_\pi$ Model (Hybrid-$\pi$ base) (Fig. 9.10):</strong> Input $r_\pi$ (or $h_{ie}$), output current source $h_{fe} \cdot i_b$.</li>
+                    <li><strong>$g_m$ Model (Transconductance) (Fig. 9.11):</strong> Input $r_\pi$, output current source $g_m \cdot v_{be}$. $g_m = h_{fe} / r_\pi$.</li>
+                    <li><strong>$r_e$ Model (Emitter Resistance) (Fig. 9.12):</strong> Often used. $r_\pi = (1 + h_{fe})r_e \approx h_{fe} \cdot r_e$.
+                        <ul>
+                            <li>$r_e \approx V_T / I_{EQ} \approx 26\text{mV} / I_{EQ}$ (at room temp, $I_{EQ}$ is DC emitter current).</li>
+                            <li>$g_m = I_{CQ} / V_T$.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </li>
+            <li>
+                <strong>Analysis using $r_e$ Model (Common Emitter - CE - Fig. 9.13):</strong>
+                <ul>
+                    <li>Input Resistance (base): $R_b \approx h_{fe}(r_e + R_{E\_ac})$. ($R_{E\_ac}$ is AC resistance in emitter).</li>
+                    <li>Amplifier Input Resistance: $R_{in} = (R_1||R_2) || R_b$.</li>
+                    <li>Voltage Gain (base to collector): $A_v = v_c / v_b \approx -R_{C\_ac} / (r_e + R_{E\_ac})$.
+                        If $R_E$ is bypassed by capacitor $C_E$ ($R_{E\_ac} = 0$), gain $A_v \approx -R_{C\_ac} / r_e$.</li>
+                    <li>Overall Voltage Gain (source to collector): $A_{vs} = A_v \cdot (R_{in} / (R_{in} + R_{s\_source}))$.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>AC and DC Load Lines (Fig. 9.15):</strong>
+                DC load line slope $-1/(R_C + R_E)$. AC load line slope $-1/(R_{C\_ac} + R_{E\_ac})$, passes through Q-point. $R_{C\_ac} = R_C || R_L$.
+            </li>
+            <li>
+                <strong>Common-Collector Amplifier (Emitter Follower) (Fig. 9.18, 9.19):</strong>
+                Output from emitter. $A_v \approx 1$. High $R_{in}$, Low $R_o$. Used as buffer.
+            </li>
+            <li>
+                <strong>h-Parameter Model (Fig. 9.21):</strong> More accurate using $h_{ie}, h_{re}, h_{fe}, h_{oe}$.
+                Ignoring $h_{re}$ and $h_{oe}$ reduces it to simpler models. Example 9.4 shows usage.
+            </li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>9.2 Field-Effect Transistor Amplifiers (Pages 592-608)</h2>
+        <p>FETs (JFETs, depletion MOSFETs, enhancement MOSFETs) can also be used as amplifiers when biased in their active/saturation region.</p>
+
+        <h3>Biasing FETs</h3>
+        <ol>
+            <li><strong>Fixed Bias (JFET - Fig. 9.23, 9.24):</strong> $V_{GS} = -V_{GG}$. Unstable.</li>
+            <li><strong>Self-Bias (JFET - Fig. 9.25, 9.26):</strong> Source resistor $R_S$. $V_{GS} = -I_D R_S$. Load line $I_D = -V_{GS} / R_S$. More stable.</li>
+            <li><strong>Combination Bias (JFET - Fig. 9.27, 9.28):</strong> Gate supply voltage $V_{GG\_Th}$ and $R_S$. $I_D = (-V_{GS} + V_{GG\_Th}) / R_S$. Better stability. Example 9.5 designs one.</li>
+            <li><strong>Biasing Enhancement MOSFETs (Fig. 9.30, 9.31):</strong> Similar to JFET combination bias. $I_D = K(V_{GS} - V_t)^2$. Example 9.6 designs one.</li>
+            <li><strong>Feedback Bias (E-MOSFET - Fig. 9.34):</strong> Feedback resistor $R_F$ from drain to gate. $V_{GS} = V_{DS}$. Good stability. $V_{GS} = V_{DD} - I_D R_D$. Example 9.7 analysis.</li>
+        </ol>
+
+        <h3>Small-Signal AC Models for FETs (Fig. 9.35, 9.36)</h3>
+        <ul>
+            <li>Gate-Source: Open circuit ($r_{gs} \approx \infty$).</li>
+            <li>Drain-Source: Voltage-controlled current source $i_d = g_m \cdot v_{gs}$.
+                <ul>
+                    <li><strong>Transconductance ($g_m$):</strong> $g_m = \Delta i_D / \Delta v_{GS}$.
+                        For JFET/Depletion MOSFET: $g_m = -(2I_{DSS}/V_P)(1 - V_{GSQ}/V_P) = g_{m0}(1 - V_{GSQ}/V_P) = (2/|V_P|)\sqrt{I_{DSS} I_{DQ}}$.
+                        For Enhancement MOSFET: $g_m = 2K(V_{GSQ} - V_t) = 2\sqrt{K I_{DQ}}$.</li>
+                </ul>
+            </li>
+            <li><strong>More Accurate Model (Fig. 9.37):</strong> Includes drain output resistance $r_d = \Delta v_{DS} / \Delta i_D$.</li>
+        </ul>
+
+        <h3>FET Amplifier Configurations</h3>
+        <ol>
+            <li>
+                <strong>Common-Source (CS) Amplifier (Fig. 9.38, 9.39):</strong>
+                Source AC ground. Input Gate, Output Drain.
+                $A_v = v_d / v_g = -g_m (R_D || R_L || r_d) \approx -g_m (R_D || R_L)$.
+                High $R_{in}$. $R_o \approx r_d || R_D$. Example 9.8 calculation.
+            </li>
+            <li>
+                <strong>Common-Drain (CD) Amplifier (Source Follower) (Fig. 9.40, 9.41):</strong>
+                Drain AC ground. Input Gate, Output Source.
+                $A_v = v_s / v_g = g_m R_T / (1 + g_m R_T) \approx 1$ (where $R_T = R_S || R_L$).
+                High $R_{in}$, Low $R_o \approx R_S || (1/g_m)$. Used as buffer. Example 9.9 analysis.
+            </li>
+            <li>
+                <strong>MOSFET Feedback Amplifier (Fig. 9.43):</strong> CS amp with feedback resistor $R_F$ (drain to gate). Complex formulas for gain, Rin. Example 9.10 analysis.
+            </li>
+        </ol>
+        <ul>
+            <li><strong>Comparison BJT vs FET (small-signal):</strong> BJT higher $g_m$, more linear. FET much higher $R_{in}$.</li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>9.3 Frequency Response (Pages 609-616, Partial)</h2>
+        <p>Amplifier gain is generally frequency-dependent due to capacitive effects.</p>
+        <ul>
+            <li><strong>Mid-band:</strong> Frequency range where gain is approximately constant.</li>
+            <li><strong>Cutoff Frequencies (3-dB frequencies):</strong> $\omega_L$ (Lower cutoff, coupling/bypass caps). $\omega_H$ (Upper cutoff, internal caps).</li>
+            <li><strong>Bandwidth (BW):</strong> $BW = \omega_H - \omega_L$.</li>
+            <li><strong>Lead Network (High-pass RC - Fig. 9.45):</strong> $V_{out}/V_{in} = j\omega RC / (1+j\omega RC)$. Cutoff $\omega_c = 1/RC$.</li>
+            <li>
+                <strong>BJT Low-Frequency Response (due to C1, C2, CE - Fig. 9.46-9.50):</strong>
+                $\omega_L$ approx. highest of:
+                $\omega_1 = 1/((R_{s\_source} + R_{in\_amp})C_1)$ (Input coupling).
+                $\omega_2 = 1/((R_{o\_amp} + R_L)C_2)$ (Output coupling).
+                $\omega_3 = 1 / (R_{oE} C_E)$ (Emitter bypass, $R_{oE}$ is impedance seen by $C_E$).
+            </li>
+            <li>
+                <strong>FET Low-Frequency Response (Fig. 9.51-9.53):</strong> Similar principles.
+                $\omega_1 = 1 / ((R_{s\_source} + R_G)C_1)$.
+                $\omega_2 = 1 / ((R_D + R_L)C_2)$.
+                $\omega_3 = 1 / (R_{oS} C_S)$, where $R_{oS} = R_S || (1/g_m)$.
+            </li>
+            <li><strong>Miller's Theorem (Fig. 9.54, 9.55):</strong> Feedback impedance $Z_F$ between input/output (gain $-A$) replaced by $Z_F / (1+A)$ at input, $A Z_F / (1+A)$ at output.</li>
+            <li><strong>Lag Network (Low-pass RC - Fig. 9.56):</strong> $V_{out}/V_{in} = 1 / (1+j\omega RC)$. Cutoff $\omega_c = 1/RC$.</li>
+            <li><strong>High-Frequency BJT Model (Fig. 9.57):</strong> Includes $C_\pi$ (or $C_{be}$) and $C_\mu$ (or $C_{bc}$, Miller capacitance).</li>
+            <li>
+                <strong>High-Frequency Response (BJT - Fig. 9.58-9.60):</strong> $\omega_H$ approx. lowest of input/output pole frequencies.
+                Input capacitance $C_g = C_\pi + C_\mu(1+|A_v|)$. Input pole $\omega_g = 1 / (R_{eq\_in} C_g)$.
+                Output capacitance $C_T \approx C_\mu$. Output pole $\omega_T = 1 / (R_{eq\_out} C_T)$.
+                <strong>Current-Gain/Bandwidth Product ($f_T$):</strong> Frequency where $|h_{fe}(j\omega)| = 1$. $f_T \approx g_m / (2\pi(C_\pi + C_\mu))$.
+            </li>
+            <li><strong>High-Frequency FET Model (Fig. 9.61):</strong> Includes $C_{gs}, C_{gd}, C_{ds}$. Analysis similar to BJT using Miller effect on $C_{gd}$.</li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>9.4 Power Amplifiers (Pages 623-639, Partial)</h2>
+        <p>Amplify large AC signals to provide sufficient power to drive loads. Power transistors are used. Linearity important.</p>
+
+        <h3>Class-A Amplifiers (Fig. 9.64-9.66)</h3>
+        <ul>
+            <li>Transistor operates entirely in the active region. Q-point typically centered.</li>
+            <li>
+                <strong>Power Terminology:</strong>
+                <ul>
+                    <li>Max Output Signal Power: $P_{o\_max} = (1/2)V_{CEQ} I_{CQ}$ (for centered Q).</li>
+                    <li>Instantaneous Power Dissipation: $p = v_{CE} \cdot i_C$.</li>
+                    <li>Quiescent Power Dissipation: $P_{DQ} = V_{CEQ} \cdot I_{CQ}$.</li>
+                    <li>Max Avg Power Dissipation ($P_{D(max)}$): Transistor spec. Must be $\ge P_{DQ}$.</li>
+                    <li>DC Power from Supply: $P_{dc} = V_{CC} \cdot I_{CQ\_avg}$.</li>
+                    <li>Efficiency ($\eta$): $\eta = P_o / P_{dc}$. Max $\eta$ for transformerless Class-A is 25%.</li>
+                </ul>
+            </li>
+            <li><strong>Power Derating:</strong> $P_{D(max)}$ reduces at higher temperatures. Heat sinks needed.</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{P_{o\\_max} = \\frac{1}{2}V_{CEQ} I_{CQ}}}')"
+             data-latex="P_{o\_max} = \\frac{1}{2}V_{CEQ} I_{CQ} \quad (Eq. 9.49)"
+             title="Click to copy LaTeX">
+             $$ P_{o\_max} = \\frac{1}{2}V_{CEQ} I_{CQ} \quad (Eq. 9.49) $$
+        </div>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{p = v_{CE} i_C}}')"
+             data-latex="p = v_{CE} i_C \quad (Eq. 9.50)"
+             title="Click to copy LaTeX">
+             $$ p = v_{CE} i_C \quad (Eq. 9.50) $$
+        </div>
+         <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{P_{DQ} = V_{CEQ} I_{CQ}}}')"
+             data-latex="P_{DQ} = V_{CEQ} I_{CQ} \quad (Eq. 9.52)"
+             title="Click to copy LaTeX">
+             $$ P_{DQ} = V_{CEQ} I_{CQ} \quad (Eq. 9.52) $$
+        </div>
+
+
+        <h3>Class-B Amplifiers</h3>
+        <ul>
+            <li>Transistor biased at cutoff ($I_{CQ} = 0$). Conducts for half cycle. More efficient.</li>
+            <li><strong>Push-Pull Configuration (Fig. 9.67-9.69):</strong> Uses two complementary transistors (npn/pnp). One conducts for positive half-cycle, other for negative. Outputs combined.</li>
+            <li><strong>Crossover Distortion (Fig. 9.70):</strong> Output is zero for small input signals if base-emitter turn-on voltage is not overcome.</li>
+            <li><strong>Trickle Bias (Class-AB) (Fig. 9.71):</strong> Slightly forward bias B-E junctions (small $I_{CQ}$) to minimize crossover distortion.</li>
+            <li>Maximum Output Power (Class-B, sine): $P_{o\_max} = V_{CC}^2 / (2R_L)$ (approx).</li>
+            <li>Max Avg Power Dissipated (per transistor): $P_{DM} \approx 0.1 V_m I_m$.</li>
+            <li>Efficiency (Class-B): Max $\eta \approx 78.5\%$.</li>
+            <li><strong>Power FETs (VMOS - Fig. 9.75):</strong> Vertical structure, used in power amplifiers.</li>
+        </ul>
+
+    </main>
+
+    <footer>
+        <!-- Optional: Add footer text if needed -->
+    </footer>
+
+     <!-- Font Size Control Icons HTML -->
+     <div class="font-control">
+         <span class="font-control-icon" id="fontMinusBtn" title="Decrease font size">-</span>
+         <span class="font-control-icon" id="fontPlusBtn" title="Increase font size">+</span>
+     </div>
+     <div id="fontSizeDisplay">10px</div> <!-- Initial size display -->
+
+    <script>
+        // --- Formula Copy Function ---
+        function copyFormulaLatex(element, latexStringWithColor) {
+            if (!latexStringWithColor) {
+                console.error('No LaTeX data found passed to copy function.');
+                return;
+            }
+            let rawLatexToCopy = element.dataset.latex;
+            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\(Eq\.\s*[\d\.]+\)$/, '');
+            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\(Inequality\s*[\d\.]+\)$/, '');
+            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\w+$/, ''); // Remove units like Hz
+
+            navigator.clipboard.writeText(rawLatexToCopy).then(() => {
+                element.classList.add('copied');
+                const originalTitle = element.title;
+                element.title = 'Copied: ' + rawLatexToCopy;
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                    element.title = originalTitle;
+                 }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy LaTeX: ', err);
+                alert('Failed to copy LaTeX. See console for details.');
+            });
+        }
+
+        // --- Font Size Control & Hold Functionality ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const minusBtn = document.getElementById('fontMinusBtn');
+            const plusBtn = document.getElementById('fontPlusBtn');
+            const display = document.getElementById('fontSizeDisplay');
+            const htmlEl = document.documentElement;
+            const bodyEl = document.body;
+
+            let currentSize = 10; 
+            const minSize = 10;
+            const maxSize = 28; 
+            const step = 1;
+            let displayTimeout = null;
+            let holdTimeout = null;
+            let holdInterval = null;
+            const initialHoldDelay = 400; 
+            const repeatInterval = 100;  
+            const mathJaxDebounceDelay = 350; 
+
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            const queueMathJaxTypeset = debounce(() => {
+                if (window.MathJax && MathJax.typesetPromise) {
+                    console.log("Debounced: Typesetting MathJax");
+                    MathJax.typesetPromise([bodyEl]).catch((err) => console.error('MathJax typesetting error:', err));
+                 }
+            }, mathJaxDebounceDelay);
+
+            function updateFontSize(newSize) {
+                const oldSize = currentSize;
+                currentSize = Math.max(minSize, Math.min(maxSize, newSize));
+
+                if (currentSize !== oldSize) {
+                    htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                    display.textContent = currentSize + 'px';
+                    display.classList.add('visible');
+
+                    if (displayTimeout) { clearTimeout(displayTimeout); }
+                    displayTimeout = setTimeout(() => {
+                        display.classList.remove('visible');
+                        displayTimeout = null;
+                    }, 1500);
+                    return true; 
+                }
+                return false; 
+            }
+
+            function stopHolding() {
+                bodyEl.classList.remove('no-font-transition'); 
+                if (holdTimeout) { clearTimeout(holdTimeout); holdTimeout = null; }
+                if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+                queueMathJaxTypeset();
+            }
+
+            function startHolding(direction) {
+                bodyEl.classList.add('no-font-transition');
+                updateFontSize(currentSize + direction * step);
+                if (holdTimeout) clearTimeout(holdTimeout);
+                if (holdInterval) clearInterval(holdInterval);
+
+                holdTimeout = setTimeout(() => {
+                    holdInterval = setInterval(() => {
+                        if (!updateFontSize(currentSize + direction * step)) {
+                            stopHolding(); 
+                        }
+                    }, repeatInterval);
+                }, initialHoldDelay);
+            }
+
+            if (minusBtn && plusBtn && display) {
+                minusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(-1); });
+                plusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(1); });
+                window.addEventListener('mouseup', stopHolding); 
+                minusBtn.addEventListener('mouseleave', stopHolding); 
+                plusBtn.addEventListener('mouseleave', stopHolding);
+
+                htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                display.textContent = currentSize + 'px';
+                console.log("Font control initialized. Current size:", currentSize);
+                 if (window.MathJax) {
+                     MathJax.startup.promise.then(() => {
+                         console.log("Queueing initial MathJax typeset");
+                         queueMathJaxTypeset(); 
+                     });
+                 }
+            } else {
+                console.error("Font control elements not found!");
+            }
+
+             const formulaContainers = document.querySelectorAll('.formula-container');
+             formulaContainers.forEach(container => {
+                 container.addEventListener('wheel', function(event) {
+                     const isScrollableHorizontally = this.scrollWidth > this.clientWidth;
+                     if (isScrollableHorizontally) {
+                         if (event.deltaY !== 0) { 
+                             event.preventDefault();
+                             this.scrollLeft += event.deltaY;
+                         }
+                     }
+                 }, { passive: false });
+             });
+             console.log("Horizontal scroll override applied to formula containers.");
+
+        });
+    </script>
+
+</body>
+</html>
