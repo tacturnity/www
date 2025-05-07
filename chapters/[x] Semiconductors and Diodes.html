@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 6: Diodes</title>
+    <title>Chapter 6: Diodes (Syllabus Topics)</title>
 
     <!-- Google Fonts - Roboto Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,29 +110,23 @@
 <body>
 
     <header>
-        <h1>Chapter 6: Diodes</h1>
+        <h1>Chapter 6: Diodes (Syllabus Topics)</h1>
     </header>
 
     <main>
         <h2>Introduction (Page 345)</h2>
-        <p>This chapter introduces <strong>semiconductor diodes</strong>, which are foundational electronic components.</p>
-        <ul>
-            <li>Diodes are <strong>nonlinear elements</strong>, meaning their current-voltage relationship is not a straight line, unlike resistors. This makes circuit analysis more complex but enables many important applications impossible with only linear elements.</li>
-            <li>The study of diodes naturally leads to bipolar junction transistors (BJTs) and field-effect transistors (FETs).</li>
-            <li>Understanding diodes requires some emphasis on <strong>physical principles</strong> of materials, which is where the chapter begins.</li>
-        </ul>
+        <p>This chapter introduces <strong>semiconductor diodes</strong>, building upon the concept of the pn junction. Diodes are <strong>nonlinear elements</strong>, crucial for many electronic devices. The study starts with the electrical properties of semiconductor materials.</p>
 
         <hr style="border: 1px solid #444; margin: 2em 0;">
 
-        <h2>6.1 Semiconductors (Pages 346-351)</h2>
+        <h2>6.1 Semiconductors (Pages 346-347, Excluding Temp Effects)</h2>
 
         <h3>Current Flow in Metals</h3>
         <ul>
-            <li>Current in metals is due to the movement of <strong>free electrons</strong> (valence electrons).</li>
-            <li>Metal atoms consist of positively charged <strong>ions</strong> (nucleus + inner electrons) and a "sea" of free electrons (Fig. 6.1).</li>
-            <li>Electrons move randomly due to thermal energy, colliding with ions. The average distance between collisions is the <strong>mean free path</strong>.</li>
-            <li>Without an applied voltage, random motion results in zero net current.</li>
-            <li><strong>Drift Speed (u):</strong> Applying a voltage creates an electric field $E$ (V/m). Electrons, on average, drift at a speed $u$ proportional to $E$.</li>
+            <li>Current = movement of negatively charged free electrons (charge $q = 1.60 \times 10^{-19} \text{ C}$).</li>
+            <li>Structure: Positive ions + free valence electrons (Fig. 6.1).</li>
+            <li>Electrons move randomly due to thermal energy. No net current without voltage.</li>
+            <li><strong>Drift Speed (u):</strong> Applying voltage creates electric field $E$. Electrons drift with average speed $u$ proportional to $E$.</li>
         </ul>
         <div class="formula-container"
              onclick="copyFormulaLatex(this, '\\color{white}{u = \\mu E}}')"
@@ -141,176 +135,82 @@
              $$ u = \mu E \quad (Eq. 6.1) $$
         </div>
         <ul>
-            <li>$\mu$ (mu) is the <strong>electron mobility</strong> (m²/V·s).</li>
+            <li>$\mu$ (mu) = electron <strong>mobility</strong> (m²/V·s).</li>
         </ul>
 
-        <h3>Current Density and Conductivity in Metals</h3>
+        <h3>Current Density and Conductivity</h3>
         <ul>
-            <li>Consider a conductor section of length $L$ and cross-sectional area $A$ (Fig. 6.2).</li>
-            <li>If $N$ electrons move with drift speed $u$, and it takes time $T = L/u$ for an electron to travel $L$.</li>
-            <li>Current $I = Nq/T = Nqu/L$, where $q$ is electron charge magnitude ($1.60 \times 10^{-19}$ C).</li>
-            <li><strong>Current Density (J):</strong> Current per unit area.</li>
+            <li>For $N$ electrons moving at speed $u$ in conductor (Length $L$, Area $A$, Fig. 6.2): Current $I = Nqu/L$.</li>
+            <li><strong>Current Density (J):</strong></li>
         </ul>
         <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J = I/A}}')"
-             data-latex="J = I/A \quad (Eq. 6.2)"
+             onclick="copyFormulaLatex(this, '\\color{white}{J = I/A = nqu}}')"
+             data-latex="J = I/A = nqu \quad (Eq. 6.2, 6.4)"
              title="Click to copy LaTeX">
-             $$ J = I/A \quad (Eq. 6.2) $$
-        </div>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J = Nqu / (LA)}}')"
-             data-latex="J = Nqu / (LA) \quad (Eq. 6.3)"
-             title="Click to copy LaTeX">
-             $$ J = Nqu / (LA) \quad (Eq. 6.3) $$
+             $$ J = I/A = nqu \quad (Eq. 6.2, 6.4) $$
         </div>
         <ul>
-            <li><strong>Free-Electron Concentration (n):</strong> Number of free electrons per unit volume. $n = N / (LA)$. Units: m⁻³.</li>
-            <li>Rewriting $J$:</li>
+            <li>$n$ = free-electron concentration (electrons/m³).</li>
+            <li><strong>Conductivity ($\sigma$, sigma):</strong> $J = \sigma E$ (Ohm's Law).</li>
         </ul>
         <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J = nqu}}')"
-             data-latex="J = nqu \quad (Eq. 6.4)"
+             onclick="copyFormulaLatex(this, '\\color{white}{\\sigma = nq\\mu}}')"
+             data-latex="\sigma = nq\mu \quad (Eq. 6.5 \text{ derived})"
              title="Click to copy LaTeX">
-             $$ J = nqu \quad (Eq. 6.4) $$
+             $$ \sigma = nq\mu \quad (Eq. 6.5 \text{ derived}) $$
         </div>
+        <p>Unit: S/m or $(\Omega \cdot \text{m})^{-1}$.</p>
         <ul>
-            <li>The product $nq$ is called <strong>charge density</strong> (C/m³).</li>
-            <li>Substituting $u = \mu E$ into $J = nqu$: $J = nq\mu E$.</li>
-            <li><strong>Conductivity ($\sigma$, sigma):</strong></li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J = \\sigma E}}')"
-             data-latex="J = \\sigma E \quad (Eq. 6.5)"
-             title="Click to copy LaTeX">
-             $$ J = \sigma E \quad (Eq. 6.5) $$
-        </div>
-        <p>So, $\sigma = nq\mu$. Units: Siemens per meter (S/m) or $(\Omega \cdot \text{m})^{-1}$.</p>
-        <ul>
-            <li><strong>Resistivity ($\rho$, rho):</strong> Reciprocal of conductivity. $\rho = 1/\sigma$. Units: Ohm-meter ($\Omega \cdot \text{m}$).</li>
-            <li><strong>Resistance (R):</strong> For the conductor of length $L$, area $A$:
-            $I = JA = \sigma EA = \sigma(V/L)A$ (since $E = V/L$ for uniform field).
-            $V = I (L / (\sigma A))$. So, $R = L / (\sigma A) = \rho L / A$.</li>
-            <li><strong>Temperature:</strong> Kelvin (K): $T_K = T_C + 273$ (where $T_C$ is degrees Celsius).</li>
+            <li><strong>Resistivity ($\rho$, rho):</strong> $\rho = 1/\sigma$. Unit: $\Omega \cdot \text{m}$.</li>
+            <li><strong>Resistance (R):</strong> $R = \rho L/A = L/(\sigma A)$.</li>
         </ul>
 
         <p><strong>Example 6.1: Copper Wire</strong></p>
         <ul>
-            <li>Copper wire, Area $A = 1 \text{ mm}^2 = 10^{-6} \text{ m}^2$, Current $I = 0.4 \text{ A}$.
-            Conductivity $\sigma = 5.78 \times 10^7 \text{ S/m}$ (at 20°C). Free-electron concentration $n = 8.43 \times 10^{28} \text{ m}^{-3}$.</li>
-            <li><strong>Drift speed (u):</strong>
-            $J = I/A = 0.4 \text{ A} / 10^{-6} \text{ m}^2 = 4 \times 10^5 \text{ A/m}^2$.
-            From $J = nqu$, $u = J / (nq) = (4 \times 10^5) / (8.43 \times 10^{28} \times 1.6 \times 10^{-19}) \approx 2.97 \times 10^{-5} \text{ m/s}$. (Very slow!)</li>
-            <li><strong>Mobility ($\mu$):</strong>
-            From $\sigma = nq\mu$, $\mu = \sigma / (nq) = (5.78 \times 10^7) / (8.43 \times 10^{28} \times 1.6 \times 10^{-19}) \approx 4.29 \times 10^{-3} \text{ m}^2/\text{V}\cdot\text{s}$.</li>
-            <li><strong>Electric Field Strength (E):</strong>
-            From $u = \mu E$, $E = u / \mu = (2.97 \times 10^{-5}) / (4.29 \times 10^{-3}) \approx 6.92 \times 10^{-3} \text{ V/m}$.</li>
-            <li><strong>Resistance of 1m length:</strong>
-            $R = L / (\sigma A) = 1\text{m} / (5.78 \times 10^7 \text{ S/m} \times 10^{-6} \text{ m}^2) = 1 / 57.8 \approx 0.0173 \Omega = 17.3 \text{ m}\Omega$.</li>
+            <li>Calculates drift speed ($u$), mobility ($\mu$), electric field ($E$), and resistance ($R$) for a copper wire given its dimensions, current, conductivity, and electron concentration, using the formulas above. Demonstrates that drift speed is typically very slow.</li>
         </ul>
 
         <h3>Semiconductor Materials</h3>
         <ul>
-            <li><strong>Conductors</strong> (like copper): $n$ is high ($10^{28} - 10^{29} \text{ m}^{-3}$).</li>
-            <li><strong>Insulators:</strong> $n$ is low (e.g., $10^7 \text{ m}^{-3}$).</li>
-            <li>
-                <strong>Semiconductors</strong> (Silicon-Si, Germanium-Ge): Conductivity between conductors and insulators.
-                <ul>
-                    <li>
-                        At 300K (room temp):
-                        <ul>
-                            <li>Si: $n \approx 1.5 \times 10^{16} \text{ m}^{-3}$.</li>
-                            <li>Ge: $n \approx 2.5 \times 10^{19} \text{ m}^{-3}$.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <strong>Crystal Lattice Structure (Fig. 6.3):</strong> Atoms like Si and Ge have 4 valence electrons. Each atom forms <strong>covalent bonds</strong> with 4 neighbors, sharing electrons.
-                <ul>
-                    <li>Valence electrons are tightly bound. Low conductivity at low temperatures (acts as insulator).</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Hole-Electron Pairs (Fig. 6.4):</strong>
-                <ul>
-                    <li>At room temperature, thermal energy can break covalent bonds, dislodging an electron, making it a <strong>free electron</strong>.</li>
-                    <li>The vacated space is called a <strong>hole</strong>. A hole acts like a positive charge carrier.</li>
-                    <li><strong>Electron Volt (eV):</strong> Unit of energy. $1 \text{ eV} = 1.60 \times 10^{-19} \text{ J}$.</li>
-                    <li>Energy to form a hole-electron pair: Si $\approx 1.1 \text{ eV}$, Ge $\approx 0.72 \text{ eV}$.</li>
-                </ul>
-            </li>
-            <li><strong>Hole Current:</strong> When a valence electron fills a hole, the hole effectively moves. This movement of holes constitutes a <strong>hole current</strong>.</li>
-            <li>
-                <strong>Intrinsic Semiconductor:</strong> Pure semiconductor.
-                <ul>
-                    <li>Number of free electrons $n$ equals number of holes $p$.</li>
-                    <li>This concentration is called <strong>intrinsic concentration ($n_i$)</strong>. So, $n = p = n_i$.</li>
-                </ul>
-            </li>
-            <li><strong>Recombination:</strong> Free electrons can fall into holes, eliminating a pair. In thermal equilibrium, generation rate = recombination rate.</li>
-        </ul>
-
-        <h3>Current Density in Semiconductors</h3>
-        <ul>
-            <li>Metals are <strong>unipolar</strong> (current by electrons only).</li>
-            <li>Semiconductors are <strong>bipolar</strong> (current by both electrons and holes).</li>
-            <li>Electric field $E$ causes electrons and holes to move in opposite directions, but their currents are in the same direction (conventional current).</li>
-            <li>Let $\mu_n$ be electron mobility, $\mu_p$ be hole mobility.</li>
-            <li>Total current density $J$:</li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J = (n\\mu_n + p\\mu_p)qE = \\sigma E}}')"
-             data-latex="J = (n\\mu_n + p\\mu_p)qE = \\sigma E \quad (Eq. 6.6)"
-             title="Click to copy LaTeX">
-             $$ J = (n\\mu_n + p\\mu_p)qE = \\sigma E \quad (Eq. 6.6) $$
-        </div>
-        <ul>
-            <li>Conductivity in semiconductor: $\sigma = (n\mu_n + p\mu_p)q$.</li>
+            <li>Conductivity between conductors (high $n$) and insulators (low $n$). Si, Ge are common.</li>
+            <li>Intrinsic (pure) Si and Ge have 4 valence electrons, forming <strong>covalent bonds</strong> in a crystal lattice (Fig. 6.3). Electrons are tightly bound at low temps.</li>
+            <li><strong>Hole-Electron Pairs:</strong> Thermal energy can break bonds, creating a free electron and a vacancy (<strong>hole</strong>). Holes act like positive charge carriers (Fig. 6.4).</li>
+            <li><strong>Hole Current:</strong> Movement of holes.</li>
+            <li><strong>Intrinsic Semiconductor:</strong> Pure material. $n = p = n_i$ (intrinsic concentration).</li>
+            <li><strong>Recombination:</strong> Electron fills a hole. Equilibrium exists between generation and recombination.</li>
+            <li>Semiconductors are <strong>bipolar</strong> (conduct via electrons and holes).</li>
+            <li>Conductivity: $\sigma = (n\mu_n + p\mu_p)q$ (where $\mu_n, \mu_p$ are electron/hole mobilities). (Derived from Eq. 6.6).</li>
         </ul>
 
         <p><strong>Example 6.2: Intrinsic Silicon Conductivity</strong></p>
         <ul>
-            <li>At 300K for Si: $n_i = 1.5 \times 10^{16} \text{ m}^{-3}$. $\mu_n = 0.13 \text{ m}^2/\text{V}\cdot\text{s}$, $\mu_p = 0.05 \text{ m}^2/\text{V}\cdot\text{s}$.</li>
-            <li>$\sigma = n_i(\mu_n + \mu_p)q = (1.5 \times 10^{16})(0.13 + 0.05)(1.6 \times 10^{-19})$
-            $= (1.5 \times 10^{16})(0.18)(1.6 \times 10^{-19}) = 4.32 \times 10^{-4} \text{ S/m}$.</li>
-            <li>Resistivity $\rho = 1/\sigma = 1 / (4.32 \times 10^{-4}) \approx 2.31 \times 10^3 \Omega \cdot \text{m} = 2.31 \text{ k}\Omega \cdot \text{m}$.</li>
-        </ul>
-        <ul>
-            <li>
-                <strong>Temperature Effect on Conductivity:</strong>
-                <ul>
-                    <li>Metal: Temp $\uparrow$, mobility $\downarrow$ (more collisions), $\sigma \downarrow$.</li>
-                    <li>Semiconductor: Temp $\uparrow$, $n$ and $p \uparrow$ (more pairs generated), $\sigma \uparrow$. (This effect dominates mobility changes).</li>
-                </ul>
-            </li>
+            <li>Calculates the conductivity $\sigma$ and resistivity $\rho$ of pure silicon using $n_i, \mu_n, \mu_p$, and $q$.</li>
         </ul>
 
         <hr style="border: 1px solid #444; margin: 2em 0;">
 
-        <h2>6.2 Doped Semiconductors (Pages 351-359)</h2>
-        <p>Conductivity of semiconductors can be dramatically increased by adding impurities (<strong>doping</strong>).</p>
+        <h2>6.2 Doped Semiconductors (Pages 351-360, Excluding Temp/Einstein Detail)</h2>
+        <p><strong>Doping:</strong> Adding impurities to increase conductivity dramatically.</p>
 
         <h3>n-type Semiconductor (Fig. 6.5, 6.7)</h3>
         <ul>
-            <li>Doping with an impurity element having <strong>five</strong> valence electrons (e.g., arsenic, phosphorus). These are called <strong>donor</strong> impurities.</li>
-            <li>Four valence electrons of the impurity form covalent bonds with Si/Ge. The fifth electron is loosely bound and easily becomes a free electron.</li>
-            <li>Each donor atom contributes one free electron, increasing $n$.</li>
-            <li>Free electrons become <strong>majority carriers</strong>. Holes become <strong>minority carriers</strong>.</li>
-            <li>The donor atom, having lost an electron, becomes a fixed (immobile) positive ion (Fig. 6.7).</li>
+            <li>Doped with <strong>donor</strong> impurities (5 valence electrons, e.g., P, As).</li>
+            <li>Each donor provides one extra free electron.</li>
+            <li>Electrons are <strong>majority carriers</strong>, holes are <strong>minority carriers</strong>.</li>
+            <li>Donor atom becomes an immobile positive ion.</li>
         </ul>
 
         <h3>p-type Semiconductor (Fig. 6.6)</h3>
         <ul>
-            <li>Doping with an impurity element having <strong>three</strong> valence electrons (e.g., boron, gallium). These are called <strong>acceptor</strong> impurities.</li>
-            <li>The three valence electrons form covalent bonds, but one bond is incomplete, creating a hole.</li>
-            <li>Each acceptor atom creates one hole, increasing $p$.</li>
-            <li>Holes become <strong>majority carriers</strong>. Free electrons become <strong>minority carriers</strong>.</li>
-            <li>The acceptor atom, having accepted an electron (to complete bonds, effectively), becomes a fixed (immobile) negative ion.</li>
+            <li>Doped with <strong>acceptor</strong> impurities (3 valence electrons, e.g., B, Ga).</li>
+            <li>Each acceptor creates one <strong>hole</strong>.</li>
+            <li>Holes are <strong>majority carriers</strong>, electrons are <strong>minority carriers</strong>.</li>
+            <li>Acceptor atom becomes an immobile negative ion.</li>
         </ul>
 
-        <h3>Mass-Action Law</h3>
+        <h3>Carrier Concentrations</h3>
         <ul>
-            <li>Regardless of doping, under thermal equilibrium, the product of electron and hole concentrations is constant for a given temperature:</li>
+            <li><strong>Mass-Action Law:</strong></li>
         </ul>
         <div class="formula-container"
              onclick="copyFormulaLatex(this, '\\color{white}{np = n_i^2}}')"
@@ -318,14 +218,9 @@
              title="Click to copy LaTeX">
              $$ np = n_i^2 \quad (Eq. 6.7) $$
         </div>
-        <p>where $n_i$ is the intrinsic concentration.</p>
-
-        <h3>Charge Neutrality</h3>
+        <p>Product is constant at a given temperature.</p>
         <ul>
-            <li>The semiconductor must remain electrically neutral.</li>
-            <li>$N_D$ = concentration of donor atoms. $N_A$ = concentration of acceptor atoms.</li>
-            <li>Total positive charge density = Total negative charge density.
-            Immobile positive ions (from donors) + mobile positive holes = Immobile negative ions (from acceptors) + mobile negative electrons.</li>
+            <li><strong>Charge Neutrality:</strong> Total positive charge = Total negative charge.</li>
         </ul>
         <div class="formula-container"
              onclick="copyFormulaLatex(this, '\\color{white}{N_D + p = N_A + n}}')"
@@ -333,166 +228,65 @@
              title="Click to copy LaTeX">
              $$ N_D + p = N_A + n \quad (Eq. 6.8) $$
         </div>
-
-        <h3>Concentrations in Doped Semiconductors</h3>
-        <ol>
-            <li>
-                <strong>n-type:</strong> $N_A = 0$.
-                <ul>
-                    <li>Charge neutrality: $N_D + p = n$.</li>
-                    <li>Typically $n \gg p$ (electrons are majority). So, $n \approx N_D$.</li>
-                    <li>From mass-action law: $p = n_i^2 / n \approx n_i^2 / N_D$.</li>
-                    <li>Summary for n-type: $n \approx N_D$ and $p \approx n_i^2 / N_D$ (Eq. 6.9).</li>
-                </ul>
-            </li>
-            <li>
-                <strong>p-type:</strong> $N_D = 0$.
-                <ul>
-                    <li>Charge neutrality: $p = N_A + n$.</li>
-                    <li>Typically $p \gg n$ (holes are majority). So, $p \approx N_A$.</li>
-                    <li>From mass-action law: $n = n_i^2 / p \approx n_i^2 / N_A$.</li>
-                    <li>Summary for p-type: $p \approx N_A$ and $n \approx n_i^2 / N_A$ (Eq. 6.10).</li>
-                </ul>
-            </li>
-        </ol>
+        <p>($N_D, N_A$ = donor/acceptor concentrations).</p>
+        <ul>
+            <li><strong>In n-type:</strong> $n \approx N_D$ ; $p \approx n_i^2/N_D$ (Eq. 6.9).</li>
+            <li><strong>In p-type:</strong> $p \approx N_A$ ; $n \approx n_i^2/N_A$ (Eq. 6.10).</li>
+        </ul>
 
         <p><strong>Example 6.3: Conductivity of Doped Silicon</strong></p>
         <ul>
-            <li>Si at 300K: $n_i = 1.5 \times 10^{16} \text{ m}^{-3}$, $\mu_n = 0.13$, $\mu_p = 0.05$. Intrinsic $\sigma = 4.32 \times 10^{-4} \text{ S/m}$.</li>
-            <li>Si atoms/m³ $\approx 5 \times 10^{28}$. Doped with donor impurity, 2 parts per $10^8$ (1 per 50 million).</li>
-            <li>Donor concentration $N_D = (2 / 10^8) \times (5 \times 10^{28}) = 10^{21} \text{ m}^{-3}$.</li>
-            <li>This is n-type: $n \approx N_D = 10^{21} \text{ m}^{-3}$.
-            $p \approx n_i^2 / N_D = (1.5 \times 10^{16})^2 / 10^{21} = 2.25 \times 10^{32} / 10^{21} = 2.25 \times 10^{11} \text{ m}^{-3}$.
-            Indeed $n \gg p$.</li>
-            <li>Conductivity $\sigma = (n\mu_n + p\mu_p)q \approx n\mu_n q$ (since $n\mu_n \gg p\mu_p$).
-            $\sigma \approx (10^{21})(0.13)(1.6 \times 10^{-19}) = 0.0208 \times 10^2 = 20.8 \text{ S/m}$.</li>
-            <li>Increase in conductivity factor: $20.8 / (4.32 \times 10^{-4}) \approx 48,000$ times!</li>
-        </ul>
-        <ul>
-            <li>
-                Approximation for conductivity:
-                <ul>
-                    <li>n-type: $\sigma \approx nq\mu_n \approx N_D q \mu_n$.</li>
-                    <li>p-type: $\sigma \approx pq\mu_p \approx N_A q \mu_p$.</li>
-                </ul>
-            </li>
+            <li>Calculates $n$ and $p$ for Si doped with a known concentration of donors ($N_D$).</li>
+            <li>Calculates the new conductivity $\sigma \approx nq\mu_n$ showing a large increase (~48,000x) compared to intrinsic Si.</li>
         </ul>
 
-        <h3>Graded Semiconductors and Diffusion Current</h3>
+        <h3>Diffusion and Drift Currents</h3>
         <ul>
-            <li>So far, assumed uniform doping. If doping concentration is non-uniform (<strong>graded semiconductor</strong>), charge carrier concentrations vary with position.</li>
-            <li>
-                <strong>Diffusion:</strong> Charge carriers move from regions of high concentration to low concentration (statistical phenomenon, like gas diffusion). This movement creates <strong>diffusion current</strong>.
+            <li><strong>Diffusion:</strong> Movement from high to low concentration. Creates <strong>diffusion current</strong>.
                 <ul>
-                    <li>Hole diffusion current density</li>
+                    <li>Hole diffusion current density:</li>
                 </ul>
             </li>
         </ul>
         <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J_p = -qD_p \\frac{dp}{dx}}}')"
-             data-latex="J_p = -qD_p \frac{dp}{dx} \quad (Eq. 6.11)"
+             onclick="copyFormulaLatex(this, '\\color{white}{J_{p\\_diff} = -qD_p \\frac{dp}{dx}}}')"
+             data-latex="J_{p\_diff} = -qD_p \frac{dp}{dx} \quad (Eq. 6.11)"
              title="Click to copy LaTeX">
-             $$ J_p = -qD_p \frac{dp}{dx} \quad (Eq. 6.11) $$
+             $$ J_{p\_diff} = -qD_p \frac{dp}{dx} \quad (Eq. 6.11) $$
         </div>
         <ul>
-            <li>$dp/dx$ = hole concentration gradient. $D_p$ = diffusion constant for holes (m²/s).</li>
-            <li>Electron diffusion current density</li>
+            <li>Electron diffusion current density:</li>
         </ul>
         <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J_n = qD_n \\frac{dn}{dx}}}')"
-             data-latex="J_n = qD_n \frac{dn}{dx} \quad (Eq. 6.12)"
+             onclick="copyFormulaLatex(this, '\\color{white}{J_{n\\_diff} = qD_n \\frac{dn}{dx}}}')"
+             data-latex="J_{n\_diff} = qD_n \frac{dn}{dx} \quad (Eq. 6.12)"
              title="Click to copy LaTeX">
-             $$ J_n = qD_n \frac{dn}{dx} \quad (Eq. 6.12) $$
+             $$ J_{n\_diff} = qD_n \frac{dn}{dx} \quad (Eq. 6.12) $$
         </div>
         <ul>
-            <li>$dn/dx$ = electron concentration gradient. $D_n$ = diffusion constant for electrons (m²/s).</li>
-            <li><strong>Einstein Relation:</strong> Links diffusion constant and mobility.</li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{\\frac{D_n}{\\mu_n} = \\frac{D_p}{\\mu_p} = \\frac{kT}{q} = V_T}}')"
-             data-latex="\frac{D_n}{\\mu_n} = \frac{D_p}{\\mu_p} = \frac{kT}{q} = V_T \quad (Eq. 6.13)"
-             title="Click to copy LaTeX">
-             $$ \frac{D_n}{\\mu_n} = \frac{D_p}{\\mu_p} = \frac{kT}{q} = V_T \quad (Eq. 6.13) $$
-        </div>
-        <ul>
-            <li>$k$ = Boltzmann constant ($1.38 \times 10^{-23}$ J/K). $T$ = temperature in Kelvin. $V_T = kT/q$ is the <strong>volt equivalent of temperature</strong>.
-            At $T = 300\text{K}$, $V_T \approx 0.02586 \text{ V} \approx 26 \text{ mV}$.</li>
-            <li>
-                <strong>Total Current Density:</strong> Sum of drift current (due to electric field $E$) and diffusion current.
+            <li>$D_p, D_n$ are diffusion constants.</li>
+            <li><strong>Drift:</strong> Movement due to electric field $E$. Creates <strong>drift current</strong>.
                 <ul>
-                    <li>Holes:</li>
+                    <li>Hole drift current density: $J_{p\_drift} = p q \mu_p E$</li>
+                    <li>Electron drift current density: $J_{n\_drift} = n q \mu_n E$</li>
                 </ul>
             </li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J_{p\\_total} = p q \\mu_p E - q D_p \\frac{dp}{dx}}}')"
-             data-latex="J_{p\_total} = p q \\mu_p E - q D_p \frac{dp}{dx} \quad (Eq. 6.15)"
-             title="Click to copy LaTeX">
-             $$ J_{p\_total} = p q \\mu_p E - q D_p \frac{dp}{dx} \quad (Eq. 6.15) $$
-        </div>
-        <ul>
-            <li>Electrons:</li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{J_{n\\_total} = n q \\mu_n E + q D_n \\frac{dn}{dx}}}')"
-             data-latex="J_{n\_total} = n q \\mu_n E + q D_n \frac{dn}{dx} \quad (Eq. 6.16)"
-             title="Click to copy LaTeX">
-             $$ J_{n\_total} = n q \\mu_n E + q D_n \frac{dn}{dx} \quad (Eq. 6.16) $$
-        </div>
-        <ul>
-            <li>
-                <strong>Open-Circuit Graded Semiconductor:</strong> No external connections, so net current is zero.
-                <ul>
-                    <li>If $p(x)$ is non-uniform, hole diffusion current exists. This must be balanced by an equal and opposite hole drift current. This drift current implies an internal <strong>built-in electric field $E$</strong>.</li>
-                    <li>$0 = p q \mu_p E - q D_p (dp/dx) \Rightarrow E = (D_p / (p \mu_p)) (dp/dx)$.</li>
-                    <li>Using Einstein relation ($D_p/\mu_p = V_T$): $E = (V_T/p) (dp/dx)$.</li>
-                    <li>Since $E = -dv/dx$ (potential $v$): $-dv/dx = (V_T/p) (dp/dx)$.</li>
-                    <li>Integrating between points $x_1$ and $x_2$ with potentials $v_1, v_2$ and hole concentrations $p_1, p_2$: $v_{21} = V_T \ln(p_1/p_2)$ (Eq. 6.17, where $v_{21} = v_2 - v_1$).</li>
-                    <li>This implies $p_1/p_2 = e^{(v_{21}/V_T)}$. Or</li>
-                </ul>
-            </li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{p_1 = p_2 e^{(v_{21}/V_T)}}}')"
-             data-latex="p_1 = p_2 e^{(v_{21}/V_T)} \quad (Eq. 6.18)"
-             title="Click to copy LaTeX">
-             $$ p_1 = p_2 e^{(v_{21}/V_T)} \quad (Eq. 6.18) $$
-        </div>
-        <ul>
-            <li>Similarly for electrons:</li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{n_1 = n_2 e^{(-v_{21}/V_T)}}}')"
-             data-latex="n_1 = n_2 e^{(-v_{21}/V_T)} \quad (Eq. 6.19)"
-             title="Click to copy LaTeX">
-             $$ n_1 = n_2 e^{(-v_{21}/V_T)} \quad (Eq. 6.19) $$
-        </div>
-        <ul>
-            <li>Product: $n_1p_1 = (n_2 e^{(-v_{21}/V_T)}) (p_2 e^{(v_{21}/V_T)}) = n_2p_2$. This shows $np = n_i^2$ is constant and independent of position, confirming mass-action law.</li>
+            <li><strong>Total Current Density:</strong> Sum of drift and diffusion components (Eq. 6.15, 6.16).</li>
         </ul>
 
         <h3>The pn Junction (Fig. 6.8)</h3>
-        <p>Boundary between p-type and n-type material in a single semiconductor crystal.</p>
+        <p>Boundary between p-type and n-type regions.</p>
         <ul>
-            <li><strong>Step Graded:</strong> Assumed abrupt change from p-type to n-type.</li>
             <li>
-                <strong>Open-Circuit Case (No external connections):</strong>
+                <strong>Open Circuit (Equilibrium):</strong>
                 <ul>
-                    <li>Concentration gradient exists: higher $p$ in p-side, higher $n$ in n-side.</li>
-                    <li><strong>Diffusion:</strong> Holes diffuse from p-side to n-side. Electrons diffuse from n-side to p-side. This creates a net diffusion current.</li>
-                    <li>As carriers diffuse and cross the junction, they leave behind uncovered immobile ions (negative acceptors on p-side, positive donors on n-side) near the junction.</li>
-                    <li><strong>Depletion Region (Space-Charge Region, Transition Region):</strong> This region around the junction becomes depleted of mobile carriers and contains these fixed ions. Width typically ~0.5 µm.</li>
-                    <li><strong>Built-in Electric Field:</strong> These uncovered ions create an electric field $E$ across the depletion region.</li>
-                    <li><strong>Drift Current:</strong> This field $E$ causes a drift current of carriers in the opposite direction to diffusion current.</li>
-                    <li><strong>Equilibrium:</strong> In open-circuit, the diffusion current and drift current balance, so net current is zero.</li>
+                    <li>Diffusion occurs across the junction due to concentration gradients.</li>
+                    <li>Uncovered immobile ions form near junction -&gt; <strong>Depletion Region</strong> (lacks mobile carriers).</li>
+                    <li>This charge creates a <strong>built-in electric field $E$</strong>.</li>
+                    <li>$E$ causes a drift current opposing diffusion current. Net current is zero.</li>
                 </ul>
             </li>
-            <li>
-                <strong>Barrier Potential (Built-in Voltage, $v_0$):</strong> The potential difference created by the built-in electric field across the depletion region.
-                <ul>
-                    <li>From Eq. 6.17, let p-side be point 1 (conc. $p_p \approx N_A$), n-side be point 2 (conc. $p_n \approx n_i^2/N_D$).</li>
-                </ul>
-            </li>
+            <li><strong>Barrier Potential ($v_0$):</strong> Potential difference across depletion region due to $E$.</li>
         </ul>
         <div class="formula-container"
              onclick="copyFormulaLatex(this, '\\color{white}{v_0 = V_T \\ln\\left(\\frac{N_A N_D}{n_i^2}\\right)}}')"
@@ -501,61 +295,42 @@
              $$ v_0 = V_T \\ln\\left(\\frac{N_A N_D}{n_i^2}\\right) \quad (Eq. 6.20) $$
         </div>
         <ul>
-            <li>Typically a few tenths of a volt (e.g., ~0.7V for Si, ~0.3V for Ge at room temp).</li>
-            <li>This internal $v_0$ cannot cause external current due to contact potentials forming at metal-semiconductor connections, which negate $v_0$.</li>
+            <li>$V_T = kT/q$ (volt equivalent of temperature $\approx 26\text{mV}$ at 300K).</li>
+            <li>Typically ~0.7V for Si, ~0.3V for Ge at room temp.</li>
         </ul>
 
-        <p><strong>Example 6.4: Barrier Potential of Ge pn Junction</strong></p>
+        <p><strong>Example 6.4: Barrier Potential Calculation</strong></p>
         <ul>
-            <li>p-side: $p_p = 2 \times 10^{21} \text{ m}^{-3}$ (so $N_A \approx 2 \times 10^{21}$).
-            n-side: $n_n = 5 \times 10^{22} \text{ m}^{-3}$ (so $N_D \approx 5 \times 10^{22}$).</li>
-            <li>For Ge at 300K, $n_i = 2.5 \times 10^{19} \text{ m}^{-3}$. $V_T \approx 0.02586 \text{ V}$.
-            $v_0 = V_T \ln((N_A N_D) / n_i^2) = (300/11586) \ln((2 \times 10^{21} \times 5 \times 10^{22}) / (2.5 \times 10^{19})^2) $
-            $v_0 = 0.02589 \ln((10 \times 10^{43}) / (6.25 \times 10^{38})) = 0.02589 \ln(1.6 \times 10^5) = 0.02589 \times 11.98 \approx 0.31 \text{ V}$. (Matches text).</li>
+            <li>Calculates $v_0$ for a Germanium pn junction given doping levels and $n_i$.</li>
         </ul>
 
         <hr style="border: 1px solid #444; margin: 2em 0;">
 
-        <h2>6.3 The Junction Diode (Pages 360-367)</h2>
-        <p>A pn junction with metal (ohmic) contacts forms a <strong>junction diode</strong> (Fig. 6.10).</p>
+        <h2>6.3 The Junction Diode (Pages 360-363, Excluding Temp Details)</h2>
+        <p>A pn junction with ohmic contacts (Fig. 6.10). Symbol arrow points P -&gt; N.</p>
+
+        <h3>Biasing</h3>
         <ul>
-            <li>Symbol: Arrow points from p-type (anode) to n-type (cathode), indicating conventional current direction in forward bias.</li>
+            <li>
+                <strong>Reverse Bias (Fig. 6.11):</strong> External voltage aids $v_0$. Depletion region widens.
+                <ul>
+                    <li>Majority carrier flow blocked.</li>
+                    <li>Small current due to minority carrier drift: <strong>reverse saturation current ($I_s$)</strong>. Flows N -&gt; P.</li>
+                    <li>$I_s$ is small (nA for Si, µA for Ge).</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Forward Bias:</strong> External voltage opposes $v_0$. Depletion region narrows.
+                <ul>
+                    <li>If external $V > v_0$ (approx), majority carriers diffuse across junction -&gt; injection.</li>
+                    <li>Results in significant <strong>forward current $i$</strong>. Flows P -&gt; N.</li>
+                </ul>
+            </li>
         </ul>
 
-        <h3>Biasing the Diode</h3>
-        <p>Applying an external DC voltage.</p>
-        <ol>
-            <li>
-                <strong>Reverse Bias (Fig. 6.11):</strong>
-                <ul>
-                    <li>Positive terminal of battery to cathode (n-side), negative terminal to anode (p-side).</li>
-                    <li>External voltage $V$ aids the barrier potential $v_0$. Total potential across junction is $v_0 + V$.</li>
-                    <li>Depletion region widens.</li>
-                    <li>Majority carrier diffusion is greatly reduced (opposed by larger field).</li>
-                    <li>Minority carriers (holes in n-side, electrons in p-side) are thermally generated and swept across the junction by the field (drift).</li>
-                    <li>This results in a small <strong>reverse saturation current ($I_s$)</strong>, directed from cathode to anode (opposite to diode arrow).</li>
-                    <li>$I_s$ is largely independent of $V$ but highly dependent on temperature (more thermal generation at higher temp).
-                        Typically µA for Ge, nA for Si at 300K.</li>
-                    <li>If $V$ is too large, <strong>breakdown</strong> occurs (large reverse current).</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Forward Bias:</strong>
-                <ul>
-                    <li>Positive terminal of battery to anode (p-side), negative terminal to cathode (n-side).</li>
-                    <li>External voltage $V$ opposes the barrier potential $v_0$. Effective potential across junction $v_0 - V$.</li>
-                    <li>Depletion region narrows.</li>
-                    <li>If $V$ is large enough (a few tenths of a volt), majority carriers have enough energy to diffuse across the junction ("injection").
-                        Holes from p-side injected into n-side (become minority carriers there, then recombine).
-                        Electrons from n-side injected into p-side.</li>
-                    <li>Results in a significant <strong>forward current (i)</strong>, directed from anode to cathode (same as diode arrow). Limited by bulk resistance of semiconductor and contacts.</li>
-                </ul>
-            </li>
-        </ol>
-
-        <h3>Diode i-v Characteristic (Diode Equation) (Fig. 6.12, 6.13)</h3>
+        <h3>Diode i-v Characteristic (Fig. 6.13)</h3>
         <ul>
-            <li>Relationship between diode current $i$ and diode voltage $v$:</li>
+            <li><strong>Diode Equation:</strong></li>
         </ul>
         <div class="formula-container"
              onclick="copyFormulaLatex(this, '\\color{white}{i = I_s (e^{(v / (\\eta V_T))} - 1)}}')"
@@ -564,37 +339,16 @@
              $$ i = I_s (e^{(v / (\\eta V_T))} - 1) \quad (Eq. 6.21) $$
         </div>
         <ul>
-            <li>$I_s$: Reverse saturation current.</li>
-            <li>$V_T$: Volt equivalent of temperature ($kT/q$).</li>
-            <li>$\eta$ (eta): <strong>Emission coefficient</strong> (ideality factor). $\eta \approx 1$ for Ge, $\eta \approx 2$ for Si.</li>
-            <li>$v$: Voltage across diode (positive for forward bias, negative for reverse).</li>
+            <li>$\eta$ = emission coefficient (~1 for Ge, ~2 for Si). $v$ = voltage anode to cathode.</li>
             <li>
                 <strong>Approximations:</strong>
                 <ul>
-                    <li>Forward bias, $v > 0.2\text{V}$ (approx.): $e^{(v / (\eta V_T))} \gg 1$.</li>
+                    <li>Forward ($v > 0.2\text{V}$): $i \approx I_s e^{(v / (\eta V_T))}$ (Exponential increase).</li>
+                    <li>Reverse ($v < -0.2\text{V}$, not breakdown): $i \approx -I_s$ (Small, constant).</li>
                 </ul>
             </li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{i \\approx I_s e^{(v / (\\eta V_T))}}}')"
-             data-latex="i \\approx I_s e^{(v / (\\eta V_T))} \quad (Eq. 6.22)"
-             title="Click to copy LaTeX">
-             $$ i \\approx I_s e^{(v / (\\eta V_T))} \quad (Eq. 6.22) $$
-        </div>
-        <p>Current increases exponentially with $v$.</p>
-        <ul>
-            <li>Reverse bias, $v < -0.2\text{V}$ (but not in breakdown): $e^{(v / (\eta V_T))} \ll 1$.</li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{i \\approx I_s (0 - 1) = -I_s}}')"
-             data-latex="i \\approx I_s (0 - 1) = -I_s \quad (Eq. 6.23)"
-             title="Click to copy LaTeX">
-             $$ i \\approx I_s (0 - 1) = -I_s \quad (Eq. 6.23) $$
-        </div>
-        <p>Current is small, constant $-I_s$.</p>
-        <ul>
-            <li><strong>Breakdown Voltage ($V_Z$):</strong> If reverse voltage $|v|$ reaches $V_Z$, diode breaks down, large reverse current flows (Fig. 6.13, dashed line).</li>
-            <li>Solving for $v$ from diode equation (if $i > -I_s$):</li>
+            <li><strong>Breakdown:</strong> If $v$ reaches $-V_Z$ (breakdown voltage), large reverse current flows.</li>
+            <li><strong>Inverse Equation:</strong> (for $i > -I_s$)</li>
         </ul>
         <div class="formula-container"
              onclick="copyFormulaLatex(this, '\\color{white}{v = \\eta V_T \\ln(i/I_s + 1)}}')"
@@ -605,413 +359,140 @@
 
         <p><strong>Example 6.5: Diode Current/Voltage Calculation</strong></p>
         <ul>
-            <li>Si diode, 300K ($\eta=2$, $V_T \approx 0.02586\text{V}$). $I_s = 10 \text{ nA} = 10 \times 10^{-9} \text{ A}$.</li>
-            <li>If $v = 0.6 \text{ V}$:
-            $i = 10^{-8} (e^{(0.6 / (2 \times 0.02586))} - 1) = 10^{-8} (e^{(0.6 / 0.05172)} - 1)$
-            $i = 10^{-8} (e^{(11.60)} - 1) = 10^{-8} (109348 - 1) \approx 1.09 \times 10^{-3} \text{ A} = 1.09 \text{ mA}$. (Text gets 1.08 mA)</li>
-            <li>If $v = 0.7 \text{ V}$:
-            $i = 10^{-8} (e^{(0.7 / 0.05172)} - 1) = 10^{-8} (e^{(13.534)} - 1) \approx 7.54 \text{ mA}$. (Text gets 7.42 mA)</li>
-            <li>If $i = 5 \text{ mA} = 5 \times 10^{-3} \text{ A}$:
-            $v = 2 \times 0.02586 \ln((5 \times 10^{-3}) / 10^{-8} + 1) = 0.05172 \ln(500001) \approx 0.05172 \times 13.122 \approx 0.678 \text{ V}$. (Text gets 0.68V)</li>
+            <li>Uses the diode equation (6.21) or inverse equation (6.24) to find $i$ given $v$ or $v$ given $i$ for a silicon diode.</li>
         </ul>
 
-        <h3>Diode Behavior Details (Fig. 6.14)</h3>
+        <h3>Diode Behavior (Fig. 6.14)</h3>
         <ul>
             <li>
-                <strong>Cut-in Voltage ($V_\gamma$):</strong> Voltage below which forward current is very small.
+                <strong>Cut-in Voltage ($V_\gamma$):</strong> Approx. forward voltage where significant current starts.
                 <ul>
-                    <li>Ge: $V_\gamma \approx 0.2 \text{ V}$.</li>
-                    <li>Si: $V_\gamma \approx 0.5 \text{ V}$.</li>
+                    <li>$V_\gamma \approx 0.2\text{V}$ (Ge).</li>
+                    <li>$V_\gamma \approx 0.5\text{V}$ (Si).</li>
                 </ul>
             </li>
-            <li>Temperature Dependence of $I_s$: $I_s$ approximately doubles for every 10°C rise in temperature.</li>
+            <li><em>(Temperature Effects Skipped per Syllabus)</em></li>
         </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{I_s(T_b) = I_s(T_a) \\times 2^{((T_b - T_a)/10)}}}')"
-             data-latex="I_s(T_b) = I_s(T_a) \\times 2^{((T_b - T_a)/10)} \quad (Eq. 6.25)"
-             title="Click to copy LaTeX">
-             $$ I_s(T_b) = I_s(T_a) \\times 2^{((T_b - T_a)/10)} \quad (Eq. 6.25) $$
-        </div>
-        <ul>
-            <li>
-                Temperature Dependence of Forward Voltage (at constant current) (Fig. 6.15):
-                <ul>
-                    <li>For a given $v$, $i$ increases with $T$ (mainly due to $I_s$ increase).</li>
-                    <li>To maintain constant forward current $i$ when $T$ increases, $v$ must decrease.</li>
-                </ul>
-            </li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{\\frac{dv}{dT} \\approx -2.5 \\text{ mV/°C}}}')"
-             data-latex="\frac{dv}{dT} \\approx -2.5 \\text{ mV/°C} \quad (Eq. 6.26)"
-             title="Click to copy LaTeX">
-             $$ \frac{dv}{dT} \\approx -2.5 \\text{ mV/°C} \quad (Eq. 6.26) $$
-        </div>
-        <p>(For both Si and Ge at room temp).</p>
-        <ul>
-            <li>So,</li>
-        </ul>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{v_2 - v_1 \\approx -2.5 (T_2 - T_1) \\times 10^{-3} \\text{ V}}}')"
-             data-latex="v_2 - v_1 \\approx -2.5 (T_2 - T_1) \\times 10^{-3} \\text{ V} \quad (Eq. 6.27)"
-             title="Click to copy LaTeX">
-             $$ v_2 - v_1 \\approx -2.5 (T_2 - T_1) \\times 10^{-3} \\text{ V} \quad (Eq. 6.27) $$
-        </div>
-
-        <p><strong>Example 6.6: Temperature Effect on Diode Voltage</strong></p>
-        <ul>
-            <li>Si diode, $I_s(300\text{K}) = 10 \text{ nA}$. Current $i = 7.42 \text{ mA}$ at $v = 0.7\text{V}$ (from Ex 6.5).</li>
-            <li>Find $v$ for same current at $T = 316 \text{ K}$.</li>
-            <li>$I_s(316\text{K}) = 10 \text{ nA} \times 2^{((316-300)/10)} = 10 \text{ nA} \times 2^{(1.6)} \approx 10 \text{ nA} \times 3.03 \approx 30.3 \text{ nA}$.</li>
-            <li>Approximate method (Eq 6.27): $\Delta v \approx -2.5 \text{ mV/°C} \times (16\text{°C}) = -40 \text{ mV} = -0.04\text{V}$.
-            New $v \approx 0.7\text{V} - 0.04\text{V} = 0.66\text{V}$.</li>
-            <li>Check with diode equation at 316K ($V_T = 316/11586 \approx 0.02727\text{V}$):
-            $v = 2 \times 0.02727 \ln((7.42 \times 10^{-3}) / (30.3 \times 10^{-9}) + 1) \approx 0.05454 \ln(244885) \approx 0.05454 \times 12.408 \approx 0.677 \text{ V}$. (Close to 0.66V).</li>
-        </ul>
-
+        
         <hr style="border: 1px solid #444; margin: 2em 0;">
 
-        <h2>6.4 The Ideal Diode (Pages 371-376)</h2>
-        <p>Simplified model for diode analysis.</p>
+        <h2>6.4 The Ideal Diode (Pages 371-376, Excluding DL Gates)</h2>
+        <p>Simplified model for circuit analysis.</p>
 
-        <h3>Ideal Diode i-v Characteristic (Fig. 6.18)</h3>
+        <h3>Ideal Diode Characteristic (Fig. 6.18)</h3>
         <ul>
-            <li><strong>Forward Bias (i > 0 A):</strong> Acts as a <strong>short circuit</strong>. Voltage $v = 0 \text{ V}$.</li>
-            <li><strong>Reverse Bias (v ≤ 0 V):</strong> Acts as an <strong>open circuit</strong>. Current $i = 0 \text{ A}$.</li>
-            <li>Symbol for ideal diode is hollow (Fig. 6.19a).</li>
-        </ul>
-
-        <h3>Analyzing Circuits with Ideal Diodes</h3>
-        <p>Nonlinear, so linear techniques don't directly apply. Method:</p>
-        <ol>
-            <li><strong>Assume states:</strong> Assume each diode is either ON (forward biased, short circuit) or OFF (reverse biased, open circuit).</li>
-            <li><strong>Analyze linear circuit:</strong> Replace diodes with shorts/opens and analyze the resulting linear circuit.</li>
             <li>
-                <strong>Verify assumptions:</strong>
+                <strong>ON State (Forward Biased):</strong> If current $i > 0$ attempts to flow (Anode to Cathode).
                 <ul>
-                    <li>For each diode assumed ON: Check if calculated current $i$ through it is $> 0$.</li>
-                    <li>For each diode assumed OFF: Check if calculated voltage $v$ across it is $\le 0$ (anode to cathode).</li>
+                    <li>Acts as a <strong>short circuit</strong>. $v = 0\text{V}$.</li>
                 </ul>
             </li>
-            <li><strong>If any assumption is violated:</strong> Change the state of the violating diode(s) and go back to step 2.</li>
-            <li>If all assumptions are consistent, the solution is correct.</li>
+            <li>
+                <strong>OFF State (Reverse Biased):</strong> If voltage $v \le 0$ attempts to be applied (Anode negative or zero w.r.t Cathode).
+                <ul>
+                    <li>Acts as an <strong>open circuit</strong>. $i = 0\text{A}$.</li>
+                </ul>
+            </li>
+            <li>Symbol: Hollow triangle (Fig. 6.19a).</li>
+        </ul>
+
+        <h3>Analysis Method</h3>
+        <ol>
+            <li>Assume state (ON/OFF) for each diode.</li>
+            <li>Replace ON diodes with shorts, OFF diodes with opens.</li>
+            <li>Analyze the resulting linear circuit.</li>
+            <li>Verify: Check if $i > 0$ for assumed ON diodes, and $v \le 0$ for assumed OFF diodes.</li>
+            <li>If contradiction found, change assumption(s) and repeat.</li>
         </ol>
 
-        <p><strong>Example 6.9: Simple Ideal Diode Circuit (Half-Wave Rectifier) (Fig. 6.20-6.22)</strong></p>
+        <p><strong>Example 6.9: Half-Wave Rectifier (Fig. 6.20-6.23)</strong></p>
         <ul>
-            <li>Circuit: Voltage source $v_s$, series diode $D$, series resistor $R$. Output voltage $v_o$ taken across $R$.</li>
-            <li>
-                <strong>Case 1: $v_s > 0 \text{ V}$</strong>
-                <ul>
-                    <li>Assume D is ON (short circuit). Fig. 6.21.</li>
-                    <li>$i = v_s / R$. Since $v_s > 0$ and $R > 0$, then $i > 0$. Assumption ON is confirmed.</li>
-                    <li>Output $v_o = iR = (v_s/R)R = v_s$.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Case 2: $v_s \le 0 \text{ V}$</strong>
-                <ul>
-                    <li>Assume D is OFF (open circuit). Fig. 6.22.</li>
-                    <li>$i = 0 \text{ A}$. Voltage across D (anode to cathode) $v_D = v_s - iR = v_s$.</li>
-                    <li>Since $v_s \le 0$, then $v_D \le 0$. Assumption OFF is confirmed.</li>
-                    <li>Output $v_o = iR = 0\text{V}$.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Summary for output $v_o$:</strong>
-                <ul>
-                    <li>$v_o = v_s$ if $v_s > 0 \text{ V}$</li>
-                    <li>$v_o = 0 \text{ V}$ if $v_s \le 0 \text{ V}$</li>
-                </ul>
-            </li>
-            <li>If $v_s$ is a sinusoid (Fig. 6.23a), $v_o$ is a <strong>half-wave rectified</strong> sinusoid (Fig. 6.23b). Circuit is a half-wave rectifier.</li>
+            <li>Circuit: $v_s \rightarrow$ Diode $\rightarrow R$. Output $v_o$ across $R$.</li>
+            <li>If $v_s > 0$, assume D ON. $v_o = v_s$. Current $i = v_s/R > 0$. Consistent.</li>
+            <li>If $v_s \le 0$, assume D OFF. $i=0$. $v_o = 0$. Voltage across D is $v_D = v_s \le 0$. Consistent.</li>
+            <li>Result: $v_o = v_s$ if $v_s > 0$, $v_o = 0$ if $v_s \le 0$. Rectifies AC input.</li>
         </ul>
 
-        <p><strong>Example 6.10: Diode Clipper Circuit (Fig. 6.24-6.26)</strong></p>
-        <p>(Following text's interpretation of Fig 6.24: $v_s$ -- $R_1$(1kΩ) -- junction. From junction: anode of D, and top of $R_2$(2kΩ). Cathode of D to +terminal of 3V battery, -terminal of 3V to ground. $v_o$ is across $R_2$.)</p>
+        <p><strong>Example 6.10: Diode Clipper (Fig. 6.24-6.27)</strong></p>
         <ul>
-            <li>Assume D is ON. From Fig. 6.25, $v_o = 3\text{V}$ (as diode creates a short, placing 3V battery effectively across $R_2$ if $R_2$ is grounded at the other end, or current calculation considers the 3V source in path). The text states $i_1 = (v_s - 3)/1000$ and $i_2 = 3/2000 = 1.5 \text{ mA}$. Diode current $i = i_1 - i_2$. D is ON if $i > 0 \Rightarrow (v_s-3)/1000 - 1.5 \times 10^{-3} > 0 \Rightarrow v_s > 4.5\text{V}$. Output $v_o = 3\text{V}$.</li>
-            <li>If $v_s \le 4.5\text{V}$, D is OFF. Circuit is $v_s$ -- 1kΩ -- $v_o$ -- 2kΩ -- ground (voltage divider).
-            $v_o = v_s \cdot (2000 / (1000 + 2000)) = (2/3)v_s$.</li>
-            <li>Summary: $v_o = (2/3)v_s$ for $v_s \le 4.5 \text{ V}$; $v_o = 3 \text{ V}$ for $v_s > 4.5 \text{ V}$.</li>
-            <li>If input $v_s = 6 \sin(\omega t)$ (Fig. 6.27a), output $v_o$ follows $(2/3)v_s$ until $v_s$ reaches 4.5V, then $v_o$ clips at 3V (Fig. 6.27b). This is a <strong>diode clipper circuit</strong>.</li>
+            <li>Analyzes a circuit using the ideal diode assumption method.</li>
+            <li>Text's analysis for Fig 6.24 (where $v_o$ is across the 2kΩ resistor):
+                <ul>
+                    <li>Assume D ON: Happens if $v_s > 4.5\text{V}$. Then $v_o = 3\text{V}$.</li>
+                    <li>Assume D OFF: Happens if $v_s \le 4.5\text{V}$. Then $v_o = (2/3)v_s$.</li>
+                </ul>
+            </li>
+            <li>Result: Clips the top of the waveform (scaled by 2/3) at 3V.</li>
         </ul>
-
-        <h3>Application to Digital Logic Circuits (Diode Logic - DL)</h3>
-        <p>Using ideal diodes to build logic gates. Positive logic: low voltage (e.g., 0V) = logic 0; high voltage (e.g., $V_H$) = logic 1.</p>
-        <ol>
-            <li>
-                <strong>Diode OR Gate (Fig. 6.28):</strong>
-                <ul>
-                    <li>Inputs $v_1, v_2$. Each input path: $v_{in}$ -- $R_f$ -- Diode (anode to input path) -- output $v_o$. Output node $v_o$ also has resistor $R$ to ground. (Diode cathodes tied to $v_o$).</li>
-                    <li>If any input is $V_H$ (logic 1), corresponding diode(s) ON, $v_o \approx V_H$ (logic 1). If all inputs 0V (logic 0), diodes OFF, $v_o = 0\text{V}$ (logic 0).</li>
-                    <li><strong>Truth Table (Table 6.1):</strong> Matches OR operation.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Diode AND Gate (Fig. 6.31):</strong>
-                <ul>
-                    <li>Each input $v_{in}$ connects to anode of a diode. Cathodes of all diodes tied together to node $v_o$. Node $v_o$ has resistor $R$ to a positive supply $V_H$.</li>
-                    <li>If any input is 0V (logic 0), corresponding diode(s) ON, pulling $v_o$ close to 0V (logic 0). If all inputs $V_H$ (logic 1), diodes OFF, $v_o$ pulled to $V_H$ by $R$ (logic 1).</li>
-                    <li><strong>Table 6.2:</strong> Matches AND operation. Output is high ONLY if all inputs are high.</li>
-                </ul>
-            </li>
-        </ol>
-
+        <p><em>(Skipping Diode Logic Gates: Fig 6.28 onwards in this section)</em></p>
+        
         <hr style="border: 1px solid #444; margin: 2em 0;">
 
-        <h2>6.5 Nonideal-Diode Models (Pages 381-388)</h2>
-        <p>More accurate approximations than ideal diode.</p>
-
-        <h3>DC (Static) Resistance $R_Q$ (Fig. 6.35a,b)</h3>
-        <ul>
-            <li>If a DC voltage $V_Q$ across diode results in DC current $I_Q$. $R_Q = V_Q / I_Q$.</li>
-            <li>$R_Q$ is not constant; depends on the operating point (Q point) on the i-v curve.</li>
-        </ul>
-
-        <h3>AC (Dynamic/Incremental) Resistance $r$ (Fig. 6.35c)</h3>
-        <ul>
-            <li>If total voltage $v_s = V_Q + v_{ac}$ (DC bias + small AC signal). Total current $i = I_Q + i_{ac}$.</li>
-            <li>For small $v_{ac}$, the i-v curve around Q point is approx. linear. AC conductance $g = di/dv$ (slope). AC resistance $r = dv/di = 1/g$.</li>
-            <li>From diode equation $i \approx I_s e^{(v/(\eta V_T))}$ for forward bias. $di/dv = (I_s / (\eta V_T)) e^{(v/(\eta V_T))} = (i + I_s) / (\eta V_T)$.</li>
-            <li>So, $r = \eta V_T / (I_Q + I_s)$. If $I_Q \gg I_s$: $r \approx \eta V_T / I_Q$.
-                <ul>
-                    <li>At 300K ($V_T \approx 26\text{mV}$): Ge ($\eta=1$): $r \approx 0.026 / I_Q$. Si ($\eta=2$): $r \approx 0.052 / I_Q$.</li>
-                </ul>
-            AC resistance depends on DC bias current $I_Q$.</li>
-        </ul>
-
-        <p><strong>Example 6.11: Circuit with DC and AC sources (Fig. 6.36)</strong></p>
-        <ul>
-            <li>Circuit: 1.5V DC source in series with $0.001\sin(\omega t)$ AC source, series Si diode, series 100Ω resistor ($R_L$). Output $v_o$ across $R_L$. $I_s = 10\text{nA}$, 300K.</li>
-            <li><strong>DC Analysis (Fig. 6.36b):</strong> Solve for DC operating point: $I_Q = 7.96 \text{ mA}$, $V_Q = 0.704 \text{ V}$ (across diode). DC output voltage $V_{o(dc)} = I_Q R_L = 0.796 \text{ V}$.</li>
-            <li><strong>AC Analysis (Fig. 6.36c):</strong> Replace DC source with short. Replace diode with $r \approx \eta V_T / I_Q = (2 \times 0.026\text{V}) / 7.96\text{mA} \approx 6.53 \Omega$. AC circuit: $0.001\sin(\omega t)$ source, series $r$, series $R_L$.
-            AC output voltage $v_{o(ac)} = (0.001\sin\omega t) \times (R_L / (r + R_L)) \approx 0.000938 \sin\omega t \text{ V}$.</li>
-            <li><strong>Total Output Voltage:</strong> $v_o = V_{o(dc)} + v_{o(ac)} = 0.796 + 0.00094 \sin\omega t \text{ V}$.</li>
-        </ul>
-
-        <h3>Modeling with Ideal Diodes and other elements</h3>
-        <ol>
-            <li>
-                <strong>Piecewise Linear Model 1: Ideal Diode + Forward Resistance $R_f$ (Fig. 6.38)</strong>
-                <ul>
-                    <li>Approximates forward i-v curve as a straight line of slope $1/R_f$ passing through origin (Fig. 6.37). $R_f$ is typical AC resistance. Reverse bias: Open circuit.</li>
-                    <li>Model: Ideal diode in series with resistor $R_f$. (Fig. 6.38b).</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Piecewise Linear Model 2: Ideal Diode + Cut-in Voltage $V_\gamma$ + Forward Resistance $R_f$ (Fig. 6.40-6.42)</strong>
-                <ul>
-                    <li>Approximates forward i-v curve as a straight line of slope $1/R_f$ that intersects voltage axis at $V_\gamma$ (cut-in voltage) (Fig. 6.40). $v = V_\gamma + iR_f$ for $v > V_\gamma$.</li>
-                    <li>Model: Ideal diode in series with a battery $V_\gamma$ (opposing forward current) and series $R_f$ (Fig. 6.42b).</li>
-                </ul>
-            </li>
-        </ol>
-        <p><strong>Example 6.12: i-v characteristic of two ideal diodes and a battery (Fig. 6.43)</strong></p>
-        <p>(Note: The text's description and analysis of Fig 6.43a are somewhat unclear or may refer to a standard Zener clamp function not fully detailed by the diagram elements. The resulting characteristic Fig 6.43b is for a bidirectional clamp.)</p>
-        <ol start="3">
-            <li>
-                <strong>Model for Digital Logic (Fig. 6.47):</strong>
-                <ul>
-                    <li>Forward biased: Constant voltage drop $V_{ON}$ (e.g., 0.7V for Si). Reverse biased: Open circuit.</li>
-                    <li>Model: Ideal diode in series with battery $V_{ON}$ (opposing forward current).</li>
-                </ul>
-            </li>
-        </ol>
-        <p><strong>Example 6.13: DL AND Gate with Nonideal Model (Fig. 6.48)</strong></p>
-        <ul>
-            <li>Using $V_{ON} = 0.7\text{V}$ for diodes. Logic 0 = 2V, Logic 1 = 8V. $R_1 = 1\text{k}\Omega, R_2 = 10\text{k}\Omega$. Supply +10V.</li>
-            <li>Circuit: Inputs $v_1, v_2$ to anodes of D1, D2. Cathodes tied to node $v_3$. D3 anode to $v_3$, cathode to $v_o$. $R_1$ from +10V to $v_3$. $R_2$ from $v_o$ to ground.</li>
-            <li><strong>Case 1: $v_1=2\text{V}, v_2=2\text{V}$ (0,0).</strong> Assume D1, D2, D3 ON. $v_3 = V_{D1\_ON} + v_1 = 0.7 + 2 = 2.7\text{V}$. $v_o = v_3 - V_{D3\_ON} = 2.7 - 0.7 = 2\text{V}$ (Logic 0).</li>
-            <li><strong>Case 4: $v_1=8\text{V}, v_2=8\text{V}$ (1,1).</strong> Assume D1, D2, D3 ON. $v_3 = V_{D1\_ON} + v_1 = 0.7 + 8 = 8.7\text{V}$. $v_o = v_3 - V_{D3\_ON} = 8.7 - 0.7 = 8\text{V}$ (Logic 1).</li>
-            <li>The circuit functions as an AND gate with these logic levels.</li>
-        </ul>
-
-        <hr style="border: 1px solid #444; margin: 2em 0;">
-
-        <h2>6.6 Zener Diodes (Pages 393-400)</h2>
-        <p>Diodes designed to operate in the reverse breakdown region.</p>
+        <h2>6.6 Zener Diodes (Pages 393-400, Excluding Temp Coeff)</h2>
+        <p>Diodes designed to operate in the reverse <strong>breakdown</strong> region.</p>
 
         <h3>Breakdown Mechanisms</h3>
         <ol>
-            <li>
-                <strong>Avalanche Breakdown:</strong>
-                <ul>
-                    <li>Reverse bias widens depletion region. Minority carriers crossing gain energy from field. High energy carriers collide, dislodging more carriers (avalanche). Leads to large reverse current. $V_Z$ is avalanche breakdown voltage.</li>
-                    <li>Dominant for $V_Z > \sim 6\text{V}$. Positive temperature coefficient.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Zener Breakdown:</strong>
-                <ul>
-                    <li>High electric field strength across narrow junction (heavily doped diodes) pulls electrons directly from covalent bonds. Not dependent on collisions. $V_Z$ is Zener breakdown voltage.</li>
-                    <li>Dominant for $V_Z < \sim 6\text{V}$. Negative temperature coefficient.</li>
-                </ul>
-            </li>
+            <li><strong>Avalanche Breakdown:</strong> High reverse voltage $\rightarrow$ carriers collide $\rightarrow$ create more carriers $\rightarrow$ current avalanches. Dominant for $V_Z > \sim 6\text{V}$.</li>
+            <li><strong>Zener Breakdown:</strong> High electric field pulls electrons from bonds. Dominant for $V_Z < \sim 6\text{V}$.</li>
         </ol>
-        <p>Commonly all are called "Zener diodes" regardless of mechanism. Symbol Fig. 6.49b.</p>
+        <p>$V_Z$ = Zener breakdown voltage (magnitude).</p>
 
-        <p><strong>Example 6.14: Series Zener Diodes (Fig. 6.50)</strong></p>
+        <h3>Zener Diode Characteristic and Symbol (Fig. 6.49)</h3>
         <ul>
-            <li>Two Zeners D1, D2 in series, reverse biased by $V_S$. Both have $V_Z = 10\text{V}$. $I_{s1} = 10\text{nA}, I_{s2} = 20\text{nA}$.</li>
-            <li>(a) $V_S = 6\text{V}$: Neither Zener in breakdown. Current is limited by the smaller reverse saturation current. Text indicates $i = -10\text{nA}$, $v_1 = -5.964\text{V}$, $v_2 = -0.036\text{V}$.</li>
-            <li>(b) $V_S = 12\text{V}$: D1 in breakdown ($v_1 = -10\text{V}$), D2 reverse biased but not in breakdown ($v_2 = -2\text{V}$). Current $i = -20\text{nA}$ (saturation current of D2).</li>
+            <li>Forward bias: Acts like a normal diode.</li>
+            <li>Reverse bias: Acts like normal diode until $v$ reaches $-V_Z$.</li>
+            <li>Breakdown region ($v = -V_Z$): Current can be large negative, voltage stays nearly constant at $-V_Z$.</li>
+            <li>Symbol: Diode symbol with "Z" shaped bar for cathode line.</li>
         </ul>
 
-        <h3>Zener Diode Voltage Regulator (Fig. 6.51)</h3>
+        <p><strong>Example 6.14: Series Zener Circuit (Fig. 6.50)</strong></p>
         <ul>
-            <li>Circuit: $v_s$ (supply) -- $R$ (series resistor) -- Node (Zener cathode, Load $R_L$ top). Zener anode and $R_L$ bottom to ground.</li>
-            <li>Zener maintains nearly constant voltage $V_Z$ across $R_L$ as long as Zener is in breakdown.</li>
-            <li>Min reverse current for breakdown often 10% of max rated.</li>
+            <li>Analyzes circuit with two Zeners in series, determining which (if any) are in breakdown based on source voltage and KVL.</li>
         </ul>
 
-        <p><strong>Example 6.15: Regulator Design</strong></p>
+        <h3>Zener Voltage Regulator (Fig. 6.51)</h3>
         <ul>
-            <li>Zener: $V_Z = 6\text{V}$, max current $I_{Zmax} = 50\text{mA}$. Min current $I_{Zmin} = 5\text{mA}$.</li>
-            <li>(a) $v_s = 24\text{V}, R = 300\Omega$. Find range of $R_L$.
-            Source current $I_S = (v_s - V_Z) / R = (24 - 6) / 300 = 60\text{mA}$.
-            For $I_{Zmax}=50\text{mA}$, $I_{Lmin} = I_S - I_{Zmax} = 10\text{mA} \Rightarrow R_{Lmax} = 6\text{V}/10\text{mA} = 600\Omega$.
-            For $I_{Zmin}=5\text{mA}$, $I_{Lmax} = I_S - I_{Zmin} = 55\text{mA} \Rightarrow R_{Lmin} = 6\text{V}/55\text{mA} \approx 109\Omega$.
-            So, $109\Omega \le R_L \le 600\Omega$.</li>
-            <li>(b) $R_L = 1\text{k}\Omega, R = 300\Omega$. Find range of $v_s$.
-            Load current $I_L = V_Z / R_L = 6\text{V} / 1\text{k}\Omega = 6\text{mA}$.
-            For $I_{Zmin}=5\text{mA}$, $I_{Smin} = I_{Zmin} + I_L = 11\text{mA} \Rightarrow v_{s\_min} = I_{Smin}R + V_Z = 11\text{mA} \times 300\Omega + 6\text{V} = 9.3\text{V}$.
-            For $I_{Zmax}=50\text{mA}$, $I_{Smax} = I_{Zmax} + I_L = 56\text{mA} \Rightarrow v_{s\_max} = I_{Smax}R + V_Z = 56\text{mA} \times 300\Omega + 6\text{V} = 22.8\text{V}$.
-            So, $9.3\text{V} \le v_s \le 22.8\text{V}$.</li>
+            <li>Circuit: $v_s \rightarrow R \rightarrow$ Node (+). Zener across load $R_L$ (cathode to Node +, anode to ground).</li>
+            <li>Maintains output voltage $v_L \approx V_Z$ across the load, as long as the Zener stays in breakdown.</li>
+            <li>Zener absorbs variations in $i_S$ (current from supply) or $i_L$ (current to load) while keeping voltage constant.</li>
+            <li>Requires minimum Zener current ($I_{Zmin}$, e.g., 10% of max) to ensure breakdown operation.</li>
         </ul>
 
-        <h3>Zener Diode Characteristics and Models</h3>
+        <p><strong>Example 6.15: Regulator Design/Analysis</strong></p>
         <ul>
-            <li><strong>Ideal Zener Model (Fig. 6.52b):</strong> In breakdown, constant voltage source $V_Z$.</li>
-            <li><strong>Nonideal Zener Model (Fig. 6.52c):</strong> In breakdown, $V_Z$ in series with Zener resistance $R_Z$.</li>
-            <li>
-                <strong>Ideal Zener Diode i-v (Fig. 6.53):</strong>
-                <ul>
-                    <li>Forward bias: Acts like ideal normal diode (short if $i>0$).</li>
-                    <li>Reverse bias (not breakdown, $0 > v > -V_Z$): Open circuit ($i=0$).</li>
-                    <li>Breakdown ($v = -V_Z$): Constant voltage, can pass any reverse current $i < 0$.</li>
-                </ul>
-            </li>
+            <li>Calculates the range of load resistance $R_L$ or supply voltage $v_s$ for which regulation is maintained (i.e., Zener stays in breakdown with current between $I_{Zmin}$ and $I_{Zmax}$).</li>
+        </ul>
+
+        <h3>Zener Diode Models (Fig. 6.52, 6.53)</h3>
+        <ul>
+            <li><strong>Ideal Model (Breakdown):</strong> Voltage source $V_Z$ (opposing reverse current). (Fig 6.52b)</li>
+            <li><strong>Nonideal Model (Breakdown):</strong> $V_Z$ source in series with Zener resistance $R_Z$. (Fig 6.52c)</li>
+            <li><strong>Ideal Zener Diode (overall i-v, Fig 6.53):</strong> Combines ideal diode forward characteristic, open circuit for reverse bias up to $V_Z$, and constant voltage $-V_Z$ in breakdown.</li>
         </ul>
 
         <p><strong>Example 6.16: Ideal Zener Clipper (Fig. 6.54, 6.55)</strong></p>
-        <p>(Text Config Fig 6.54: $v_s$ to 1kΩ to $v_o$. From $v_o$ to ground: D1 (cathode to $v_o$) then D2 (anode to D1 anode, cathode to ground). $V_{Z1}=V_{Z2}=12\text{V}$.)</p>
         <ul>
-            <li>If $v_s > 12\text{V}$: D1 forward, D2 breakdown. $v_o = 12\text{V}$.</li>
-            <li>If $v_s < -12\text{V}$: D2 forward, D1 breakdown. $v_o = -12\text{V}$.</li>
-            <li>If $-12\text{V} \le v_s \le 12\text{V}$: Both Zeners non-conducting in breakdown, ideal diodes reverse. `i=0`, $v_o = v_s$.</li>
-            <li>Output $v_o$ (Fig. 6.55b): Clipped at +12V and -12V. If $v_s = 24\sin(\omega t)$.</li>
+            <li>Uses two opposing ideal Zeners to clip both positive and negative peaks of an input waveform at $\pm V_Z$.</li>
         </ul>
-        <ul>
-            <li><strong>Zener Temperature Coefficient:</strong> Variation of $V_Z$ with temp. (% per °C). Avalanche ($V_Z > 6\text{V}$): Positive T.C. Zener effect ($V_Z < 6\text{V}$): Negative T.C. Around 5-6V, T.C. can be near zero.</li>
-        </ul>
+        <p><em>(Skipping Temperature Coefficient of Zener Diodes)</em></p>
 
         <hr style="border: 1px solid #444; margin: 2em 0;">
 
-        <h2>6.7 Effects of Capacitance (Pages 401-406)</h2>
-        <p>Diodes have inherent capacitances that affect behavior, especially at high frequencies or fast switching.</p>
-
-        <h3>Applications involving External Capacitors</h3>
+        <h2>Summary (Selected Relevant Points Based on Syllabus)</h2>
         <ol>
-            <li>
-                <strong>Peak Detector (Half-Wave Rectifier with Filter Cap) (Fig. 6.56, 6.57)</strong>
-                <ul>
-                    <li>Half-wave rectifier (diode + resistor $R$) with capacitor $C$ in parallel with $R$. Input $v_s = A \sin(\omega t)$.</li>
-                    <li>During positive half-cycle when diode ON: $C$ charges up to peak $A$. When $v_s$ drops below capacitor voltage $v_o$, diode becomes reverse biased (OFF). $C$ discharges slowly through $R$. If $RC \gg T$, $v_o$ remains close to $A$.</li>
-                    <li>Output $v_o$ is nearly DC at $A$, with small <strong>ripple</strong> (Fig. 6.57b). Also called <strong>envelope detector</strong>.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Clamping Circuit (DC Restorer) (Fig. 6.58, 6.59)</strong>
-                <ul>
-                    <li>Input $v_s$ (AC) in series with capacitor $C$. Diode across output $v_o$ (and load $R$).</li>
-                    <li>Example (Fig 6.58): Diode cathode to output, anode to ground. First time $v_s$ goes negative, diode conducts, $C$ charges to peak $A$. If $RC \gg T$, capacitor holds this DC voltage $A$. Output $v_o = V_C + v_s = A + A \sin(\omega t)$.</li>
-                    <li>The AC signal $v_s$ is "clamped" such that its negative peak is at 0V.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Peak-to-Peak Detector (Voltage Doubler) (Fig. 6.60)</strong>
-                <ul>
-                    <li>Combines clamper and peak detector. Clamper shifts AC input to $A + A \sin(\omega t)$. Peak detector rectifies this, outputting DC voltage approx. $2A$.</li>
-                </ul>
-            </li>
+            <li>Semiconductors (Si, Ge) allow conduction via electrons and holes (bipolar).</li>
+            <li>Doping adds impurities (donors/acceptors) to create n-type/p-type material with majority/minority carriers, increasing conductivity.</li>
+            <li>Mass-Action Law ($np=n_i^2$) and Charge Neutrality ($N_D+p=N_A+n$) relate carrier concentrations.</li>
+            <li>Current mechanisms: Drift (E-field) and Diffusion (concentration gradient).</li>
+            <li>A pn junction forms a diode. Built-in potential $v_0$ exists across the depletion region.</li>
+            <li>Junction Diode: Allows easy current flow when forward biased, blocks current (except small $I_s$) when reverse biased (until breakdown).</li>
+            <li>Diode Equation: $i = I_s(e^{(v/\eta V_T)} - 1)$. Cut-in voltage $V_\gamma$ (~0.2V Ge, ~0.5V Si).</li>
+            <li>Ideal Diode: Short circuit when ON, open circuit when OFF. Used for simplified analysis (assume state, verify).</li>
+            <li>Basic Diode Applications: Rectifiers (half-wave shown), Clippers.</li>
+            <li>Zener Diode: Operates in reverse breakdown at nearly constant voltage $V_Z$. Used in voltage regulators. Breakdown via Avalanche or Zener effect.</li>
         </ol>
 
-        <h3>Inherent Diode Capacitances</h3>
-        <ol>
-            <li>
-                <strong>Transition Capacitance (Depletion-Region / Space-Charge Capacitance, $C_T$)</strong>
-                <ul>
-                    <li>Depletion region acts like parallel plate capacitor:</li>
-                </ul>
-            </li>
-        </ol>
-        <div class="formula-container"
-             onclick="copyFormulaLatex(this, '\\color{white}{C_T = \\frac{\\epsilon A}{W}}}')"
-             data-latex="C_T = \frac{\\epsilon A}{W} \quad (Eq. 6.35)"
-             title="Click to copy LaTeX">
-             $$ C_T = \frac{\epsilon A}{W} \quad (Eq. 6.35) $$
-        </div>
-        <ul>
-            <li>$\epsilon$ = permittivity, $A$ = junction area, $W$ = depletion region width. $W$ increases with reverse bias, so $C_T$ decreases. Values: 5pF to 500pF.</li>
-            <li><strong>Varactors (Varicaps):</strong> Diodes designed for use as voltage-variable capacitors.</li>
-        </ul>
-        <ol start="2">
-            <li>
-                <strong>Diffusion Capacitance (Storage Capacitance, $C_D$)</strong>
-                <ul>
-                    <li>Dominant in <strong>forward bias</strong>. Due to injected minority carriers "stored". Charge stored $q = I_{forward} \times \tau$ ($\tau$ = mean carrier lifetime).</li>
-                    <li>Approximation $i \approx I_s e^{(v/(\eta V_T))}$. If $i = q/\tau$, then $q \approx \tau I_s e^{(v/(\eta V_T))}$.</li>
-                    <li>$C_D = dq/dv = \tau(i + I_s) / (\eta V_T)$. If $i \gg I_s$, then $C_D \approx \tau i / (\eta V_T)$. Proportional to forward current $i$.</li>
-                    <li>Can be large, but diode forward resistance $R_f$ (or $r$) is small.</li>
-                </ul>
-            </li>
-        </ol>
-
-        <h3>Diode Switching Times (Fig. 6.61, 6.62)</h3>
-        <p>Due to capacitances, diodes don't switch instantaneously.</p>
-        <ol>
-            <li>
-                <strong>Forward Recovery Time ($t_{fr}$) (Fig. 6.61):</strong>
-                <ul>
-                    <li>Switching from reverse to forward bias. Time for current to rise. Dependent on $C_T$. Usually negligible.</li>
-                </ul>
-            </li>
-            <li>
-                <strong>Reverse Recovery Time ($t_{rr}$) (Fig. 6.62):</strong>
-                <ul>
-                    <li>Switching from forward to reverse bias. Initially, large reverse current $-I_R$ due to stored minority carriers.</li>
-                    <li><strong>Storage Time ($t_s$):</strong> Time during which reverse current remains high ($-I_R$) while stored charge is removed.</li>
-                    <li><strong>Transition Time ($t_t$):</strong> After $t_s$, current decays from $-I_R$ to $-I_s$. Dependent on $C_D$ (and $C_T$).</li>
-                    <li>$t_{rr} = t_s + t_t$. Ranges from ns to µs.</li>
-                </ul>
-            </li>
-        </ol>
-
-        <hr style="border: 1px solid #444; margin: 2em 0;">
-
-        <h2>Summary (Page 407)</h2>
-        <p>Key takeaways from Chapter 6:</p>
-        <ol>
-            <li>Semiconductors (Si, Ge) have covalent bonds; thermal energy creates hole-electron pairs.</li>
-            <li>Metals are unipolar (electron conduction); semiconductors are bipolar (electron and hole conduction).</li>
-            <li>Conductivity: Metal $\sigma$ decreases with temp; Semiconductor $\sigma$ increases with temp.</li>
-            <li>Doping: Donors (5 valence e⁻) -&gt; n-type. Acceptors (3 valence e⁻) -&gt; p-type.</li>
-            <li>Majority/Minority carriers: Electrons/holes in n-type; Holes/electrons in p-type.</li>
-            <li>Doping significantly increases conductivity.</li>
-            <li>Semiconductor current: Drift (due to E-field) and Diffusion (due to concentration gradient).</li>
-            <li>pn junction + metal contacts = junction diode.</li>
-            <li>Forward-biased diode: easy current flow. Reverse-biased: very small current ($I_s$).</li>
-            <li>Cut-in voltage $V_\gamma$: ~0.2V for Ge, ~0.5V for Si.</li>
-            <li>$I_s$ doubles approx. every 10°C rise. Forward voltage $v$ for const. $i$ decreases by ~2.5mV/°C.</li>
-            <li>Diode circuits: graphical or numerical analysis due to nonlinearity.</li>
-            <li>Ideal diode: Short (ON, $v=0, i>0$), Open (OFF, $i=0, v\le0$).</li>
-            <li>Nonideal diode models: Ideal diode + battery ($V_\gamma$) + resistor ($R_f$).</li>
-            <li>Breakdown (Avalanche/Zener): Excessive reverse bias -&gt; large reverse current. Zener diodes are designed for this.</li>
-            <li>Diode capacitance: Transition ($C_T$, reverse bias, voltage-dependent). Diffusion ($C_D$, forward bias, current-dependent).</li>
-            <li>Varactors: Voltage-variable capacitors ($C_T$).</li>
-            <li>Diode applications: Rectifiers, clippers, regulators, peak detectors, clampers, voltage doublers, logic gates. (Switching times $t_{fr}, t_{rr}$ are important for speed).</li>
-        </ol>
     </main>
 
     <footer>
@@ -1026,30 +507,26 @@
      <div id="fontSizeDisplay">10px</div> <!-- Initial size display -->
 
     <script>
-                // --- Formula Copy Function ---
-                function copyFormulaLatex(element, latexStringToCopy) { // Renamed 2nd arg for clarity
+        // --- Formula Copy Function ---
+        function copyFormulaLatex(element, latexStringToCopy) { 
             if (!latexStringToCopy) { 
                 console.error('No LaTeX string passed to copy function.');
                 return;
             }
 
-            // Directly use the string passed as the second argument
             navigator.clipboard.writeText(latexStringToCopy).then(() => { 
                 element.classList.add('copied');
                 const originalTitle = element.title;
-                // Show the actual copied string in the tooltip
                 element.title = 'Copied: ' + latexStringToCopy; 
                 setTimeout(() => {
                     element.classList.remove('copied');
-                    element.title = originalTitle; // Restore original title
+                    element.title = originalTitle; 
                  }, 1500);
             }).catch(err => {
                 console.error('Failed to copy LaTeX: ', err);
-                // Optional: Provide visual feedback on failure
                 const originalTitle = element.title;
                 element.title = 'Copy failed!';
                  setTimeout(() => { element.title = originalTitle; }, 1500);
-                // alert('Failed to copy LaTeX. See console for details.'); // Uncomment for alert
             });
         }
 
