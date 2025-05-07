@@ -1026,27 +1026,30 @@
      <div id="fontSizeDisplay">10px</div> <!-- Initial size display -->
 
     <script>
-        // --- Formula Copy Function ---
-        function copyFormulaLatex(element, latexStringWithColor) {
-            if (!latexStringWithColor) {
-                console.error('No LaTeX data found passed to copy function.');
+                // --- Formula Copy Function ---
+                function copyFormulaLatex(element, latexStringToCopy) { // Renamed 2nd arg for clarity
+            if (!latexStringToCopy) { 
+                console.error('No LaTeX string passed to copy function.');
                 return;
             }
-            let rawLatexToCopy = element.dataset.latex;
-            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\(Eq\.\s*[\d\.]+\)$/, '');
-            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\w+$/, ''); // Remove units like Hz
 
-            navigator.clipboard.writeText(rawLatexToCopy).then(() => {
+            // Directly use the string passed as the second argument
+            navigator.clipboard.writeText(latexStringToCopy).then(() => { 
                 element.classList.add('copied');
                 const originalTitle = element.title;
-                element.title = 'Copied: ' + rawLatexToCopy;
+                // Show the actual copied string in the tooltip
+                element.title = 'Copied: ' + latexStringToCopy; 
                 setTimeout(() => {
                     element.classList.remove('copied');
-                    element.title = originalTitle;
+                    element.title = originalTitle; // Restore original title
                  }, 1500);
             }).catch(err => {
                 console.error('Failed to copy LaTeX: ', err);
-                alert('Failed to copy LaTeX. See console for details.');
+                // Optional: Provide visual feedback on failure
+                const originalTitle = element.title;
+                element.title = 'Copy failed!';
+                 setTimeout(() => { element.title = originalTitle; }, 1500);
+                // alert('Failed to copy LaTeX. See console for details.'); // Uncomment for alert
             });
         }
 
