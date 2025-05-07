@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en" style="--base-font-size: 10px;"> <!-- Default font size set to 10px -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 11: Digital Logic</title>
+
+    <!-- Google Fonts - Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true, tags: 'ams' },
+          options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'], ignoreHtmlClass: 'tex2jax_ignore', processHtmlClass: 'tex2jax_process' },
+          svg: { fontCache: 'global' },
+          startup: {
+            ready: () => { console.log('MathJax ready.'); MathJax.startup.defaultReady(); MathJax.startup.promise.then(() => console.log('MathJax initial typeset complete.')); }
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Keyframes for Animations (FadeIn) */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Fonts & Base Styling */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            color: #e0e0e0;
+            line-height: 1.7;
+            padding: 25px;
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            font-size: var(--base-font-size); /* Controlled by JS */
+            transition: font-size 0.2s ease-in-out; /* Default smooth transition */
+            padding-bottom: 80px; /* Space for controls */
+            overflow-x: hidden;
+        }
+        /* Class to disable transition during rapid changes (e.g., hold) */
+        body.no-font-transition {
+            transition: none !important;
+        }
+
+        /* Headings */
+        h1, h2 { font-family: 'Roboto Mono', monospace; text-align: center; margin-bottom: 1.5em; }
+        h1 { font-size: 2.4em; color: #ffffff; font-weight: 700; padding-bottom: 12px; margin-top: 1.5em; margin-bottom: 1.5em; border-bottom: 2px solid #ffffff; animation: fadeIn 0.8s ease-out both; animation-delay: 0.1s; letter-spacing: -0.5px; }
+        h2 { font-size: 1.6em; color: #cccccc; font-weight: 500; margin-top: 30px; margin-bottom: 1.5em; border-bottom: 1px solid #555555; padding-bottom: 5px; animation: fadeIn 0.8s ease-out both; animation-delay: 0.3s; }
+        h3 { font-size: 1.2em; color: #bdbdbd; font-weight: 500; margin-top: 1.8em; margin-bottom: 0.8em; padding-bottom: 3px; border-bottom: 1px dotted #444; text-align: left; }
+        h4 { font-size: 1.1em; color: #b0b0b0; font-weight: 500; margin-top: 1.5em; margin-bottom: 0.7em; text-align: left; }
+
+
+        /* Main Content Area */
+        main { max-width: 800px; margin: 40px auto; background-color: rgba(30, 30, 30, 0.85); padding: 35px 45px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.1); animation: fadeIn 0.8s ease-out both; animation-delay: 0.2s; }
+        /* Paragraph and List styling */
+        p { margin-bottom: 1em; color: inherit; font-size: inherit; }
+        ul, ol { margin-left: 25px; list-style: disc; margin-bottom: 1em; }
+        ol { list-style: decimal; }
+        li { margin-bottom: 8px; font-size: inherit; }
+        strong { font-weight: 500; color: #ffffff; }
+
+        /* Formula Container Styling (with horizontal scroll) */
+        .formula-container {
+            margin: 15px 0 20px 0; padding: 10px 20px; background-color: rgba(45, 45, 45, 0.9);
+            border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto; overflow-y: hidden; /* Horizontal scroll, no vertical */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            cursor: pointer; color: #e0e0e0; border-left: 4px solid transparent;
+            font-family: 'Roboto Mono', monospace; position: relative; white-space: nowrap;
+        }
+        .formula-container:hover { background-color: rgba(60, 60, 60, 0.95); border-left-color: #a6e3a1; border-color: rgba(166, 227, 161, 0.5); }
+        .formula-container.copied { background-color: rgba(166, 227, 161, 0.2); border-color: #a6e3a1; border-left-color: #a6e3a1; }
+        /* Optional Scrollbar Style */
+        .formula-container::-webkit-scrollbar { height: 8px; }
+        .formula-container::-webkit-scrollbar-track { background: rgba(60, 60, 60, 0.5); border-radius: 4px; }
+        .formula-container::-webkit-scrollbar-thumb { background-color: #888; border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+        .formula-container::-webkit-scrollbar-thumb:hover { background-color: #aaa; }
+        /* MathJax display style */
+        .formula-container mjx-container[display="true"] { margin: 0.5em 0 !important; text-align: left !important; display: inline-block; vertical-align: middle; }
+        
+        table { border-collapse: collapse; margin: 1em auto; background-color: rgba(40,40,40,0.8); width: auto; }
+        th, td { border: 1px solid #555; padding: 8px 12px; text-align: center; }
+        th { background-color: rgba(60,60,60,0.9); color: #ddd; }
+
+
+        /* Footer Styling */
+        footer { text-align: center; margin-top: 70px; padding-bottom: 35px; font-size: 0.85em; color: #888888; animation: fadeIn 1s ease-out both; animation-delay: 0.7s; }
+
+        /* Simple Dark Theme Scrollbar for Page */
+        body::-webkit-scrollbar { width: 10px; }
+        body::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 5px; }
+        body::-webkit-scrollbar-thumb { background-color: #777; border-radius: 5px; border: 2px solid #2a2a2a; background-clip: content-box; }
+        body::-webkit-scrollbar-thumb:hover { background-color: #999; }
+        html { scrollbar-width: thin; scrollbar-color: #777 #2a2a2a; }
+        @supports (scrollbar-gutter: stable) { html { scrollbar-gutter: stable; } }
+
+        /* Font Control Icons CSS */
+        .font-control { position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+        .font-control-icon { font-size: 28px; font-weight: bold; color: #777; cursor: pointer; padding: 8px; transition: color 0.3s ease; pointer-events: auto; user-select: none; line-height: 1; display: inline-block; }
+        .font-control-icon:hover { color: #a6e3a1; }
+        #fontSizeDisplay { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(45, 45, 45, 0.9); color: #e0e0e0; padding: 6px 12px; border-radius: 5px; font-size: 13px; font-family: 'Roboto Mono', monospace; z-index: 11; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; white-space: nowrap; }
+        #fontSizeDisplay.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Chapter 11: Digital Logic</h1>
+    </header>
+
+    <main>
+        <h2>Introduction (Page 749-750)</h2>
+        <p>
+            Digital systems manipulate information in a <strong>discrete form</strong>, often represented by digits. This contrasts with <strong>analog signals</strong>, which can take on an infinite number of values (e.g., $V(t) = V \cos \omega t$).
+        </p>
+        <ul>
+            <li>
+                <strong>Binary Devices:</strong> Devices that can be in one of two possible states.
+                <ul>
+                    <li>A <strong>switch</strong> (open/closed) can be associated with values 0 and 1.</li>
+                    <li><strong>Transistors</strong> (OFF/ON) are fundamental binary devices in modern digital systems.</li>
+                    <li>Historically, <strong>relays</strong> (electromechanical switches) were used.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Digital Computer Components (Fig. 11.1):</strong>
+                <ul>
+                    <li><strong>Input:</strong> How data and programs (sets of instructions) enter (keyboards, disk drives, sensors).</li>
+                    <li><strong>Memory (Storage Unit):</strong> Stores programs and data.</li>
+                    <li><strong>Control Unit:</strong> Supervises information flow between units and directs the processor.</li>
+                    <li><strong>Processor (Arithmetic Unit):</strong> Manipulates data (arithmetic, data processing) as per program instructions.</li>
+                    <li><strong>Output:</strong> Presents results to the user (printers, displays).</li>
+                </ul>
+            </li>
+        </ul>
+        <p>
+            The chapter will focus on the fundamentals of digital systems, starting with binary representation.
+        </p>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>11.1 Binary Numbers (Pages 751-757)</h2>
+        <p>Number systems are defined by their <strong>base</strong> or <strong>radix</strong>.</p>
+        <ul>
+            <li>
+                <strong>Decimal System (Base 10):</strong> Uses digits 0-9. A number like $1983.64$ represents:
+                $1 \times 10^3 + 9 \times 10^2 + 8 \times 10^1 + 3 \times 10^0 + 6 \times 10^{-1} + 4 \times 10^{-2}$
+                In general, $(a_n...a_0 . a_{-1}...a_{-m})_{10}$ is $\sum (a_i \cdot 10^i)$.
+            </li>
+            <li>
+                <strong>Binary System (Base 2):</strong> Uses digits 0 and 1.
+                A binary number like $(110101.101)_2$ represents:
+                $1 \times 2^5 + 1 \times 2^4 + 0 \times 2^3 + 1 \times 2^2 + 0 \times 2^1 + 1 \times 2^0 + 1 \times 2^{-1} + 0 \times 2^{-2} + 1 \times 2^{-3}$
+                $= 32 + 16 + 0 + 4 + 0 + 1 + 0.5 + 0 + 0.125 = (53.625)_{10}$.
+                In general, for base $r$, $(a_n...a_0 . a_{-1}...a_{-m})_r$ is $\sum (a_i \cdot r^i)$.
+            </li>
+        </ul>
+
+        <h3>Decimal to Binary Conversion</h3>
+        <h4>1. Integer Part:</h4>
+        <ul>
+            <li><strong>Method: Successive Division by 2.</strong> The remainders form the binary number, read from bottom up (last remainder is the most significant bit, MSB).</li>
+            <li>Let $I$ be the decimal integer:
+            $I = a_n 2^n + ... + a_1 2^1 + a_0 2^0$
+            $I = 2(a_n 2^{(n-1)} + ... + a_1) + a_0$
+            Dividing $I$ by 2 gives a quotient and remainder $a_0$. Repeat with the quotient to get $a_1$, and so on.</li>
+            <li><strong>Example 11.1: Convert (25)₁₀ to binary.</strong></li>
+        </ul>
+        <table>
+            <thead>
+                <tr><th>Decimal Number</th><th>Division by 2</th><th>Quotient</th><th>Remainder</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>25</td><td>25/2</td><td>12</td><td>1 ($a_0$)</td></tr>
+                <tr><td>12</td><td>12/2</td><td>6</td><td>0 ($a_1$)</td></tr>
+                <tr><td>6</td><td>6/2</td><td>3</td><td>0 ($a_2$)</td></tr>
+                <tr><td>3</td><td>3/2</td><td>1</td><td>1 ($a_3$)</td></tr>
+                <tr><td>1</td><td>1/2</td><td>0</td><td>1 ($a_4$)</td></tr>
+            </tbody>
+        </table>
+        <p>Reading remainders from bottom up: $(11001)_2$. So, $(25)_{10} = (11001)_2$.</p>
+        <ul>
+            <li><strong>Convenient Notation (Right to Left Division):</strong>
+            <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+  a₄  a₃  a₂  a₁  a₀
+  1   1   0   0   1   &lt;-- Remainders
+0 ) 1 ) 3 ) 6 ) 12 ) 25   (Divide by 2)
+            </pre>
+            </li>
+        </ul>
+
+        <h4>2. Fractional Part:</h4>
+        <ul>
+            <li><strong>Method: Successive Multiplication by 2.</strong> The integer parts of the products form the binary fraction, read from top down (first integer part is the most significant fractional bit).</li>
+            <li>Let $F$ be the decimal fraction ($0 < F < 1$):
+            $F = a_{-1} 2^{-1} + a_{-2} 2^{-2} + a_{-3} 2^{-3} + ...$
+            $2F = a_{-1} + a_{-2} 2^{-1} + a_{-3} 2^{-2} + ...$
+            The integer part of $2F$ is $a_{-1}$. Subtract $a_{-1}$ and repeat with the new fractional part to get $a_{-2}$, etc.</li>
+            <li><strong>Example 11.2: Convert (0.684)₁₀ to binary.</strong></li>
+        </ul>
+        <table>
+            <thead>
+                <tr><th>Decimal Number</th><th>Multiplication by 2</th><th>Integer Part</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>0.684</td><td>1.368</td><td>1 ($a_{-1}$)</td></tr>
+                <tr><td>0.368</td><td>0.736</td><td>0 ($a_{-2}$)</td></tr>
+                <tr><td>0.736</td><td>1.472</td><td>1 ($a_{-3}$)</td></tr>
+                <tr><td>0.472</td><td>0.944</td><td>0 ($a_{-4}$)</td></tr>
+                <tr><td>0.944</td><td>1.888</td><td>1 ($a_{-5}$)</td></tr>
+                <tr><td>0.888</td><td>1.776</td><td>1 ($a_{-6}$)</td></tr>
+                <tr><td>0.776</td><td>1.552</td><td>1 ($a_{-7}$)</td></tr>
+                <tr><td>0.552</td><td>1.104</td><td>1 ($a_{-8}$)</td></tr>
+                <tr><td>...</td><td>...</td><td>...</td></tr>
+            </tbody>
+        </table>
+        <p>Reading integer parts from top down: $(0.10101111...)_2$. So, $(0.684)_{10} \approx (0.10101111)_2$.</p>
+        <ul>
+            <li><strong>Combined:</strong> $(25.684)_{10} = (11001.10101111...)_2$.</li>
+        </ul>
+
+        <h3>Other Number Systems</h3>
+        <h4>1. Octal (Base 8):</h4>
+        <ul>
+            <li>Uses digits 0-7.</li>
+            <li><strong>Octal to Decimal:</strong> Similar to binary to decimal, using powers of 8.
+                <ul>
+                    <li>Example: $(261.64)_8 = 2 \times 8^2 + 6 \times 8^1 + 1 \times 8^0 + 6 \times 8^{-1} + 4 \times 8^{-2} = 128 + 48 + 1 + 6/8 + 4/64 = (177.8125)_{10}$. (Note: The text example calculation result $(146.8125)_{10}$ seems to be a typo for the given octal number $(261.64)_8$. The calculation here for $(261.64)_8$ is $177.8125_{10}$.)</li>
+                </ul>
+            </li>
+            <li><strong>Decimal to Octal:</strong> Successive division by 8 (for integer part) or multiplication by 8 (for fractional part).
+                <ul>
+                    <li>Example: $(937)_{10}$ to octal:
+                    $937 / 8 = 117 \text{ R } 1$
+                    $117 / 8 = 14  \text{ R } 5$
+                    $14  / 8 = 1   \text{ R } 6$
+                    $1   / 8 = 0   \text{ R } 1$
+                    So, $(937)_{10} = (1651)_8$.</li>
+                    <li>Example: $(0.194)_{10}$ to octal:
+                    $0.194 \times 8 = 1.552  \text{ (Integer part = 1)}$
+                    $0.552 \times 8 = 4.416  \text{ (Integer part = 4)}$
+                    $0.416 \times 8 = 3.328  \text{ (Integer part = 3)}$
+                    So, $(0.194)_{10} = (0.143...)_8$.</li>
+                </ul>
+            </li>
+            <li><strong>Binary to Octal:</strong> Group binary digits in threes from the binary point. Each group of three converts to one octal digit. (Since $2^3 = 8$). Add leading/trailing zeros if needed.
+                <ul>
+                    <li>Example: $(10101011000.1110011)_2$
+                    $010\ 101\ 011\ 000\ .\ 111\ 001\ 100$
+                    $\ \downarrow \ \ \ \downarrow \ \ \ \downarrow \ \ \ \downarrow \ \ \ .\ \ \downarrow \ \ \ \downarrow \ \ \ \downarrow$
+                    $\ 2 \ \ \ 5 \ \ \ 3 \ \ \ 0 \ \ .\ \ 7 \ \ \ 1 \ \ \ 4$
+                    So, $(10101011000.1110011)_2 = (2530.714)_8$.</li>
+                </ul>
+            </li>
+            <li><strong>Octal to Binary:</strong> Convert each octal digit to its 3-bit binary equivalent.
+                <ul>
+                    <li>Example: $(1704.536)_8$
+                    $\ \ 1 \ \ \ \ 7 \ \ \ \ 0 \ \ \ \ 4 \ \ .\ \ 5 \ \ \ \ 3 \ \ \ \ 6$
+                    $\ \downarrow \ \ \ \ \downarrow \ \ \ \ \downarrow \ \ \ \ \downarrow \ \ .\ \ \downarrow \ \ \ \ \downarrow \ \ \ \ \downarrow$
+                    $001\ \ 111\ \ 000\ \ 100\ .\ 101\ \ 011\ \ 110$
+                    So, $(1704.536)_8 = (001111000100.101011110)_2 = (1111000100.10101111)_2$.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>2. Hexadecimal (Base 16):</h4>
+        <ul>
+            <li>Uses digits 0-9 and letters A-F (A=10, B=11, C=12, D=13, E=14, F=15).</li>
+            <li><strong>Binary to Hexadecimal:</strong> Group binary digits in fours from the binary point. Each group of four converts to one hex digit. (Since $2^4 = 16$).
+                <ul>
+                    <li>Example: $(10101011000.1110011)_2$
+                    $0101\ 0101\ 1000\ .\ 1110\ 0110$
+                    $\ \downarrow \ \ \ \ \downarrow \ \ \ \ \downarrow \ \ \ .\ \ \ \downarrow \ \ \ \ \downarrow$
+                    $\ \ 5 \ \ \ \ \ 5 \ \ \ \ \ 8 \ \ \ .\ \ \ \ E \ \ \ \ \ 6$
+                    So, $(10101011000.1110011)_2 = (558.E6)_{16}$.</li>
+                </ul>
+            </li>
+            <li><strong>Hexadecimal to Binary:</strong> Convert each hex digit to its 4-bit binary equivalent.
+                <ul>
+                    <li>Example: $(6A9.0C)_{16}$
+                    $\ \ 6 \ \ \ \ \ A \ \ \ \ \ 9 \ \ \ .\ \ \ 0 \ \ \ \ \ C$
+                    $\ \downarrow \ \ \ \ \ \downarrow \ \ \ \ \ \downarrow \ \ \ .\ \ \ \downarrow \ \ \ \ \ \downarrow$
+                    $0110\ \ 1010\ \ 1001\ .\ 0000\ \ 1100$
+                    So, $(6A9.0C)_{16} = (011010101001.00001100)_2 = (11010101001.000011)_2$.</li>
+                </ul>
+            </li>
+        </ul>
+        <p><strong>Table 11.1:</strong> Shows decimal, binary, octal, and hexadecimal for integers 0-15. Useful for quick conversions of small numbers or digits.</p>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>11.2 Binary Arithmetic (Pages 758-762)</h2>
+        <p>Operations on binary numbers.</p>
+        <h4>1. Binary Addition:</h4>
+        <ul>
+            <li>Rules:
+            $0 + 0 = 0$
+            $0 + 1 = 1$
+            $1 + 0 = 1$
+            $1 + 1 = 0$ (with a carry of 1 to the next higher position, i.e., $(10)_2$)</li>
+            <li>Carries propagate as in decimal addition.</li>
+            <li>Example: $(60)_{10} + (42)_{10} = (102)_{10}$
+            $(60)_{10} = (111100)_2$
+            $(42)_{10} = (101010)_2$
+            <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+  111100  (carries)
+    111100   (60)
++   101010   (42)
+----------
+  1100110  (102)
+            </pre>
+            </li>
+        </ul>
+
+        <h4>2. Binary Subtraction:</h4>
+        <ul>
+            <li>Borrows propagate as in decimal subtraction.</li>
+            <li>Example: $(60)_{10} - (42)_{10} = (18)_{10}$
+            <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+       (borrow)
+  111100   (60)
+- 101010   (42)
+----------
+  010010   (18)  (which is (10010)₂)
+            </pre>
+            </li>
+            <li>Subtracting a larger number from a smaller: subtract smaller from larger and add a negative sign.</li>
+        </ul>
+
+        <h4>3. Binary Multiplication:</h4>
+        <ul>
+            <li>Rules:
+            $0 \times 0 = 0$
+            $0 \times 1 = 0$
+            $1 \times 0 = 0$
+            $1 \times 1 = 1$</li>
+            <li>Process is like decimal long multiplication (shift and add).</li>
+            <li>Example: $(23)_{10} \times (5)_{10} = (115)_{10}$
+            $(23)_{10} = (10111)_2$
+            $(5)_{10} = (101)_2$
+            <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+    10111
+  x   101
+  -------
+    10111  (10111 * 1)
+   00000   (10111 * 0, shifted)
+  10111    (10111 * 1, shifted)
+  -------
+  1110011  (115)
+            </pre>
+            </li>
+        </ul>
+
+        <h4>4. Binary Division:</h4>
+        <ul>
+            <li>Process is like decimal long division.</li>
+            <li>Example: $(87)_{10} \div (6)_{10} = (14.5)_{10}$
+            $(87)_{10} = (1010111)_2$
+            $(6)_{10} = (110)_2$
+            $(14.5)_{10} = (1110.1)_2$
+            <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+      1110.1
+   _______
+110|1010111.0
+   -110
+   ----
+    1001
+    -110
+    ----
+     0111
+     -110
+     ----
+        10  (add decimal point and a 0)
+        -0
+        --
+        100
+       -110 (Corrected: the remainder from 111-110 is 1. Bring down 0, 10. 10/110=0. Bring down 0, 100/110=0. Text result 1110.1 is from 10 / 110 -> quotient .1 (binary) not .0 )
+The text's illustration for division is a bit condensed. For $(87) \div (6) = (1010111)_2 \div (110)_2 = (1110.1)_2$.
+Long division steps (confirming text result):
+   1010111 / 110
+   1010 / 110 = 1, remainder 100. (Quotient: 1)
+   1001 / 110 = 1, remainder 11.  (Quotient: 11)
+   111 / 110 = 1, remainder 1.   (Quotient: 111)
+   1.0 / 110 = 0 (with point), remainder 10. (Quotient: 1110.)
+   10.0 / 110 = 1, remainder 10. (Quotient: 1110.1)
+            </pre>
+            </li>
+        </ul>
+
+        <h3>Subtraction using Complements</h3>
+        <p>Alternative for computer arithmetic.</p>
+        <h4>1. 1's Complement:</h4>
+        <ul>
+            <li>Obtained by changing all 0s to 1s and all 1s to 0s (inverting bits).</li>
+            <li>Example: 1's complement of $(10110010)_2$ is $(01001101)_2$.</li>
+            <li>For fractions, the $0.$ part is usually left as is if specified, but the text implies inverting all: 1's comp of $0.1110100$ is $0.0001011$.</li>
+            <li>
+                <strong>Subtraction (n - m) using 1's Complement:</strong>
+                <ol>
+                    <li>Add $n$ to the 1's complement of $m$.</li>
+                    <li><strong>If sum has a carry at the left end (end-around carry):</strong> Add this carry (1) to the least significant digit (LSB) of the sum. Result is $n-m$ (positive).</li>
+                    <li><strong>If sum has no carry:</strong> Take the 1's complement of the sum and place a negative sign in front. Result is $n-m$ (negative).</li>
+                </ol>
+            </li>
+            <li>
+                <strong>Example 11.4:</strong> $n = 1101001$, $m = 0101110$.
+                <ul>
+                    <li>
+                        Find $n - m$:
+                        <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+  n =             1101001
+  1's comp of m = +1010001
+  ---------------------
+  Sum =          (1)0111010  (End-around carry is 1)
+  Add carry =         +     1
+  ---------------------
+  Result (n-m) =    0111011  (positive)
+                        </pre>
+                        Decimal: $105 - 46 = 59$. $(0111011)_2 = 32+16+8+0+2+1 = 59$. Correct.
+                    </li>
+                    <li>
+                        Find $m - n$:
+                        <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+  m =             0101110
+  1's comp of n = +0010110
+  ---------------------
+  Sum =           01110100  (No end-around carry; PDF shows sum as 1000100 for 7 digits)
+  Corrected sum (as per PDF logic): 1000100
+  Result = -(1's comp of Sum) = -(1's comp of 1000100) = -(0111011)
+                        </pre>
+                        Decimal: $46 - 105 = -59$. $-(0111011)_2 = -59$. Matches PDF example logic.
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>2. 2's Complement:</h4>
+        <ul>
+            <li>Defined for an integer part of $p$ digits as $2^p - \text{number}$.</li>
+            <li>Easier method: Add 1 to the 1's complement of the number.</li>
+            <li>Example: 2's complement of $(10110010)_2$:
+            1's comp: $01001101$
+            Add 1:   $+       1$
+            2's comp: $01001110$</li>
+            <li>
+                <strong>Subtraction (n - m) using 2's Complement:</strong>
+                <ol>
+                    <li>Add $n$ to the 2's complement of $m$.</li>
+                    <li><strong>If sum has a carry at the left end:</strong> Discard (remove) the carry. Result is $n-m$ (positive).</li>
+                    <li><strong>If sum has no carry:</strong> Take the 2's complement of the sum and place a negative sign in front. Result is $n-m$ (negative).</li>
+                </ol>
+            </li>
+            <li>
+                <strong>Example 11.6:</strong> $n = 1101001$, $m = 0101110$.
+                <ul>
+                    <li>
+                        Find $n - m$:
+                        2's comp of $m$: (1's comp $1010001 + 1$) = $1010010$
+                        <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+  n =             1101001
+  2's comp of m = +1010010
+  ---------------------
+  Sum =          (1)0111011  (Discard carry)
+  Result (n-m) =    0111011  (positive, same as 1's comp method: 59)
+                        </pre>
+                    </li>
+                    <li>
+                        Find $m - n$:
+                        2's comp of $n$: (1's comp $0010110 + 1$) = $0010111$
+                        <pre style="background-color: #2b2b2b; padding: 10px; border-radius: 5px; color: #ccc; overflow-x: auto; white-space: pre;">
+  m =             0101110
+  2's comp of n = +0010111
+  ---------------------
+  Sum =           01000101  (No carry. PDF for this case gives Sum = 1000101)
+  Using PDF's sum logic for m-n: Sum = 1000101
+  Result = -(2's comp of Sum)
+  2's comp of 1000101: (1's comp $0111010 + 1$) = $0111011$
+  Result (m-n) = -(0111011) (negative, same as 1's comp method: -59)
+                        </pre>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Binary Codes</h3>
+        <p>Representing information (numbers, letters, symbols) using sequences of binary digits (bits).</p>
+        <ul>
+            <li><strong>Byte:</strong> A sequence of 8 bits.</li>
+            <li><strong>Binary Code:</strong> A set of binary sequences.</li>
+            <li><strong>Code Word:</strong> Each sequence in a binary code.</li>
+        </ul>
+        <h4>Binary-Coded Decimal (BCD):</h4>
+        <ul>
+            <li>Encodes decimal digits (0-9) using 4-bit binary quadruples.</li>
+            <li>A minimum of 4 bits is needed because 3 bits only give 8 combinations (000-111).</li>
+            <li><strong>Table 11.2 (BCD codes):</strong>
+                0 = 0000, 1 = 0001, ..., 9 = 1001.
+                Combinations 1010 through 1111 are unused in standard BCD.</li>
+            <li>Example: BCD for decimal $1983$ is $0001\ 1001\ 1000\ 0011$.</li>
+        </ul>
+        <h4>Error-Detecting Codes (Parity Bit):</h4>
+        <ul>
+            <li>Electrical noise can cause errors (0-&gt;1 or 1-&gt;0) during transmission.</li>
+            <li><strong>Parity Bit:</strong> An extra bit added to a code word to detect errors.</li>
+            <li><strong>Even Parity (Table 11.3):</strong> Parity bit is chosen so the new code word (original bits + parity bit) has an even number of 1s.
+                <ul>
+                    <li>Example: Original $000$ (0 ones). Add parity $0 \rightarrow 0000$ (0 ones - even).</li>
+                    <li>Original $001$ (1 one). Add parity $1 \rightarrow 0011$ (2 ones - even).</li>
+                </ul>
+            </li>
+            <li><strong>Detection:</strong> If a single bit error occurs, the received word will have an odd number of 1s.</li>
+            <li>
+                <strong>Limitations:</strong>
+                <ul>
+                    <li>Detects single errors (and any odd number of errors).</li>
+                    <li>Cannot detect an even number of errors (e.g., 2 errors).</li>
+                    <li>Does not correct errors (can't tell which bit is wrong).</li>
+                </ul>
+            </li>
+            <li><strong>Odd Parity:</strong> Parity bit chosen for an odd number of 1s in the new code word.</li>
+            <li><strong>Error-Correcting Codes:</strong> Require more parity bits, beyond scope of this text.</li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>11.3 Digital Logic Circuits (Pages 765-771)</h2>
+        <p>Circuits that perform logic operations.</p>
+        <ul>
+            <li>
+                <strong>Binary Variable:</strong> A variable that can take one of two values (0 or 1).
+                <ul>
+                    <li>Example: Switch S (0=open, 1=closed). Lightbulb L (0=off, 1=on).</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Truth Table:</strong> A table showing the relationship between input and output binary variables.
+                <ul>
+                    <li>If L = S (light on when switch closed): (Table 11.4a)
+                        <table><tr><th>S</th><th>L=S</th></tr><tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr></table>
+                    </li>
+                    <li>If L = S̅ (light off when switch closed, complement of S): (Table 11.4b)
+                        <table><tr><th>S</th><th>L=S̅</th></tr><tr><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td></tr></table>
+                        (S̅ is "NOT S")
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Switching Circuits (using mechanical switches to illustrate logic)</h3>
+        <h4>1. OR Operation (Parallel Switches - Fig. 11.3, Table 11.5):</h4>
+        <ul>
+            <li>Output L is 1 (light on) if Switch A is 1 OR Switch B is 1 (or both).</li>
+            <li>L = 0 only if A=0 AND B=0.</li>
+            <li>Mathematical notation: $L = A + B$.
+                <table><tr><th>A</th><th>B</th><th>L=A+B</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></table>
+            </li>
+        </ul>
+        <h4>2. AND Operation (Series Switches - Fig. 11.4, Table 11.6):</h4>
+        <ul>
+            <li>Output L is 1 only if Switch A is 1 AND Switch B is 1.</li>
+            <li>Mathematical notation: $L = A \cdot B$ or $L = AB$.
+                <table><tr><th>A</th><th>B</th><th>L=AB</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></table>
+            </li>
+        </ul>
+        <h4>3. Combined Operations (Fig. 11.5, Table 11.7):</h4>
+        <ul>
+            <li>Example: Switch A in series with a parallel combination of B and C.</li>
+            <li>$L = A(B+C)$. Truth table requires $2^3 = 8$ rows for 3 variables.</li>
+        </ul>
+        <h4>4. Complement (NOT):</h4>
+        <ul>
+            <li>If switch B is always in the opposite state of switch A (B closed when A open, B open when A closed), then $B = \bar{A}$. (Table 11.8)</li>
+        </ul>
+        <h4>5. Exclusive-OR (XOR) Operation (Table 11.9):</h4>
+        <ul>
+            <li>Output L is 1 if A is 1 AND B is 0, OR if A is 0 AND B is 1. (Inputs are different).</li>
+            <li>L = 0 if A and B are the same.</li>
+            <li>Mathematical notation: $L = \bar{A}B + A\bar{B}$ or $L = A \oplus B$.</li>
+            <li>Switch realization (Fig. 11.6): Two parallel paths. Path 1: $\bar{A}$ in series with B. Path 2: A in series with $\bar{B}$.</li>
+        </ul>
+        <ul>
+            <li><strong>Logic Gates:</strong> Circuits (usually electronic) that perform logic operations.</li>
+        </ul>
+
+        <h3>Types of Switches for Realization</h3>
+        <ul>
+            <li><strong>SPST (Single-Pole, Single-Throw - Fig. 11.7a):</strong> Simple on/off switch (like S).</li>
+            <li><strong>SPDT (Single-Pole, Double-Throw - Fig. 11.7b):</strong> Three terminals. Pole $a$ connects to either $b$ or $c$.
+                <ul>
+                    <li>If $a-b$ is switch A, then $a-c$ is switch $\bar{A}$.</li>
+                </ul>
+            </li>
+            <li><strong>Two-way Light Switch (Fig. 11.8):</strong> Practical application of XOR using two SPDT switches.
+            $L = \bar{A}B + A\bar{B}$. Allows light control from two locations.</li>
+        </ul>
+
+        <h3>Logic Gates (Electronic Implementations)</h3>
+        <p>Symbols for electronic circuits performing logic operations.</p>
+        <ol>
+            <li><strong>Buffer (Fig. 11.9):</strong> Output = Input. $\text{Output} = A$. Used for signal amplification or isolation.</li>
+            <li><strong>NOT Gate (Inverter - Fig. 11.10):</strong> Output = Complement of Input. $\text{Output} = \bar{A}$. Symbol: Buffer symbol with a small circle (bubble) at the output.</li>
+            <li><strong>OR Gate (Fig. 11.11):</strong> Output is 1 if any input is 1. $\text{Output} = A + B$ (for 2 inputs). Can have two or more inputs.</li>
+            <li><strong>AND Gate (Fig. 11.12):</strong> Output is 1 only if all inputs are 1. $\text{Output} = AB$ (for 2 inputs). Can have two or more inputs.</li>
+            <li><strong>Exclusive-OR (XOR) Gate (Fig. 11.13 - realization, Fig. 11.14 - symbol):</strong> $\text{Output} = A \oplus B = \bar{A}B + A\bar{B}$. Realized using AND, OR, NOT gates. Has its own distinct symbol.</li>
+            <li><strong>NAND Gate (NOT-AND - Fig. 11.15):</strong> Output is complement of AND operation. $\text{Output} = \overline{AB}$. (Table 11.11). Symbol: AND gate symbol with a bubble at the output.</li>
+            <li><strong>NOR Gate (NOT-OR - Fig. 11.16):</strong> Output is complement of OR operation. $\text{Output} = \overline{A+B}$. (Table 11.12). Symbol: OR gate symbol with a bubble at the output.</li>
+        </ol>
+        <p><strong>Example 11.7 (Fig. 11.17):</strong></p>
+        <ul>
+            <li>Logic circuit with inputs A, B. The text states output $F = \bar{A} + \bar{B} + AB$.
+            (Note: The diagram in Fig. 11.17 actually implements $F = \overline{A+B} + AB = \bar{A}\bar{B} + AB$, which is the XNOR function. The text's discussion around this example and Eq. 11.1 seems to confuse XOR and XNOR or has typographical errors in the function expression.)</li>
+            <li>Truth Table 11.13 for $F = \bar{A}\bar{B} + AB$ (XNOR):</li>
+        </ul>
+        <table>
+            <thead><tr><th>A</th><th>B</th><th>$\bar{A}$</th><th>$\bar{B}$</th><th>$\bar{A}\bar{B}$</th><th>AB</th><th>F=$\bar{A}\bar{B}$+AB</th></tr></thead>
+            <tbody>
+                <tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+                <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+            </tbody>
+        </table>
+        <p>This table represents the XNOR function.</p>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>11.4 Boolean Algebra (Pages 772-779)</h2>
+        <p>Mathematical system for manipulating binary variables using AND, OR, NOT operations. Also called switching algebra.</p>
+        <ul>
+            <li><strong>Recap of Operations (Tables 11.14, 11.15, 11.16):</strong>
+            AND: $A \cdot B$ or $AB$. OR: $A + B$. NOT: $\bar{A}$.</li>
+            <li><strong>Basic Identities (verifiable by truth tables):</strong>
+            $A \cdot 1 = A$; $A + 0 = A$; $A \cdot A = A$; $A + A = A$; $A \cdot 0 = 0$; $A + 1 = 1$; $A \cdot \bar{A} = 0$; $A + \bar{A} = 1$.</li>
+            <li>
+                <strong>Laws of Boolean Algebra:</strong>
+                <ol>
+                    <li><strong>Involution:</strong> $\overline{(\bar{A})} = A$</li>
+                    <li><strong>Commutative Law:</strong> $AB = BA$; $A + B = B + A$</li>
+                    <li><strong>Associative Law:</strong> $A(BC) = (AB)C$; $A + (B + C) = (A + B) + C$</li>
+                    <li><strong>Distributive Law:</strong> $A(B + C) = AB + AC$; $A + BC = (A + B)(A + C)$ (Precedence: AND before OR unless parentheses dictate). (Table 11.17 verifies $A + BC = (A+B)(A+C)$)</li>
+                    <li>
+                        <strong>Absorption Laws:</strong>
+                        $A + AB = A$ (Proof: $A + AB = A \cdot 1 + AB = A(1+B) = A \cdot 1 = A$)
+                        $A(A + B) = A$ (Proof: $A(A+B) = AA + AB = A + AB = A$)
+                        Additional Absorption:
+                        $A + \bar{A}B = A + B$ (Proof: $A + \bar{A}B = (A + \bar{A})(A + B) = 1 \cdot (A + B) = A + B$)
+                        $A(\bar{A} + B) = AB$ (Proof: $A(\bar{A}+B) = A\bar{A} + AB = 0 + AB = AB$)
+                    </li>
+                    <li>
+                        <strong>De Morgan's Theorems:</strong> Crucial for simplifying expressions and converting between gate types.
+                        $\overline{(A + B)} = \bar{A}\bar{B}$ (The complement of a sum is the product of the complements). (Table 11.18)
+                        $\overline{(AB)} = \bar{A} + \bar{B}$ (The complement of a product is the sum of the complements). (Table 11.19)
+                    </li>
+                </ol>
+            </li>
+        </ul>
+        <p><strong>Example 11.8: Algebraic Verification</strong></p>
+        <p>(Note: The text aims to prove Eq. 11.1, $F = \bar{A} + \bar{B} + AB = \bar{A}B + A\bar{B}$. However, the LHS is XNOR: $(\overline{AB}) + AB$, while the RHS is XOR. These are not equal. The example's algebraic steps also seem to have issues as presented in the source text.)</p>
+        <p>Let's simplify $F = \bar{A} + \bar{B} + AB$ using DeMorgan's: $F = \overline{AB} + AB$. This is the XNOR function.</p>
+
+        <h3>Duality:</h3>
+        <ul>
+            <li>A property of Boolean algebra. If an expression is valid, its <strong>dual</strong> is also valid.</li>
+            <li>To form a dual: Interchange AND ($\cdot$) and OR ($+$) operations, and interchange 0s and 1s. Variables and complements remain unchanged.</li>
+            <li>Example: $A + AB = A$. Dual: $A(A+B) = A$.</li>
+            <li>Example: $A + 0 = A$. Dual: $A \cdot 1 = A$.</li>
+            <li><strong>Important Note:</strong> Duals are not necessarily equivalent to each other.</li>
+        </ul>
+
+        <p><strong>Example 11.9: Dual of Exclusive-OR</strong></p>
+        <ul>
+            <li>XOR: $A \oplus B = \bar{A}B + A\bar{B}$</li>
+            <li>Dual: Interchange $+$ and $\cdot$. $(\bar{A} + B)(A + \bar{B})$</li>
+            <li>This dual is called <strong>Exclusive-NOR (XNOR)</strong> or <strong>Equivalence</strong>. Denoted $A \odot B$.
+            $A \odot B = (\bar{A} + B)(A + \bar{B})$.
+            Expanding: $\bar{A}A + \bar{A}\bar{B} + BA + B\bar{B} = 0 + \bar{A}\bar{B} + AB + 0 = \bar{A}\bar{B} + AB$.</li>
+            <li>Truth Table for XNOR (Table 11.20): Output is 1 if A and B are the same.</li>
+        </ul>
+        <table>
+            <thead><tr><th>A</th><th>B</th><th>$\bar{A}\bar{B}$+AB (XNOR)</th></tr></thead>
+            <tbody>
+                <tr><td>0</td><td>0</td><td>1</td></tr>
+                <tr><td>0</td><td>1</td><td>0</td></tr>
+                <tr><td>1</td><td>0</td><td>0</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td></tr>
+            </tbody>
+        </table>
+        <ul>
+            <li>XNOR gate symbol (Fig. 11.18): XOR symbol with a bubble at the output.</li>
+        </ul>
+
+        <h3>Multiple-Input Gates</h3>
+        <ul>
+            <li>
+                <strong>AND and OR gates are associative and commutative:</strong>
+                $A + (B+C) = (A+B) + C = A+B+C$
+                $A(BC) = (AB)C = ABC$
+                Order doesn't matter, so $A+B+C$ and $ABC$ are unambiguous.
+                Allows for gates with 3 or more inputs (Fig. 11.19 for 3-input OR, Fig. 11.20 for 3-input AND).
+            </li>
+            <li>
+                <strong>NOR and NAND gates are commutative but NOT associative:</strong>
+                NOR: $A \downarrow B = \overline{(A+B)}$.
+                $A \downarrow (B \downarrow C) = \overline{(A + \overline{(B+C)})} = \bar{A}(B+C) = \bar{A}B + \bar{A}C$.
+                $(A \downarrow B) \downarrow C = \overline{(\overline{(A+B)} + C)} = (A+B)\bar{C} = A\bar{C} + B\bar{C}$.
+                These are not equal.
+                Therefore, a 3-input NOR gate is *defined* as $\overline{(A+B+C)}$ (Fig. 11.21).
+                By DeMorgan: $\overline{(A+B+C)} = \bar{A}\bar{B}\bar{C}$.
+                NAND: $A \uparrow B = \overline{(AB)}$.
+                A 3-input NAND gate is *defined* as $\overline{(ABC)}$ (Fig. 11.22).
+                By DeMorgan: $\overline{(ABC)} = \bar{A} + \bar{B} + \bar{C}$.
+            </li>
+            <li>
+                <strong>De Morgan's extended for multiple variables:</strong>
+                $\overline{(A+B+C+D)} = \bar{A}\bar{B}\bar{C}\bar{D}$
+                $\overline{(ABCD)} = \bar{A}+\bar{B}+\bar{C}+\bar{D}$
+                NOR and NAND gates can have more than three inputs.
+            </li>
+        </ul>
+
+    </main>
+
+    <footer>
+        <!-- Optional: Add footer text if needed -->
+    </footer>
+
+     <!-- Font Size Control Icons HTML -->
+     <div class="font-control">
+         <span class="font-control-icon" id="fontMinusBtn" title="Decrease font size">-</span>
+         <span class="font-control-icon" id="fontPlusBtn" title="Increase font size">+</span>
+     </div>
+     <div id="fontSizeDisplay">10px</div> <!-- Initial size display -->
+
+    <script>
+        // --- Formula Copy Function ---
+        function copyFormulaLatex(element, latexStringWithColor) {
+            if (!latexStringWithColor) {
+                console.error('No LaTeX data found passed to copy function.');
+                return;
+            }
+            let rawLatexToCopy = element.dataset.latex;
+            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\(Eq\.\s*[\d\.]+\)$/, '');
+            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\w+$/, ''); // Remove units like Hz
+
+            navigator.clipboard.writeText(rawLatexToCopy).then(() => {
+                element.classList.add('copied');
+                const originalTitle = element.title;
+                element.title = 'Copied: ' + rawLatexToCopy;
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                    element.title = originalTitle;
+                 }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy LaTeX: ', err);
+                alert('Failed to copy LaTeX. See console for details.');
+            });
+        }
+
+        // --- Font Size Control & Hold Functionality ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const minusBtn = document.getElementById('fontMinusBtn');
+            const plusBtn = document.getElementById('fontPlusBtn');
+            const display = document.getElementById('fontSizeDisplay');
+            const htmlEl = document.documentElement;
+            const bodyEl = document.body;
+
+            let currentSize = 10; 
+            const minSize = 10;
+            const maxSize = 28; 
+            const step = 1;
+            let displayTimeout = null;
+            let holdTimeout = null;
+            let holdInterval = null;
+            const initialHoldDelay = 400; 
+            const repeatInterval = 100;  
+            const mathJaxDebounceDelay = 350; 
+
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            const queueMathJaxTypeset = debounce(() => {
+                if (window.MathJax && MathJax.typesetPromise) {
+                    console.log("Debounced: Typesetting MathJax");
+                    MathJax.typesetPromise([bodyEl]).catch((err) => console.error('MathJax typesetting error:', err));
+                 }
+            }, mathJaxDebounceDelay);
+
+            function updateFontSize(newSize) {
+                const oldSize = currentSize;
+                currentSize = Math.max(minSize, Math.min(maxSize, newSize));
+
+                if (currentSize !== oldSize) {
+                    htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                    display.textContent = currentSize + 'px';
+                    display.classList.add('visible');
+
+                    if (displayTimeout) { clearTimeout(displayTimeout); }
+                    displayTimeout = setTimeout(() => {
+                        display.classList.remove('visible');
+                        displayTimeout = null;
+                    }, 1500);
+                    return true; 
+                }
+                return false; 
+            }
+
+            function stopHolding() {
+                bodyEl.classList.remove('no-font-transition'); 
+                if (holdTimeout) { clearTimeout(holdTimeout); holdTimeout = null; }
+                if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+                queueMathJaxTypeset();
+            }
+
+            function startHolding(direction) {
+                bodyEl.classList.add('no-font-transition');
+                updateFontSize(currentSize + direction * step);
+                // Clear previous timers to prevent multiple intervals if mousedown event fires rapidly
+                if (holdTimeout) clearTimeout(holdTimeout);
+                if (holdInterval) clearInterval(holdInterval);
+
+                holdTimeout = setTimeout(() => {
+                    holdInterval = setInterval(() => {
+                        if (!updateFontSize(currentSize + direction * step)) {
+                            stopHolding(); 
+                        }
+                    }, repeatInterval);
+                }, initialHoldDelay);
+            }
+
+            if (minusBtn && plusBtn && display) {
+                minusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(-1); });
+                plusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(1); });
+                window.addEventListener('mouseup', stopHolding); 
+                minusBtn.addEventListener('mouseleave', stopHolding); 
+                plusBtn.addEventListener('mouseleave', stopHolding);
+
+                htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                display.textContent = currentSize + 'px';
+                console.log("Font control initialized. Current size:", currentSize);
+                 if (window.MathJax) {
+                     MathJax.startup.promise.then(() => {
+                         console.log("Queueing initial MathJax typeset");
+                         queueMathJaxTypeset(); 
+                     });
+                 }
+            } else {
+                console.error("Font control elements not found!");
+            }
+
+             const formulaContainers = document.querySelectorAll('.formula-container');
+             formulaContainers.forEach(container => {
+                 container.addEventListener('wheel', function(event) {
+                     const isScrollableHorizontally = this.scrollWidth > this.clientWidth;
+                     if (isScrollableHorizontally) {
+                         if (event.deltaY !== 0) { 
+                             event.preventDefault();
+                             this.scrollLeft += event.deltaY;
+                         }
+                     }
+                 }, { passive: false });
+             });
+             console.log("Horizontal scroll override applied to formula containers.");
+
+        });
+    </script>
+
+</body>
+</html>

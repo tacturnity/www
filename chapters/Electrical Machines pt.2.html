@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en" style="--base-font-size: 10px;"> <!-- Default font size set to 10px -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 15: Machines</title>
+
+    <!-- Google Fonts - Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true, tags: 'ams' },
+          options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'], ignoreHtmlClass: 'tex2jax_ignore', processHtmlClass: 'tex2jax_process' },
+          svg: { fontCache: 'global' },
+          startup: {
+            ready: () => { console.log('MathJax ready.'); MathJax.startup.defaultReady(); MathJax.startup.promise.then(() => console.log('MathJax initial typeset complete.')); }
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Keyframes for Animations (FadeIn) */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Fonts & Base Styling */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            color: #e0e0e0;
+            line-height: 1.7;
+            padding: 25px;
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            font-size: var(--base-font-size); /* Controlled by JS */
+            transition: font-size 0.2s ease-in-out; /* Default smooth transition */
+            padding-bottom: 80px; /* Space for controls */
+            overflow-x: hidden;
+        }
+        /* Class to disable transition during rapid changes (e.g., hold) */
+        body.no-font-transition {
+            transition: none !important;
+        }
+
+        /* Headings */
+        h1, h2 { font-family: 'Roboto Mono', monospace; text-align: center; margin-bottom: 1.5em; }
+        h1 { font-size: 2.4em; color: #ffffff; font-weight: 700; padding-bottom: 12px; margin-top: 1.5em; margin-bottom: 1.5em; border-bottom: 2px solid #ffffff; animation: fadeIn 0.8s ease-out both; animation-delay: 0.1s; letter-spacing: -0.5px; }
+        h2 { font-size: 1.6em; color: #cccccc; font-weight: 500; margin-top: 30px; margin-bottom: 1.5em; border-bottom: 1px solid #555555; padding-bottom: 5px; animation: fadeIn 0.8s ease-out both; animation-delay: 0.3s; }
+        h3 { font-size: 1.2em; color: #bdbdbd; font-weight: 500; margin-top: 1.8em; margin-bottom: 0.8em; padding-bottom: 3px; border-bottom: 1px dotted #444; text-align: left; }
+        h4 { font-size: 1.1em; color: #b0b0b0; font-weight: 500; margin-top: 1.5em; margin-bottom: 0.7em; text-align: left; }
+
+
+        /* Main Content Area */
+        main { max-width: 800px; margin: 40px auto; background-color: rgba(30, 30, 30, 0.85); padding: 35px 45px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.1); animation: fadeIn 0.8s ease-out both; animation-delay: 0.2s; }
+        /* Paragraph and List styling */
+        p { margin-bottom: 1em; color: inherit; font-size: inherit; }
+        ul, ol { margin-left: 25px; list-style: disc; margin-bottom: 1em; }
+        ol { list-style: decimal; }
+        li { margin-bottom: 8px; font-size: inherit; }
+        strong { font-weight: 500; color: #ffffff; }
+
+        /* Formula Container Styling (with horizontal scroll) */
+        .formula-container {
+            margin: 15px 0 20px 0; padding: 10px 20px; background-color: rgba(45, 45, 45, 0.9);
+            border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto; overflow-y: hidden; /* Horizontal scroll, no vertical */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            cursor: pointer; color: #e0e0e0; border-left: 4px solid transparent;
+            font-family: 'Roboto Mono', monospace; position: relative; white-space: nowrap;
+        }
+        .formula-container:hover { background-color: rgba(60, 60, 60, 0.95); border-left-color: #a6e3a1; border-color: rgba(166, 227, 161, 0.5); }
+        .formula-container.copied { background-color: rgba(166, 227, 161, 0.2); border-color: #a6e3a1; border-left-color: #a6e3a1; }
+        /* Optional Scrollbar Style */
+        .formula-container::-webkit-scrollbar { height: 8px; }
+        .formula-container::-webkit-scrollbar-track { background: rgba(60, 60, 60, 0.5); border-radius: 4px; }
+        .formula-container::-webkit-scrollbar-thumb { background-color: #888; border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+        .formula-container::-webkit-scrollbar-thumb:hover { background-color: #aaa; }
+        /* MathJax display style */
+        .formula-container mjx-container[display="true"] { margin: 0.5em 0 !important; text-align: left !important; display: inline-block; vertical-align: middle; }
+
+        /* Footer Styling */
+        footer { text-align: center; margin-top: 70px; padding-bottom: 35px; font-size: 0.85em; color: #888888; animation: fadeIn 1s ease-out both; animation-delay: 0.7s; }
+
+        /* Simple Dark Theme Scrollbar for Page */
+        body::-webkit-scrollbar { width: 10px; }
+        body::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 5px; }
+        body::-webkit-scrollbar-thumb { background-color: #777; border-radius: 5px; border: 2px solid #2a2a2a; background-clip: content-box; }
+        body::-webkit-scrollbar-thumb:hover { background-color: #999; }
+        html { scrollbar-width: thin; scrollbar-color: #777 #2a2a2a; }
+        @supports (scrollbar-gutter: stable) { html { scrollbar-gutter: stable; } }
+
+        /* Font Control Icons CSS */
+        .font-control { position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+        .font-control-icon { font-size: 28px; font-weight: bold; color: #777; cursor: pointer; padding: 8px; transition: color 0.3s ease; pointer-events: auto; user-select: none; line-height: 1; display: inline-block; }
+        .font-control-icon:hover { color: #a6e3a1; }
+        #fontSizeDisplay { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(45, 45, 45, 0.9); color: #e0e0e0; padding: 6px 12px; border-radius: 5px; font-size: 13px; font-family: 'Roboto Mono', monospace; z-index: 11; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; white-space: nowrap; }
+        #fontSizeDisplay.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Chapter 15: Machines</h1>
+    </header>
+
+    <main>
+        <h2>15.3 Rotating-Coil Devices (Pages 969-980)</h2>
+        <p>Transducers using rotation.</p>
+
+        <h3>The d'Arsonval Movement (Fig. 15.15, Fig. 15.16)</h3>
+        <p>Core of analog DC meters.</p>
+        <ul>
+            <li>
+                <strong>Structure:</strong>
+                <ul>
+                    <li>Stationary permanent magnet creating a radial magnetic field in an air gap.</li>
+                    <li>Stationary iron core within the gap to ensure uniform radial field.</li>
+                    <li>Rectangular N-turn coil, free to rotate on jeweled bearings around the iron core.</li>
+                    <li>Two springs: provide restraining torque and electrical connection to the coil.</li>
+                    <li>Pointer attached to coil assembly indicates angular deflection $\gamma$ on a scale.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Operation (Fig. 15.16 - top view of air gap):</strong>
+                <ul>
+                    <li>Current $i$ through the coil. Coil sides (length $l$) are perpendicular to $B$.</li>
+                    <li>Force on one side: $f_{side} = Bli$.</li>
+                    <li>Torque from one side: $T_{side} = f_{side} \cdot r = Blir$ (where $r$ is distance from axis to conductor).</li>
+                    <li>Total torque on N-turn coil (2 sides active):</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T_{coil} = 2NBlri}}')"
+             data-latex="T_{coil} = 2NBlri \quad (Eq. 15.18)"
+             title="Click to copy LaTeX">
+             $$ T_{coil} = 2NBlri \quad (Eq. 15.18) $$
+        </div>
+        <p>clockwise.</p>
+        <ul>
+            <li>Restraining Torque from Springs:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T_{springs} = \\frac{\\gamma}{K}}}')"
+             data-latex="T_{springs} = \frac{\gamma}{K} \quad (Eq. 15.19)"
+             title="Click to copy LaTeX">
+             $$ T_{springs} = \frac{\gamma}{K} \quad (Eq. 15.19) $$
+        </div>
+        <p>counterclockwise. ($K$ is rotational compliance of springs).</p>
+        <ul>
+            <li>
+                Equilibrium: $T_{coil} = T_{springs}$.
+                $2NBlri = \gamma / K$.
+                Deflection:
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{\\gamma = (2KNBlr)i}}')"
+             data-latex="\gamma = (2KNBlr)i \quad (Eq. 15.20)"
+             title="Click to copy LaTeX">
+             $$ \gamma = (2KNBlr)i \quad (Eq. 15.20) $$
+        </div>
+        <p>Deflection $\gamma$ is directly proportional to current $i$. -&gt; Linear scale for DC ammeters/voltmeters.</p>
+
+        <p><strong>Example 15.5: d'Arsonval Movement Calculation</strong></p>
+        <ul>
+            <li>Coil: $l = 2\text{cm} = 0.02\text{m}$, $r = 1\text{cm} = 0.01\text{m}$. Field $B = 0.5\text{T}$. Spring compliance $K = 2 \times 10^8 \text{ degrees/(N}\cdot\text{m)}$.
+            Full-scale deflection $\gamma_{fs} = 90 \text{ degrees}$ for current $i_{fs} = 50 \text{ µA} = 50 \times 10^{-6} \text{ A}$. Find $N$.</li>
+            <li>From Eq. 15.20: $N = \gamma / (2KB l r i)$.</li>
+            <li>$N = 90 / (2 \cdot (2 \times 10^8) \cdot 0.5 \cdot 0.02 \cdot 0.01 \cdot (50 \times 10^{-6})) = 90 / 2 = 45 \text{ turns}$.</li>
+        </ul>
+
+        <h3>Ammeters (Fig. 15.17)</h3>
+        <p>Using d'Arsonval movement to measure current.</p>
+        <ul>
+            <li>The basic movement measures small currents (e.g., 0-50 µA).</li>
+            <li>To measure larger currents, a <strong>shunt resistor</strong> $R_p$ is placed in parallel with the movement (coil resistance $R_c$, inductance $L_c$).</li>
+            <li>For DC, $L_c$ is a short. Current $i_c$ through coil by current division: $i_c = (R_p / (R_p + R_c)) \cdot i_{total}$.</li>
+            <li>Solving for $R_p$:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{R_p = \\frac{i_c}{(i_{total} - i_c)} R_c}}')"
+             data-latex="R_p = \frac{i_c}{(i_{total} - i_c)} R_c \quad (Eq. 15.21)"
+             title="Click to copy LaTeX">
+             $$ R_p = \frac{i_c}{(i_{total} - i_c)} R_c \quad (Eq. 15.21) $$
+        </div>
+
+        <p><strong>Example 15.6: Ammeter Shunt</strong></p>
+        <ul>
+            <li>Movement: 50 µA full scale, $R_c = 2 \text{ k}\Omega$. Desired range: 0-100 mA.</li>
+            <li>$i_{c\_fs} = 50 \text{ µA}$, $i_{total\_fs} = 100 \text{ mA} = 100,000 \text{ µA}$.</li>
+            <li>$R_p = (50 \text{ µA} / (100,000 \text{ µA} - 50 \text{ µA})) \cdot 2000 \Omega \approx (50 / 100,000) \cdot 2000 \Omega = 1.00 \Omega$.</li>
+            <li>Ideal ammeter has zero resistance. Low shunt resistance makes the overall ammeter resistance low.</li>
+        </ul>
+
+        <h3>Voltmeters (Fig. 15.18)</h3>
+        <p>Using d'Arsonval movement to measure DC voltage.</p>
+        <ul>
+            <li>A <strong>series resistor (multiplier resistor)</strong> $R_s$ is connected in series with the movement.</li>
+            <li>For full-scale voltage $v_{fs}$, current through movement is $i_{fs}$.</li>
+            <li>By Ohm's Law: $v_{fs} = i_{fs} \cdot (R_s + R_c)$.</li>
+            <li>Solving for $R_s$: $R_s = (v_{fs} / i_{fs}) - R_c$.</li>
+        </ul>
+
+        <p><strong>Example 15.7: Voltmeter Multiplier</strong></p>
+        <ul>
+            <li>Movement: 50 µA full scale, $R_c = 2 \text{ k}\Omega$. Desired range: 0-20 V.</li>
+            <li>$i_{fs} = 50 \text{ µA}$.</li>
+            <li>$R_s = (20 \text{ V} / (50 \times 10^{-6} \text{ A})) - 2000 \Omega = 400,000 \Omega - 2000 \Omega = 398,000 \Omega = 398 \text{ k}\Omega$.</li>
+            <li>Total voltmeter resistance: $R_s + R_c = 398 \text{ k}\Omega + 2 \text{ k}\Omega = 400 \text{ k}\Omega$.</li>
+            <li><strong>Ohms per volt rating:</strong> Total resistance / full-scale voltage.
+            $400,000 \Omega / 20 \text{ V} = 20,000 \Omega/\text{V} = 20 \text{ k}\Omega/\text{V}$.</li>
+            <li>Ideal voltmeter has infinite resistance. High total resistance is desirable.</li>
+        </ul>
+
+        <h3>Ohmmeters (Fig. 15.19)</h3>
+        <p>Using d'Arsonval movement to measure resistance.</p>
+        <ul>
+            <li><strong>Basic Setup:</strong> Movement (coil $R_c$), series resistor $R_s$, and a battery $V_s$ are all in series. The unknown resistance $R_x$ is connected across the terminals.</li>
+            <li>Current $i$ through movement: $i = V_s / (R_s + R_c + R_x)$.</li>
+            <li>
+                <strong>Calibration:</strong>
+                <ul>
+                    <li>Full-scale deflection ($i_{fs}$): When $R_x = 0$ (terminals shorted). $R_s$ is chosen so $i_{fs} = V_s / (R_s + R_c)$.</li>
+                    <li>Zero deflection ($i=0$): When $R_x = \infty$ (terminals open).</li>
+                    <li>Other points: e.g., half-scale deflection when $R_x = R_s + R_c$.</li>
+                </ul>
+            </li>
+            <li>Scale is nonlinear and reads high resistance on left, low on right.</li>
+        </ul>
+
+        <p><strong>Example 15.8: Ohmmeter Design</strong></p>
+        <ul>
+            <li>Movement: 50 µA fs, $R_c = 2 \text{ k}\Omega$. Battery $V_s = 1.5 \text{ V}$.</li>
+            <li>Find $R_s$ for fs deflection when $R_x = 0$:
+            $50 \times 10^{-6} \text{ A} = 1.5 \text{ V} / (R_s + 2000 \Omega)$
+            $R_s + 2000 = 1.5 / (50 \times 10^{-6}) = 30,000 \Omega$. So $R_s = 28 \text{ k}\Omega$.</li>
+            <li>Resistance for half-scale deflection ($i = 25 \text{ µA}$):
+            $R_x = (V_s / i) - R_c - R_s = (1.5 / (25 \times 10^{-6})) - 2000 - 28000 = 60000 - 30000 = 30 \text{ k}\Omega$.</li>
+            <li><strong>Multimeter (VOM):</strong> A single d'Arsonval movement with switches to select different shunt/series resistors for various current, voltage, and resistance ranges.</li>
+        </ul>
+
+        <h3>The Electrodynamometer (Fig. 15.20)</h3>
+        <p>Rotational transducer, useful for AC measurements.</p>
+        <ul>
+            <li>
+                <strong>Structure:</strong>
+                <ul>
+                    <li>No permanent magnet. Magnetic field $B$ is supplied by a <strong>stationary coil (solenoid)</strong>, split into two sections. Core is nonmagnetic (avoids eddy/hysteresis losses). $B$ is proportional to current $i_s$ in stationary coil: $B = K_s i_s$.</li>
+                    <li><strong>Movable N-turn coil</strong> (similar to d'Arsonval) restrained by springs, with a pointer.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Operation:</strong> Current $i_c$ in movable coil.
+                <ul>
+                    <li>If plane of moving coil is at angle $\psi$ with direction of $B$, effective distance for torque $d = r \cos \psi$.</li>
+                    <li>Torque on movable coil: $T = 2NBl i_c r \cos \psi = 2NB i_c A_c \cos \psi / 2 = N B i_c A_c \cos \psi$ (where $A_c = 2lr$ is area of coil).
+                    The text uses $T = 2NBl i_c (r \cos \psi)$ based on $l$ as length and $2r$ as width.
+                    $T = 2NK_s l r \cos(\psi) \cdot i_s \cdot i_c$.</li>
+                </ul>
+            </li>
+            <li>Restraining Torque: $T_0 = \gamma / K$.</li>
+            <li>Equilibrium Deflection $\gamma$:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{\\gamma = (2NKK_s l r \\cos \\psi) i_c i_s}}')"
+             data-latex="\gamma = (2NKK_s l r \cos \psi) i_c i_s \quad (Eq. 15.23)"
+             title="Click to copy LaTeX">
+             $$ \gamma = (2NKK_s l r \cos \psi) i_c i_s \quad (Eq. 15.23) $$
+        </div>
+        <p>Deflection depends on the product $i_c i_s$.</p>
+        <ul>
+            <li>
+                <strong>AC Measurements:</strong>
+                <ul>
+                    <li>If $i_c = I_c \cos(\omega t + \theta_1)$ and $i_s = I_s \cos(\omega t + \theta_2)$.</li>
+                    <li>Mechanical inertia averages the deflection. Average of $i_c i_s$ is $(1/2) I_c I_s \cos(\theta_1 - \theta_2)$. (The text simplifies to $I_c I_s \cos \theta$).</li>
+                    <li>Average deflection:</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{\\gamma_{avg} = K_\\psi I_c I_s \\cos \\theta}}')"
+             data-latex="\gamma_{avg} = K_\\psi I_c I_s \cos \\theta \quad (Eq. 15.24)"
+             title="Click to copy LaTeX">
+             $$ \gamma_{avg} = K_\\psi I_c I_s \cos \\theta \quad (Eq. 15.24) $$
+        </div>
+        <p>where $\theta = \theta_1 - \theta_2$. ($K_\psi$ includes geometric factors and $\cos \psi$).</p>
+        <ul>
+            <li>
+                <strong>AC Ammeter/Voltmeter:</strong> If stationary and moving coils are in series, $i_c = i_s = i = I \cos(\omega t)$.
+                Then $\theta = 0$, $\cos \theta = 1$. $\gamma_{avg}$ is proportional to $I_c I_s = I^2$.
+                Scale can be graduated to read RMS current ($I / \sqrt{2}$). More common for AC voltmeters than ammeters.
+            </li>
+        </ul>
+
+        <h3>The Wattmeter (Fig. 15.21)</h3>
+        <p>Most important use of electrodynamometer. Measures average power.</p>
+        <ul>
+            <li>
+                <strong>Connection:</strong>
+                <ul>
+                    <li><strong>Fixed coil (current coil):</strong> Carries load current $i_s = i_{load}$. Placed in series with the load. Low resistance.</li>
+                    <li><strong>Moving coil (voltage coil/potential coil):</strong> Connected in series with a large resistor $R_s$. This combination is placed in parallel with the load. Current $i_c$ is proportional to load voltage $v_{load}$: $i_c \approx v_{load} / R_s$. High resistance.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Operation:</strong>
+                <ul>
+                    <li>Deflection $\gamma$ is proportional to $I_c I_s \cos \theta$.</li>
+                    <li>Here, $I_s$ is RMS load current $I$. $I_c$ is proportional to RMS load voltage $V$ ($I_c = V/R_s$).</li>
+                    <li>$\theta$ is the phase angle between load voltage and load current.</li>
+                    <li>So, deflection $\gamma$ is proportional to $(V/R_s) \cdot I \cdot \cos \theta = (1/R_s) \cdot P_{avg}$.</li>
+                    <li>Scale graduated to read average power $P_{avg} = VI \cos \theta$.</li>
+                </ul>
+            </li>
+            <li><strong>Polarity Marks (±):</strong> Ensure upscale deflection. If current enters (or leaves) ± mark on both coils simultaneously, deflection is upscale.</li>
+            <li>
+                <strong>Accuracy Note:</strong> Wattmeter reading $P_W$ includes power loss in the voltage coil if connected as in Fig 15.21 (voltage coil across load + current coil). If $P_L$ is true load power: $P_L = P_W - V_L^2 / (R_s + R_{c\_moving})$. Or more simply $P_L = P_W - V_L^2/R_s$ if $R_s$ dominates voltage coil impedance.
+                <ul>
+                    <li>Alternatively, if voltage coil is connected directly across load, $P_W$ includes power loss in current coil: $P_L = P_W - I_s^2 R_{c\_fixed}$.</li>
+                </ul>
+            </li>
+            <li><strong>Compensated Wattmeters:</strong> Have an additional coil to cancel the effect of $i_c$ in the current coil circuit for more accurate $P_L$ reading.</li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>15.4 DC Machines (Pages 980-1001)</h2>
+        <p>Focus on rotating machines.</p>
+
+        <h3>Rotating Machines - Basic Principles (Fig. 15.22, 15.23)</h3>
+        <ul>
+            <li>
+                <strong>Simple AC Generator (Alternator) (Fig. 15.22a):</strong>
+                <ul>
+                    <li>Rectangular loop (length $l$, width $2r$, Area $A = 2rl$) rotates at angular velocity $\omega$ in uniform magnetic field $B$.</li>
+                    <li>Angle between plane of loop and y-z plane is $\omega t$. Flux through loop $\Phi = BA \cos(\omega t)$.</li>
+                    <li><strong>Slip Rings:</strong> Ends of loop connected to slip rings (rotate with loop).</li>
+                    <li><strong>Brushes:</strong> Fixed, make contact with slip rings.</li>
+                    <li>Induced EMF (Faraday's Law): $e = -d\Phi/dt = -d(BA \cos \omega t)/dt = BA\omega \sin \omega t$. (Eq. 15.25 with minus sign from Lenz's Law and specific geometry). If N-turns:</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{e = -NBA\\omega \\sin \\omega t}}')"
+             data-latex="e = -NBA\\omega \sin \\omega t \quad (Eq. 15.26)"
+             title="Click to copy LaTeX">
+             $$ e = -NBA\\omega \sin \\omega t \quad (Eq. 15.26) $$
+        </div>
+        <ul>
+            <li>This is an AC voltage.</li>
+            <li>
+                <strong>Simple DC Generator (Fig. 15.23a):</strong>
+                <ul>
+                    <li>Modify alternator: replace slip rings with a <strong>split-ring commutator</strong>.</li>
+                    <li>Brushes repositioned.</li>
+                    <li>Commutator acts as a mechanical rectifier. Voltage $v_{12}$ across loop is $e = -BA\omega \sin \omega t$.</li>
+                    <li>
+                        Brush voltage $v$:
+                        <ul>
+                            <li>For $0 < \omega t < \pi$, $\sin \omega t > 0$, $e$ is negative. If brushes arranged appropriately, $v = -e = BA\omega \sin \omega t$.</li>
+                            <li>For $\pi < \omega t < 2\pi$, $\sin \omega t < 0$, $e$ is positive. Commutator switches connection, so $v = e = -BA\omega \sin \omega t$ (which is positive in this range).</li>
+                        </ul>
+                    </li>
+                    <li>Result: $v = |BA\omega \sin \omega t|$ (Fig. 15.24b). A pulsating DC voltage (rectified sine wave).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>DC Generators</h3>
+        <ul>
+            <li><strong>Stator (Field):</strong> Stationary part. Produces magnetic field via direct current in <strong>field windings</strong> on poles.</li>
+            <li><strong>Rotor (Armature):</strong> Rotating part. Contains conductors where EMFs are induced, and the commutator.</li>
+            <li>
+                <strong>Simplified DC Generator (Fig. 15.25):</strong>
+                <ul>
+                    <li>2-pole stator shown (can be more, always even).</li>
+                    <li>Rotor: cylindrical iron core with slots for armature conductors, commutator segments.</li>
+                    <li>Brushes make contact with commutator.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Coil Connections (Fig. 15.26):</strong> Multiple coils connected to commutator segments.
+                <ul>
+                    <li>EMF in a single coil is rectified (Fig. 15.27).</li>
+                    <li>Commutator connects coils in series between brushes such that their rectified EMFs add up.</li>
+                    <li>Output voltage across brushes (Fig. 15.28) is smoother DC with small <strong>commutator ripple</strong>.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>Generated Voltage ($v_g$)</h4>
+        <ul>
+            <li>$p$ = number of poles.</li>
+            <li>$\Phi$ = flux per pole (Wb).</li>
+            <li>$n$ = rotor speed (rpm).</li>
+            <li>$N$ = total number of armature conductors.</li>
+            <li>$a$ = number of parallel paths in armature winding between brushes.</li>
+            <li>Average EMF per conductor = $\Phi \cdot (p \cdot n/60)$ (flux cut per second).</li>
+            <li>Number of conductors in series per path = $N/a$.</li>
+            <li>Total generated voltage (no-load):</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v_g = \\frac{Np\\Phi n}{60a}}}')"
+             data-latex="v_g = \frac{Np\\Phi n}{60a} \quad (Eq. 15.27)"
+             title="Click to copy LaTeX">
+             $$ v_g = \frac{Np\\Phi n}{60a} \quad (Eq. 15.27) $$
+        </div>
+
+        <p><strong>Example 15.9: DC Generator Voltage</strong></p>
+        <ul>
+            <li>$p=2$, $a=2$. Pole area $A = 0.01 \text{ m}^2$, $B = 1 \text{ T}$. 4 armature coils, 12 turns/coil.</li>
+            <li>Flux per pole $\Phi = BA = 1 \cdot 0.01 = 0.01 \text{ Wb}$.</li>
+            <li>Total conductors $N = (4 \text{ coils}) \cdot (12 \text{ turns/coil}) \cdot (2 \text{ conductors/turn}) = 96$.</li>
+            <li>Speed $n = 1500 \text{ rpm}$.</li>
+            <li>$v_g = (96 \cdot 2 \cdot 0.01 \cdot 1500) / (60 \cdot 2) = (96 \cdot 0.01 \cdot 1500) / 60 = 24 \text{ V}$.</li>
+        </ul>
+
+        <h4>Generator with a Load (Fig. 15.29)</h4>
+        <ul>
+            <li>Armature has resistance $R_a$ (windings, brush contacts).</li>
+            <li>When loaded, terminal voltage $v_L$ is less than $v_g$.</li>
+            <li>$v_L = v_g - I_a R_a$ (where $I_a$ is armature current, same as load current $I_L$ for separate excitation).</li>
+        </ul>
+
+        <p><strong>Example 15.10: Loaded DC Generator</strong></p>
+        <ul>
+            <li>8kW, 200V DC generator, full-load current $I_L = 40\text{A}$ at $n_1 = 1200 \text{ rpm}$. $R_a = 0.5 \Omega$.</li>
+            <li>At 1200 rpm, full load: $v_{g1} = v_{L1} + I_L R_a = 200\text{V} + 40\text{A} \cdot 0.5\Omega = 200 + 20 = 220\text{V}$. This is no-load voltage at 1200 rpm.</li>
+            <li>$v_g$ is proportional to speed $n$ (if $\Phi$ constant).</li>
+            <li>At $n_2 = 900 \text{ rpm}$: $v_{g2} = v_{g1} \cdot (n_2 / n_1) = 220\text{V} \cdot (900 / 1200) = 220\text{V} \cdot (3/4) = 165\text{V}$. This is no-load voltage at 900 rpm.</li>
+            <li>Full-load voltage at 900 rpm (assuming $I_L = 40\text{A}$ is still full load capacity):
+            $v_{L2} = v_{g2} - I_L R_a = 165\text{V} - 40\text{A} \cdot 0.5\Omega = 165 - 20 = 145\text{V}$.</li>
+        </ul>
+
+        <h4>Generator Symbol (Fig. 15.30)</h4>
+        <p>Separate symbols for field ($i_f$) and armature ($i_a$). Prime mover (engine/turbine) is implicit.</p>
+
+        <h4>Magnetization Curves (Fig. 15.31)</h4>
+        <ul>
+            <li></li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v_g = K\\Phi n}}')"
+             data-latex="v_g = K\\Phi n \quad (Eq. 15.28)"
+             title="Click to copy LaTeX">
+             $$ v_g = K\\Phi n \quad (Eq. 15.28) $$
+        </div>
+        <p>where $K = Np/(60a)$.</p>
+        <ul>
+            <li>Flux $\Phi$ depends on field current $i_f$. Relationship is nonlinear (like B-H curve for magnetic material) due to saturation.</li>
+            <li>Plot of no-load $v_g$ vs. $i_f$ at constant speed $n$ is a <strong>magnetization curve</strong>.</li>
+            <li>Curves for different speeds are scaled versions (proportional to $n$).</li>
+            <li>Due to residual magnetism, $v_g$ is not zero when $i_f = 0$.</li>
+        </ul>
+
+        <h4>Generator Field Excitation</h4>
+        <p>Ways to supply DC to field winding ($R_f$ is implicit field resistance).</p>
+        <ol>
+            <li><strong>Separately Excited Generator (Fig. 15.32):</strong> Field winding connected to an external DC source $V_f$.</li>
+            <li>
+                <strong>Self-Excited Generator:</strong> Uses its own generated voltage.
+                <ul>
+                    <li>
+                        <strong>Shunt-Connected (Fig. 15.33a):</strong> Field winding in parallel (shunt) with armature.
+                        Field winding has many turns, high resistance $R_f$. $i_f$ is small.
+                        <strong>Control Rheostat</strong> $R_c$ (Fig. 15.33b) in series with field to adjust $i_f$ and thus $v_g$.
+                    </li>
+                    <li>
+                        <strong>Series-Connected (Fig. 15.34a):</strong> Field winding in series with armature. $i_f = i_a$.
+                        Field winding has few turns, low resistance.
+                        <strong>Diverter Resistance</strong> $R_d$ (Fig. 15.34b) in parallel with series field to divert some $i_a$. Rarely used.
+                    </li>
+                    <li>
+                        <strong>Compound-Connected (Fig. 15.35a):</strong> Has both shunt and series field windings.
+                        Can use control rheostat and diverter (Fig. 15.35b).
+                        <ul>
+                            <li><strong>Cumulative Compounding:</strong> Series field mmf aids shunt field mmf (typical).</li>
+                            <li><strong>Differential Compounding:</strong> Series field mmf opposes shunt field mmf.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+
+        <h4>Generator Buildup (Shunt Generator, Fig. 15.36, 15.37)</h4>
+        <p>How a self-excited shunt generator starts generating voltage.</p>
+        <ol>
+            <li>Residual magnetism produces small initial $v_g$ when rotor turns.</li>
+            <li>If field switch $S$ is closed, this small $v_g$ (across armature) is applied to field circuit ($R_f + R_c$).</li>
+            <li>This causes small $i_f$. If $i_f$ aids residual flux, $\Phi$ increases.</li>
+            <li>Increased $\Phi$ -&gt; increased $v_g$. Increased $v_g$ -&gt; increased $i_f$.</li>
+            <li>Process continues until stable operating point is reached.</li>
+        </ol>
+        <ul>
+            <li>
+                <strong>Operating Point:</strong> Intersection of magnetization curve ($v_g$ vs $i_f$) and field resistance line ($v_g = i_f \cdot R_{total\_field}$, where $R_{total\_field} = R_f + R_c$). (Fig. 15.37).
+                <ul>
+                    <li>For stable operation, field resistance line should intersect the nonlinear (saturated) part of magnetization curve.</li>
+                    <li>If $R_{total\_field}$ is too high (line too steep), intersection is very low, little buildup ("critical field resistance").</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>External Characteristics (Load Voltage $v_L$ vs. Load Current $i_L$)</h4>
+        <ol>
+            <li>
+                <strong>Separately Excited Generator (Fig. 15.38):</strong>
+                <ul>
+                    <li></li>
+                </ul>
+            </li>
+        </ol>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v_L = v_g - I_a R_a}}')"
+             data-latex="v_L = v_g - I_a R_a \quad (Eq. 15.29)"
+             title="Click to copy LaTeX">
+             $$ v_L = v_g - I_a R_a \quad (Eq. 15.29) $$
+        </div>
+        <p>If $v_g$ (due to constant $i_f$) is constant, $v_L$ drops linearly with $I_L$.</p>
+        <ul>
+            <li>Actually slightly curved down due to <strong>armature reaction</strong> (armature current's magnetic field distorts main field, slightly reducing net flux and $v_g$).</li>
+        </ul>
+        <ol start="2">
+            <li>
+                <strong>Shunt-Connected Generator (Fig. 15.38):</strong>
+                <ul>
+                    <li>$v_L$ drops more steeply than separately excited.</li>
+                    <li>As $I_L$ increases, $v_L$ drops due to $I_a R_a$.</li>
+                    <li>This lower $v_L$ is also the voltage across shunt field, so $i_f$ decreases.</li>
+                    <li>Decreased $i_f$ -&gt; decreased $\Phi$ -&gt; decreased $v_g$. This further drops $v_L$.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Compound-Connected Generator (Fig. 15.39):</strong>
+                <ul>
+                    <li>
+                        <strong>Cumulative Compounding:</strong> Series field aids shunt field. As $I_L$ (and thus series $i_f$) increases, flux from series field boosts total flux.
+                        <ul>
+                            <li><strong>Flat-Compounded:</strong> Series field compensates $R_a$ drop and armature reaction, so $v_L$ at full load $\approx v_L$ at no load.</li>
+                            <li><strong>Overcompounded:</strong> $v_L$ at full load &gt; $v_L$ at no load. Series field effect is strong.</li>
+                            <li><strong>Undercompounded:</strong> $v_L$ drops, but less than shunt. Series field effect is weak.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <ul>
+            <li>
+                <strong>Armature Reaction:</strong> MMF from armature current distorts main pole flux. Can affect commutation.
+                <ul>
+                    <li><strong>Compensating Windings (Pole-Face Windings):</strong> In slots on pole faces, series with armature. Produce MMF opposing armature MMF, reducing distortion.</li>
+                    <li><strong>Commutating Poles (Interpoles):</strong> Narrow poles between main poles, series with armature. Produce field to aid current reversal in coils undergoing commutation, reducing sparking at brushes.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>DC Motors (Pages 994-1001)</h3>
+        <p>Basically same construction as DC generators.</p>
+
+        <h4>Simple Rotating Motor (Fig. 15.40)</h4>
+        <ul>
+            <li>Loop in $B$ field. Current $i$ applied.</li>
+            <li>Force on upper conductor $f = Bli$ (downwards). Force on lower $f = Bli$ (upwards).</li>
+            <li>Torque on each conductor $fd = Blir \sin \delta$ ($\delta$ is torque/power angle between plane of loop and y-z plane).</li>
+            <li>Total torque for N-turn coil (2N conductors):</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T = 2NBlir \\sin \\delta = NBAi \\sin \\delta}}')"
+             data-latex="T = 2NBlir \\sin \\delta = NBAi \\sin \\delta \quad (Eq. 15.30)"
+             title="Click to copy LaTeX">
+             $$ T = 2NBlir \\sin \\delta = NBAi \\sin \\delta \quad (Eq. 15.30) $$
+        </div>
+        <p>Max when $\delta=90^\circ$.</p>
+        <ul>
+            <li>This torque rotates loop.</li>
+            <li>As loop rotates, it also generates a <strong>back EMF (counter EMF)</strong> that opposes applied current.</li>
+        </ul>
+
+        <h4>Armature Model for a DC Motor (Fig. 15.41)</h4>
+        <ul>
+            <li>Field current direction and rotation direction usually same as generator. Armature current direction is reversed.</li>
+            <li>Applied line voltage $v_L$. Armature resistance $R_a$. Back EMF $v_g = K\Phi n$.</li>
+            <li>KVL:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v_L = I_a R_a + v_g}}')"
+             data-latex="v_L = I_a R_a + v_g \quad (Eq. 15.31)"
+             title="Click to copy LaTeX">
+             $$ v_L = I_a R_a + v_g \quad (Eq. 15.31) $$
+        </div>
+        <p>($I_a$ direction into armature $+$ terminal).</p>
+        <ul>
+            <li>So,</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v_L = I_a R_a + K\\Phi n}}')"
+             data-latex="v_L = I_a R_a + K\\Phi n \quad (Eq. 15.32)"
+             title="Click to copy LaTeX">
+             $$ v_L = I_a R_a + K\\Phi n \quad (Eq. 15.32) $$
+        </div>
+        <ul>
+            <li><strong>Speed Equation:</strong></li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{n = \\frac{(v_L - I_a R_a)}{K\\Phi}}}')"
+             data-latex="n = \frac{(v_L - I_a R_a)}{K\\Phi} \quad (Eq. 15.33)"
+             title="Click to copy LaTeX">
+             $$ n = \frac{(v_L - I_a R_a)}{K\\Phi} \quad (Eq. 15.33) $$
+        </div>
+        <ul>
+            <li><strong>Developed Torque Equation:</strong></li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T = K\'\\Phi I_a}}')"
+             data-latex="T = K\'\\Phi I_a \quad (Eq. 15.34)"
+             title="Click to copy LaTeX">
+             $$ T = K\'\\Phi I_a \quad (Eq. 15.34) $$
+        </div>
+        <p>($K'$ is another constant).</p>
+
+        <h4>DC Shunt Motors (Fig. 15.42)</h4>
+        <p>Field winding in shunt with armature, across $v_L$.</p>
+        <ul>
+            <li>If $v_L$ is constant, and field rheostat $R_c$ is fixed, then $i_f$ is constant, so $\Phi$ is relatively constant (ignoring armature reaction).</li>
+            <li>Since $I_a R_a$ is usually small compared to $v_L$, $n \approx v_L / (K\Phi)$. Thus, a shunt motor is nearly a constant speed motor.</li>
+            <li>Speed control: Vary $R_c$ (changes $i_f \rightarrow \Phi$) or vary $v_L$ (if possible).</li>
+            <li>
+                <strong>Speed-Torque Characteristic (Fig. 15.43):</strong>
+                <ul>
+                    <li>From speed and torque equations: $n = (v_L / K\Phi) - (R_a / (KK\'\Phi^2)) \cdot T$.</li>
+                    <li>This is $n = b - mT$. A straight line with negative slope (actually slightly curved due to armature reaction). Speed drops slightly as torque (load) increases.</li>
+                    <li>$n_r, T_r$ are rated speed and torque at full load.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <p><strong>Example 15.11: Shunt Motor Speed</strong></p>
+        <ul>
+            <li>$v_L = 220\text{V}$. At no load: $n_{NL} = 1200 \text{ rpm}$, $I_{aNL} = 6\text{A}$. $R_a = 0.5\Omega$.</li>
+            <li>Find speed $n_{FL}$ when $I_{aFL} = 40\text{A}$ (full load). Assume $\Phi$ is constant.</li>
+            <li>From $n = (v_L - I_a R_a) / K\Phi$, so $K\Phi = (v_L - I_a R_a) / n$.</li>
+            <li>At no load: $K\Phi = (220 - 6 \cdot 0.5) / 1200 = (220 - 3) / 1200 = 217 / 1200 \approx 0.1808$.</li>
+            <li>At full load: $n_{FL} = (v_L - I_{aFL} R_a) / K\Phi = (220 - 40 \cdot 0.5) / 0.1808 = (220 - 20) / 0.1808 \approx 1106 \text{ rpm}$. (Text has 0.181, giving 1105 rpm).</li>
+        </ul>
+        <ul>
+            <li>
+                <strong>Speed Regulation (SR):</strong> Measure of speed change from no load to full load.
+                $SR = (n_{NL} - n_{FL}) / n_{FL}$.
+                For example: $(1200 - 1105) / 1105 = 95 / 1105 \approx 0.086 = 8.6\%$.
+                Typical shunt motor SR: 5-12%.
+            </li>
+        </ul>
+
+        <h4>DC Series Motors (Fig. 15.44)</h4>
+        <p>Field winding in series with armature. $i_f = i_a$. Field has few turns, heavy wire.</p>
+        <ul>
+            <li>Flux $\Phi$ depends on $i_a$. Assume linear magnetization: $\Phi = K_f i_f = K_f i_a$.</li>
+            <li>Back EMF</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v_g = K\\Phi n = K(K_f i_a)n = KK_f i_a n}}')"
+             data-latex="v_g = K\\Phi n = K(K_f i_a)n = KK_f i_a n \quad (Eq. 15.35)"
+             title="Click to copy LaTeX">
+             $$ v_g = K\\Phi n = K(K_f i_a)n = KK_f i_a n \quad (Eq. 15.35) $$
+        </div>
+        <ul>
+            <li>Torque</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T = K\'\\Phi i_a = K\'(K_f i_a)i_a = K\'K_f i_a^2}}')"
+             data-latex="T = K\'\\Phi i_a = K\'(K_f i_a)i_a = K\'K_f i_a^2 \quad (Eq. 15.36)"
+             title="Click to copy LaTeX">
+             $$ T = K\'\\Phi i_a = K\'(K_f i_a)i_a = K\'K_f i_a^2 \quad (Eq. 15.36) $$
+        </div>
+        <p>Torque proportional to $i_a^2$.</p>
+        <ul>
+            <li>Let $R = R_a + R_f$ (total series resistance).
+            $v_L = I_a R + v_g = I_a R + KK_f I_a n = I_a (R + KK_f n)$.
+            So $I_a = v_L / (R + KK_f n)$.</li>
+            <li>Substitute $I_a$ into torque equation:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T = K\'K_f \\left( \\frac{v_L}{R + KK_f n} \\right)^2}}')"
+             data-latex="T = K\'K_f \left( \frac{v_L}{R + KK_f n} \right)^2 \quad (Eq. 15.37)"
+             title="Click to copy LaTeX">
+             $$ T = K\'K_f \left( \frac{v_L}{R + KK_f n} \right)^2 \quad (Eq. 15.37) $$
+        </div>
+        <ul>
+            <li>
+                <strong>Speed-Torque Characteristic (Fig. 15.45):</strong>
+                <ul>
+                    <li>Speed $n$ increases rapidly as torque $T$ (load) decreases.</li>
+                    <li><strong>Dangerously high speed at no load.</strong> Series motors must always be mechanically coupled to a load.</li>
+                    <li>Used for variable-speed, high starting torque applications (cranes, hoists, electric drills).</li>
+                </ul>
+            </li>
+            <li><strong>Universal Motors:</strong> Since torque direction is same regardless of current direction ($T \sim i_a^2$), series motors can run on AC or DC. These are called universal motors. Torque pulsates on AC. Common in hand tools, appliances.</li>
+        </ul>
+
+        <h4>DC Compound Motors</h4>
+        <p>Have both shunt and series fields. Usually cumulative.</p>
+        <ul>
+            <li><strong>Speed-Torque Characteristic (Fig. 15.46):</strong> Lies between shunt and series motor characteristics.</li>
+        </ul>
+
+        <h4>Starting DC Motors</h4>
+        <ul>
+            <li>At startup, $n=0$, so back EMF $v_g = K\Phi n = 0$.</li>
+            <li>From $v_L = I_a R_a + v_g$, if $v_g=0$, then $I_a = v_L / R_a$.</li>
+            <li>Since $R_a$ is small, initial $I_a$ can be excessively large.</li>
+            <li><strong>Starting Box:</strong> A variable resistance placed in series with armature at startup. Limits $I_{a\_start}$ to 150-200% of rated. Resistance is gradually removed as motor speeds up and $v_g$ builds.</li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>15.5 AC Machines (Pages 1001-1026)</h2>
+
+        <h3>The Alternator (Synchronous Generator) (Fig. 15.47)</h3>
+        <p>Typically, field (rotor) rotates, armature (stator) is stationary.</p>
+        <ul>
+            <li><strong>Reason:</strong> Armature handles more power; easier to take high power from stationary windings. Field DC supplied via slip rings/brushes to rotor.</li>
+            <li>
+                <strong>Structure (Fig. 15.47 - simplified 2-pole):</strong>
+                <ul>
+                    <li>Rotor: Field winding. DC current creates N and S poles.</li>
+                    <li>Stator: Armature conductors (a-a', b-b', c-c') embedded in slots, forming coils.</li>
+                    <li>As rotor field rotates, changing flux induces sinusoidal EMFs in stator coils.</li>
+                    <li>Coils a-a', b-b', c-c' are physically spaced $120^\circ$ apart. EMFs induced are $120^\circ$ phase-shifted (Fig. 15.48).</li>
+                    <li>Connecting coils in Wye (Y) or Delta ($\Delta$) produces a three-phase voltage source.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Frequency:</strong> If rotor speed is $n$ rpm (n/60 rps), for a 2-pole machine, one revolution = one cycle of EMF.
+                Electrical frequency $f_e = n/60$ Hz. Synchronized with mechanical speed $n$. -&gt; <strong>Synchronous Machine</strong>.
+            </li>
+            <li>
+                <strong>Multi-pole Alternators (Fig. 15.49 - 4-pole):</strong>
+                <ul>
+                    <li>For $p$ poles (even number), one revolution produces $p/2$ cycles of EMF.</li>
+                    <li>Frequency</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f_e = \\frac{p}{2} \\cdot \\frac{n}{60} = \\frac{pn}{120}}}')"
+             data-latex="f_e = \frac{p}{2} \cdot \frac{n}{60} = \frac{pn}{120} \quad (Eq. 15.38)"
+             title="Click to copy LaTeX">
+             $$ f_e = \frac{p}{2} \cdot \frac{n}{60} = \frac{pn}{120} \quad (Eq. 15.38) $$
+        </div>
+        <p>Hz.</p>
+        <ul>
+            <li>
+                E.g., for $f_e = 60 \text{ Hz}$:
+                <ul>
+                    <li>2-pole: $n = 3600 \text{ rpm}$.</li>
+                    <li>4-pole: $n = 1800 \text{ rpm}$.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Rotor Types:</strong>
+                <ul>
+                    <li><strong>Salient-Pole:</strong> Prominent poles (Fig 15.47, 15.49). For lower speeds (e.g., hydro-generators).</li>
+                    <li><strong>Cylindrical (Nonsalient) Rotor:</strong> Field winding distributed in slots. For high speeds (e.g., turboalternators, 1800/3600 rpm) to reduce mechanical stress and windage.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Alternator Armature Model (Single Phase) (Fig. 15.50)</h3>
+        <ul>
+            <li>Per-phase equivalent circuit.</li>
+            <li>Generated EMF $V_g$ (phasor).</li>
+            <li>Armature resistance $R_a$.</li>
+            <li><strong>Synchronous Reactance $X_s$:</strong> Represents effects of armature winding inductance and armature reaction (effect of stator MMF on rotor field).</li>
+            <li>Terminal voltage $V_L$ (phasor). Armature current $I_a$ (phasor).</li>
+            <li>KVL: $V_g = V_L + I_a R_a + j I_a X_s$. (Or $V_L = V_g - I_a(R_a + jX_s)$ if $I_a$ flows out of $V_g$).</li>
+            <li>$R_a$ is often much smaller than $X_s$ and ignored.</li>
+            <li>$V_g$ (RMS magnitude) related to field current $i_f$ and speed $n$ by a magnetization curve (AC voltages, so RMS on vertical axis).</li>
+        </ul>
+
+        <p><strong>Example 15.12: Alternator Calculation</strong></p>
+        <ul>
+            <li>6-pole, 3-phase, 12 kVA, Y-connected. Rated per-phase $V_L = 125\text{V}$ (RMS) at load pf = 0.6 lagging, 60 Hz. $X_s = 2\Omega$, $R_a \approx 0$.</li>
+            <li><strong>Rotor Speed (n):</strong> From $f = pn/120 \Rightarrow n = 120f/p = 120 \cdot 60/6 = 1200 \text{ rpm}$.</li>
+            <li><strong>Armature Current ($I_a$):</strong> Per-phase power = 12 kVA / 3 = 4 kVA.
+            $I_a = (\text{Per-phase VA}) / V_L = 4000 \text{ VA} / 125 \text{ V} = 32 \text{ A}$.</li>
+            <li><strong>Phase Angle:</strong> $\text{pf} = 0.6$ lagging $\Rightarrow \theta = \cos^{-1}(0.6) = 53.1^\circ$.
+            If $V_L$ is reference: $V_L = 125\angle 0^\circ \text{ V}$. Then $I_a = 32\angle -53.1^\circ \text{ A}$.</li>
+            <li><strong>Generated Voltage ($V_g$):</strong> (Model from Fig 15.50, KVL for alternator: $V_g = V_L + I_a(jX_s)$ assuming $R_a=0$).
+            $V_g = 125\angle 0^\circ + (32\angle -53.1^\circ)(j2) = 125\angle 0^\circ + (32\angle -53.1^\circ)(2\angle 90^\circ)$.
+            $V_g = 125 + 64\angle (90 - 53.1)^\circ = 125 + 64\angle 36.9^\circ$.
+            $V_g = 125 + (51.2 + j38.4) = 176.2 + j38.4 = 180.3\angle 12.3^\circ \text{ V}$.
+            Magnitude $V_g \approx 180 \text{ V}$.</li>
+            <li>Phasor diagram (Fig. 15.52): $V_g$ leads $V_L$.</li>
+        </ul>
+
+        <h3>The Rotating Stator Field (Fig. 15.53)</h3>
+        <p>Essential for AC motors.</p>
+        <ul>
+            <li>Consider 3 stator coils (a-a', b-b', c-c') spaced $120^\circ$ physically.</li>
+            <li>
+                Fed by balanced 3-phase currents:
+                $i_a = I \cos(\omega t)$
+                $i_b = I \cos(\omega t - 120^\circ)$
+                $i_c = I \cos(\omega t - 240^\circ) = I \cos(\omega t + 120^\circ)$. (Fig. 15.54)
+            </li>
+            <li>Each current produces a pulsating flux aligned with its coil axis ($\Phi_a, \Phi_b, \Phi_c$). Assume flux $\phi = ki$.</li>
+            <li>Total flux $\Phi_{total} = \Phi_a + \Phi_b + \Phi_c$ (vector sum).</li>
+            <li>
+                Analysis using complex numbers (flux $\Phi e^{j\theta}$):
+                $\Phi_{a\_complex} = (kI \cos \omega t) e^{j0^\circ}$
+                $\Phi_{b\_complex} = (kI \cos(\omega t-120^\circ)) e^{-j120^\circ}$ (or $e^{j120^\circ}$ if axes defined differently, text shows b lagging a)
+                $\Phi_{c\_complex} = (kI \cos(\omega t+120^\circ)) e^{j120^\circ}$ (or $e^{-j240^\circ}$)
+                The sum (after trigonometric expansion and simplification, see page 1007-1008):
+                $\Phi_{total\_complex} = (3/2)kI e^{-j\omega t}$. (Or $e^{j\omega t}$ depending on rotation sense assumed).
+            </li>
+            <li><strong>Result:</strong> The total stator flux has a <strong>constant magnitude</strong> $(3/2)kI$ and rotates at angular velocity $\omega$ (synchronous speed).</li>
+        </ul>
+
+        <h3>The Synchronous Motor (Fig. 15.55)</h3>
+        <p>Construction like alternator.</p>
+        <ul>
+            <li>Stator: 3-phase winding creates rotating magnetic field (at $\omega_s$).</li>
+            <li>Rotor: DC field winding creates fixed N-S poles (relative to rotor).</li>
+            <li>
+                <strong>Operation:</strong>
+                <ul>
+                    <li>Magnetic attraction between rotating stator field poles and DC rotor poles.</li>
+                    <li>Rotor "locks in" and rotates at the same speed as stator field (synchronous speed $n_s$).</li>
+                    <li>
+                        <strong>Torque Angle ($\delta$) (Fig. 15.55):</strong> Angle between stator field axis and rotor field axis.
+                        <ul>
+                            <li>No load: $\delta$ small (overcomes friction/windage).</li>
+                            <li>Load applied: $\delta$ increases. Rotor field lags stator field.</li>
+                            <li>If load torque &gt; max developed torque, motor loses synchronism and stops.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Armature Model (Fig. 15.56):</strong> Same as alternator, but $I_a$ direction reversed (power flows into motor).
+                <ul>
+                    <li>KVL: $V_L = I_a R_a + j I_a X_s + V_g$. (Or $V_L = I_a(R_a + jX_s) + V_g$).</li>
+                    <li>Ignoring $R_a$:</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{V_L = j I_a X_s + V_g}}')"
+             data-latex="V_L = j I_a X_s + V_g \quad (Eq. 15.39)"
+             title="Click to copy LaTeX">
+             $$ V_L = j I_a X_s + V_g \quad (Eq. 15.39) $$
+        </div>
+        <ul>
+            <li>$V_g$ (generated/back EMF due to rotor field) lags $V_L$ by $\delta$.</li>
+            <li>
+                <strong>Power Equation (Fig. 15.57, 15.58 - phasor diagrams):</strong>
+                <ul>
+                    <li>From geometry of phasor diagram (assuming $R_a=0$), can derive</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{V_g \\sin \\delta = X_s I_a \\cos \\theta}}')"
+             data-latex="V_g \\sin \\delta = X_s I_a \\cos \\theta \quad (Eq. 15.40)"
+             title="Click to copy LaTeX">
+             $$ V_g \\sin \\delta = X_s I_a \\cos \\theta \quad (Eq. 15.40) $$
+        </div>
+        <p>where $\theta$ is power factor angle between $V_L$ and $I_a$.</p>
+        <ul>
+            <li>Input power per phase $P_{in} = V_L I_a \cos \theta$.</li>
+            <li>Substitute $I_a \cos \theta$:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{P_{in} = \\frac{V_L V_g}{X_s} \\sin \\delta}}')"
+             data-latex="P_{in} = \frac{V_L V_g}{X_s} \\sin \\delta \quad (Eq. 15.41)"
+             title="Click to copy LaTeX">
+             $$ P_{in} = \frac{V_L V_g}{X_s} \\sin \\delta \quad (Eq. 15.41) $$
+        </div>
+        <ul>
+            <li>$\delta$ is also called power angle. Max power when $\delta = 90^\circ$.</li>
+        </ul>
+
+        <p><strong>Example 15.13: Synchronous Motor Calculation</strong></p>
+        <ul>
+            <li>Y-connected, 3-phase. Per-phase $V_L = 125\text{V}$. $X_s = 5\Omega$. Input power $P_{total} = 6\text{kW}$. Torque angle $\delta = 27^\circ$. Find pf.</li>
+            <li>Per-phase power $P_{phase} = 6000\text{W} / 3 = 2000\text{W}$.</li>
+            <li>From $P = (V_L V_g / X_s) \sin \delta$:
+            $V_g = (P X_s) / (V_L \sin \delta) = (2000 \cdot 5) / (125 \cdot \sin 27^\circ) = 10000 / (125 \cdot 0.454) \approx 176\text{V}$.</li>
+            <li>From $V_L = jX_s I_a + V_g$ (assuming $R_a=0$), solve for $I_a$:
+            $I_a = (V_L - V_g) / (jX_s)$.
+            If $V_L = 125\angle 0^\circ$, then $V_g = 176\angle -27^\circ$ (lags $V_L$ by $\delta$).
+            $I_a = (125\angle 0^\circ - 176\angle -27^\circ) / (5\angle 90^\circ)$.
+            $125 - (176\cos(-27^\circ) + j176\sin(-27^\circ)) = 125 - (156.8 - j79.9) = -31.8 + j79.9 = 86.0\angle 111.7^\circ$.
+            $I_a = 86.0\angle 111.7^\circ / 5\angle 90^\circ = 17.2\angle (111.7-90)^\circ = 17.2\angle 21.7^\circ \text{ A}$. (Text gets $22^\circ$).</li>
+            <li>Power factor: $\cos(21.7^\circ) \approx 0.929$ leading (since $I_a$ leads $V_L$).</li>
+            <li><strong>Overexcited Motor:</strong> $V_g > V_L$ (often leading pf).</li>
+            <li><strong>Underexcited Motor:</strong> $V_g < V_L$ (often lagging pf).</li>
+            <li>
+                <strong>Power Factor Correction (Fig. 15.60):</strong> By varying field current (DC to rotor), $V_g$ changes.
+                <ul>
+                    <li>Increasing field current -&gt; increases $V_g$. For constant load (power), $V_g \sin \delta$ must be constant. So if $V_g$ increases, $\sin \delta$ (and $\delta$) must decrease.</li>
+                    <li>This changes $I_a$ and its phase angle $\theta$. Can change pf from lagging to leading.</li>
+                    <li>An unloaded synchronous motor used for pf correction is a <strong>synchronous condenser</strong>.</li>
+                </ul>
+            </li>
+            <li><strong>Synchronous Speed:</strong></li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{n_s = \\frac{120f}{p}}}')"
+             data-latex="n_s = \frac{120f}{p} \quad (Eq. 15.42)"
+             title="Click to copy LaTeX">
+             $$ n_s = \frac{120f}{p} \quad (Eq. 15.42) $$
+        </div>
+        <p>Motor runs exactly at this speed or stops.</p>
+        <ul>
+            <li><strong>Pull-out Torque:</strong> Max torque before losing synchronism.</li>
+            <li>
+                <strong>Stepper Motor (Fig. 15.61):</strong> Variation that rotates in discrete steps.
+                <ul>
+                    <li>Rotor is permanent magnet. Stator has multiple poles with windings.</li>
+                    <li>Applying current to specific stator poles in sequence positions rotor. E.g. $45^\circ$ steps.</li>
+                    <li>Used for positioning.</li>
+                </ul>
+            </li>
+            <li><strong>Starting Synchronous Motors:</strong> No inherent starting torque (average torque is zero if rotor is stationary). Requires starting mechanism (e.g., damper/squirrel-cage windings on rotor to act like induction motor at start).</li>
+        </ul>
+
+        <h3>The Induction Motor (Pages 1014-1026)</h3>
+        <p>Most common AC motor. No DC excitation needed for rotor. Operates by magnetic induction.</p>
+        <ul>
+            <li>Stator (field) creates rotating magnetic flux (at $\omega_s$).</li>
+            <li>Rotor (armature) has conductors.</li>
+            <li><strong>Squirrel-Cage Rotor (Fig. 15.62):</strong> Conducting bars short-circuited by end rings. No brushes/slip rings. Rugged.</li>
+            <li>
+                <strong>Operation (Fig. 15.63):</strong>
+                <ol>
+                    <li>Rotating stator field cuts rotor conductors.</li>
+                    <li>EMF induced in rotor conductors (Faraday's Law).</li>
+                    <li>Since rotor circuit is closed, induced currents flow in rotor conductors.</li>
+                    <li>Rotor currents in stator magnetic field experience forces -&gt; torque.</li>
+                    <li>Torque tends to make rotor follow rotating stator field.</li>
+                </ol>
+            </li>
+            <li>
+                <strong>Slip (s):</strong> Rotor speed $n$ must be <em>less than</em> synchronous speed $n_s$. If $n = n_s$, no relative motion, no induced EMF, no torque.
+                <ul>
+                    <li></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{s = \\frac{(n_s - n)}{n_s}}}')"
+             data-latex="s = \frac{(n_s - n)}{n_s} \quad (Eq. 15.43)"
+             title="Click to copy LaTeX">
+             $$ s = \frac{(n_s - n)}{n_s} \quad (Eq. 15.43) $$
+        </div>
+        <ul>
+            <li>Motor speed</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{n = (1 - s)n_s}}')"
+             data-latex="n = (1 - s)n_s \quad (Eq. 15.44)"
+             title="Click to copy LaTeX">
+             $$ n = (1 - s)n_s \quad (Eq. 15.44) $$
+        </div>
+        <ul>
+            <li>Typical full-load slip: 2-6% (0.02-0.06).</li>
+            <li>Slip Speed:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{n_s - n = s n_s}}')"
+             data-latex="n_s - n = s n_s \quad (Eq. 15.45)"
+             title="Click to copy LaTeX">
+             $$ n_s - n = s n_s \quad (Eq. 15.45) $$
+        </div>
+        <p>Relative speed between stator field and rotor.</p>
+        <ul>
+            <li>
+                <strong>Frequency of Rotor EMF/Currents ($f_r$):</strong> Proportional to slip speed.
+                $f_r = (p \cdot (s n_s)) / 120 = s \cdot (p n_s / 120) = s f_s$ (where $f_s$ is stator frequency).
+            </li>
+            <li>
+                <strong>Rotor Field Speed:</strong> Rotor currents at $f_r$ create a rotor magnetic field. This field rotates relative to rotor at $s n_s$.
+                Absolute speed of rotor field = $(\text{speed of rotor}) + (\text{speed of rotor field rel. to rotor})$
+                $= n + s n_s = (1-s)n_s + s n_s = n_s$.
+                Rotor field rotates at synchronous speed, same as stator field. Constant torque produced.
+            </li>
+            <li><strong>Damping Windings:</strong> Squirrel-cage windings on synchronous motor rotor act as induction motor windings for starting and damping oscillations.</li>
+        </ul>
+
+        <p><strong>Example 15.14: Induction Motor Parameters</strong></p>
+        <ul>
+            <li>3-phase induction motor, speed $n = 864 \text{ rpm}$ at $f_s = 60 \text{ Hz}$.</li>
+            <li>$n_s = 120 f_s / p = 7200 / p$. Since $n < n_s$, try $p$ values.
+            If $p=8$, $n_s = 7200/8 = 900 \text{ rpm}$. This is close above 864.</li>
+            <li>Slip $s = (n_s - n) / n_s = (900 - 864) / 900 = 36 / 900 = 0.04 = 4\%$.</li>
+            <li>Rotor frequency $f_r = s f_s = 0.04 \cdot 60 \text{ Hz} = 2.4 \text{ Hz}$.</li>
+        </ul>
+
+        <h3>An Induction-Motor Model (Per-Phase Equivalent Circuit)</h3>
+        <p>Like a transformer with rotating secondary.</p>
+        <ul>
+            <li>
+                <strong>Rotor at Rest (s=1, "locked rotor"):</strong> Stator field induces EMF $V_2$ (at frequency $f_s$) in rotor.
+                Rotor current
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{I_2 = \\frac{V_2}{(R_2 + jX_2)}}}')"
+             data-latex="I_2 = \frac{V_2}{(R_2 + jX_2)} \quad (Eq. 15.46)"
+             title="Click to copy LaTeX">
+             $$ I_2 = \frac{V_2}{(R_2 + jX_2)} \quad (Eq. 15.46) $$
+        </div>
+        <p>($R_2$=rotor resistance, $X_2$=rotor reactance at $f_s$).</p>
+        <ul>
+            <li>
+                <strong>Rotor Running (slip s):</strong> Induced EMF is $sV_2$ (at frequency $sf_s$). Rotor reactance is $sX_2$.
+                Rotor current
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{I_2 = \\frac{sV_2}{(R_2 + jsX_2)} = \\frac{V_2}{((R_2/s) + jX_2)}}}')"
+             data-latex="I_2 = \frac{sV_2}{(R_2 + jsX_2)} = \frac{V_2}{((R_2/s) + jX_2)} \quad (Eq. 15.47)"
+             title="Click to copy LaTeX">
+             $$ I_2 = \frac{sV_2}{(R_2 + jsX_2)} = \frac{V_2}{((R_2/s) + jX_2)} \quad (Eq. 15.47) $$
+        </div>
+        <ul>
+            <li>
+                <strong>Equivalent Rotor Circuit (Fig. 15.64):</strong> Voltage $V_2$ drives current $I_2$ through $jX_2$ and $R_2/s$.
+                The term $R_2/s$ can be split: $R_2/s = R_2 + R_2(1-s)/s$.
+                <ul>
+                    <li>$R_2$: Actual rotor resistance (power loss $I_2^2 R_2$ as heat).</li>
+                    <li>$R_r = R_2(1-s)/s$: Fictitious resistance representing mechanical power developed.
+                    $P_{mech\_per\_phase} = I_2^2 \cdot R_2(1-s)/s$.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Complete Equivalent Circuit (Fig. 15.65):</strong> Refer rotor quantities to stator (like transformer).
+                <ul>
+                    <li>$R_1, X_1$: Stator resistance and leakage reactance.</li>
+                    <li>Ideal transformer $1:N$ (N is effective turns ratio).</li>
+                    <li>Reflected rotor impedance: $(R_2/s)/N^2 + jX_2/N^2$.</li>
+                    <li>Can be simplified by lumping reactances and referring rotor resistance (Fig. 15.68 is standard).</li>
+                    <li>Text model results in Eq on page 1020: $I_2 = (V/N) / (R_1 + (R_2'/s) + jX)$ where $R_2' = R_2/N^2$ and $X = X_1 + X_2/N^2$. (V is stator phase voltage).</li>
+                    <li>Power converted to mechanical: $P_{conv} = I_2^2 \cdot R_2'(1-s)/s$ per phase. (Using the current $I_2$ from the simplified referred circuit, and $R_2'$ referred rotor resistance).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Torque-Speed Characteristics (Fig. 15.66)</h3>
+        <ul>
+            <li>Mechanical power $P_{mech} = T\omega_m$ ($\omega_m$ is mechanical speed of rotor in rad/s).</li>
+            <li>$\omega_m = (1-s)\omega_s$ (where $\omega_s$ is synchronous angular speed).</li>
+            <li>
+                Torque (3-phase total): $T = (3 \cdot P_{mech\_per\_phase}) / \omega_m = (3 \cdot I_2^2 \cdot R_2'(1-s)/s) / ((1-s)\omega_s)$.
+                $T = (3 \cdot I_2^2 \cdot R_2'/s) / \omega_s$.
+                Substitute $I_2 = V / \sqrt{((R_1 + R_2'/s)^2 + X^2)}$ (where $V$ is phase voltage).
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T = \\frac{3V^2 (R_2\'/s)}{\\omega_s [(R_1 + R_2\'/s)^2 + X^2]}}}')"
+             data-latex="T = \frac{3V^2 (R_2'/s)}{\omega_s [(R_1 + R_2'/s)^2 + X^2]} \quad (Eq. 15.51)"
+             title="Click to copy LaTeX">
+             $$ T = \frac{3V^2 (R_2'/s)}{\omega_s [(R_1 + R_2'/s)^2 + X^2]} \quad (Eq. 15.51) $$
+        </div>
+        <ul>
+            <li>
+                <strong>Normal Operation (small s, 2-6%):</strong> $R_2'/s$ is large. $R_1, X$ are small.
+                $T \approx (3V^2s) / (\omega_s R_2')$. Torque approx. proportional to slip. Constant speed machine.
+            </li>
+            <li>
+                <strong>Slow Speeds (s $\approx$ 1, starting):</strong> $R_1 + R_2'/s$ small compared to $X$.
+                $T \approx (3V^2 R_2') / (\omega_s X^2s)$. Starting torque (s=1): $T_{start} \approx (3V^2 R_2') / (\omega_s X^2)$.
+            </li>
+            <li>
+                <strong>Maximum (Breakdown) Torque ($T_m$):</strong> Differentiate $T$ wrt $s$, set to zero.
+                Occurs at slip
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{s_{maxT} = \\frac{R_2\'}{\\sqrt{R_1^2 + X^2}}}}')"
+             data-latex="s_{maxT} = \frac{R_2'}{\sqrt{R_1^2 + X^2}} \quad (Eq. 15.52)"
+             title="Click to copy LaTeX">
+             $$ s_{maxT} = \frac{R_2'}{\sqrt{R_1^2 + X^2}} \quad (Eq. 15.52) $$
+        </div>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{T_m = \\frac{3V^2}{2\\omega_s [R_1 + \\sqrt{R_1^2 + X^2}]}}}')"
+             data-latex="T_m = \frac{3V^2}{2\\omega_s [R_1 + \sqrt{R_1^2 + X^2}]} \quad (Eq. 15.53)"
+             title="Click to copy LaTeX">
+             $$ T_m = \frac{3V^2}{2\\omega_s [R_1 + \sqrt{R_1^2 + X^2}]} \quad (Eq. 15.53) $$
+        </div>
+        <p>Independent of $R_2'$.</p>
+
+        <p><strong>Example 15.15: Induction Motor Torques</strong></p>
+        <ul>
+            <li>3-phase, 120V/phase, $n = 1152 \text{ rpm}$. 60Hz, 6-pole.
+            $R_1 = 0.25\Omega$, $R_2' = 0.15\Omega$ (referred), $X = 0.5\Omega$.</li>
+            <li>$n_s = 120 \cdot 60/6 = 1200 \text{ rpm}$. $\omega_s = n_s \cdot 2\pi/60 = 1200 \cdot 2\pi/60 = 40\pi \text{ rad/s}$.</li>
+            <li>Rated slip $s = (1200 - 1152) / 1200 = 48/1200 = 0.04 = 4\%$.</li>
+            <li>
+                Rated Torque (Eq. 15.51):
+                $T_r = (3 \cdot 120^2 \cdot (0.15/0.04)) / (40\pi \cdot [(0.25 + 0.15/0.04)^2 + 0.5^2])$
+                $R_2'/s = 0.15/0.04 = 3.75$. $R_1 + R_2'/s = 0.25 + 3.75 = 4$.
+                $T_r = (3 \cdot 120^2 \cdot 3.75) / (40\pi \cdot [4^2 + 0.5^2]) = 162000 / (40\pi \cdot [16 + 0.25]) = 162000 / (40\pi \cdot 16.25) \approx 79.3 \text{ N}\cdot\text{m}$.
+            </li>
+            <li>
+                Starting Torque (s=1):
+                $R_2'/1 = 0.15$. $R_1 + R_2'/1 = 0.25 + 0.15 = 0.4$.
+                $T_{st} = (3 \cdot 120^2 \cdot 0.15) / (40\pi \cdot [0.4^2 + 0.5^2]) = 6480 / (40\pi \cdot [0.16 + 0.25]) = 6480 / (40\pi \cdot 0.41) \approx 125.7 \text{ N}\cdot\text{m}$.
+            </li>
+            <li>
+                Max Torque (Eq. 15.53):
+                $T_m = (3 \cdot 120^2) / (2 \cdot 40\pi \cdot [0.25 + \sqrt{(0.25^2 + 0.5^2)}])$
+                $\sqrt{(0.0625 + 0.25)} = \sqrt{0.3125} \approx 0.559$.
+                $T_m = 43200 / (80\pi \cdot [0.25 + 0.559]) = 43200 / (80\pi \cdot 0.809) \approx 43200 / 203.3 \approx 212 \text{ N}\cdot\text{m}$. (Matches text).
+            </li>
+            <li>
+                Slip for max torque (Eq. 15.52):
+                $s_{maxT} = 0.15 / \sqrt{(0.25^2 + 0.5^2)} = 0.15 / 0.559 \approx 0.268 = 26.8\%$. (Matches text).
+            </li>
+            <li>Speed at max torque: $n = (1 - 0.268) \cdot 1200 = 0.732 \cdot 1200 = 878.4 \text{ rpm}$. (Matches text).</li>
+            <li>Rated mechanical output power: $P_{out} = T_r \cdot \omega_m = T_r \cdot (1-s)\omega_s = 79.3 \cdot (1-0.04) \cdot 40\pi = 79.3 \cdot 0.96 \cdot 40\pi \approx 9570 \text{ W}$.
+            $9570 \text{ W} / 746 \text{ W/hp} \approx 12.8 \text{ hp}$. (Matches text).</li>
+        </ul>
+        <ul>
+            <li>
+                <strong>Wound-Rotor Motor:</strong> Rotor has windings similar to stator, connected to slip rings. External resistances can be added in series with rotor coils.
+                <ul>
+                    <li>Increasing $R_2$ (and $R_2'$) increases slip for given torque (speed control).</li>
+                    <li>Increases starting torque (shifts $s_{maxT}$ point, see Fig 15.66 curve shape). Max torque value is independent of $R_2'$.</li>
+                    <li>More expensive.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Single-Phase Induction Motors (Pages 1024-1026)</h3>
+        <p>Common for low power ( &lt; 1 hp). Stator has single-phase winding.</p>
+        <ul>
+            <li>Single-phase stator current $i = I \cos \omega t$ produces a pulsating flux $\Phi = kI \cos \omega t$.</li>
+            <li>This can be decomposed into two counter-rotating fields of equal magnitude ($(1/2)kI$).</li>
+            <li>Net torque is pulsating. Average torque-speed curve similar to 3-phase once started.</li>
+            <li><strong>No inherent starting torque.</strong> Requires starting mechanism.</li>
+        </ul>
+        <ol>
+            <li>
+                <strong>Shaded-Pole Motor (Fig. 15.67):</strong>
+                <ul>
+                    <li>Stator has salient poles. A "shading coil" (short-circuited copper loop) around part of each pole.</li>
+                    <li>Currents induced in shading coil delay flux in shaded part.</li>
+                    <li>Creates a small, weak rotating field component -&gt; low starting torque. Direction is from unshaded to shaded part.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Split-Phase Motor (Fig. 15.68):</strong>
+                <ul>
+                    <li>Two stator windings: Main winding and Auxiliary (starting) winding. Physically displaced.</li>
+                    <li>Auxiliary winding designed to have different R/X ratio than main (e.g., higher R/X).</li>
+                    <li>Currents in two windings are phase-shifted -&gt; produces rotating field component -&gt; starting torque.</li>
+                    <li><strong>Centrifugal Switch:</strong> Disconnects auxiliary winding when motor nears operating speed.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Capacitor Motor (Fig. 15.69):</strong> Type of split-phase motor.
+                <ul>
+                    <li>Capacitor in series with auxiliary winding to create larger phase shift between main and auxiliary currents.</li>
+                    <li>Better starting torque.</li>
+                    <li><strong>Capacitor-Start Motor:</strong> Centrifugal switch disconnects aux winding + capacitor.</li>
+                    <li><strong>Capacitor-Run Motor (Permanent-Split Capacitor, PSC):</strong> Capacitor and aux winding remain connected. Improves running pf and efficiency. Capacitor value is a compromise between start/run.</li>
+                    <li><strong>Capacitor-Start, Capacitor-Run Motor:</strong> Two capacitors. One for starting (larger, with aux winding, switched out). One for running (smaller, remains with aux winding). Best performance, higher cost.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>Summary (Pages 1026-1027)</h2>
+        <p>Key points from the chapter:</p>
+        <ol>
+            <li>Conductor (len $l$, vel $u$) in $B$ field: $emf = Blu$.</li>
+            <li>Conductor (len $l$, current $i$) in $B$ field: $force = Bli$.</li>
+            <li>Mechanical circuits analogous to electric circuits.</li>
+            <li>Dynamic transducers (moving-coil): Loudspeakers, mics, phonograph pickups.</li>
+            <li>Electromagnet (moving-iron): Relays, solenoid plungers.</li>
+            <li>d'Arsonval movement: Rotational, for DC ammeters, voltmeters, ohmmeters.</li>
+            <li>Electrodynamometer: Rotational, for AC measurements (esp. voltmeters, wattmeters).</li>
+            <li>Generator: Mech -&gt; Elec. Motor: Elec -&gt; Mech.</li>
+            <li>Alternator (AC gen): Slip rings. DC gen: Split-ring commutator.</li>
+            <li>DC gen: Field on stator, armature on rotor. Alternator: Field on rotor, armature on stator (usually).</li>
+            <li>Rotating machine voltage: Displayed by magnetization curve.</li>
+            <li>DC machine: Separately or self-excited (shunt, series, compound).</li>
+            <li>DC gen external characteristic: Load voltage vs. load current.</li>
+            <li>Synchronous machines: Salient-pole (low speed) or cylindrical (high speed) rotors.</li>
+            <li>Three-phase machines: Analyzed per-phase.</li>
+            <li>Synchronous speed: Depends on frequency and number of poles.</li>
+            <li>DC motor speed: Easily controlled.</li>
+            <li>DC motor speed-torque characteristic.</li>
+            <li>DC motor speed regulation: No-load to full-load speed change.</li>
+            <li>DC motor starting: Requires starting box (series resistance).</li>
+            <li>Rotating stator field: Employed by AC motors.</li>
+            <li>Synchronous motor: Constant speed. Used for power-factor correction.</li>
+            <li>Induction motor: Transformer with fixed primary, rotating secondary.</li>
+            <li>Squirrel-cage motor: Simplest induction motor type.</li>
+            <li>Induction motor: Speed slightly less than synchronous. Essentially constant speed for given load.</li>
+            <li>Slip: Measure of speed difference $(n_s - n)/n_s$.</li>
+            <li>Induction motor torque-speed curve.</li>
+            <li>Wound-rotor motor: Speed control, higher starting torque, higher cost.</li>
+            <li>Single-phase induction motors: Similar to 3-phase squirrel-cage, low power.</li>
+            <li>Single-phase starting: Shaded-pole, split-phase, capacitor motors.</li>
+        </ol>
+
+    </main>
+
+    <footer>
+        <!-- Optional: Add footer text if needed -->
+    </footer>
+
+     <!-- Font Size Control Icons HTML -->
+     <div class="font-control">
+         <span class="font-control-icon" id="fontMinusBtn" title="Decrease font size">-</span>
+         <span class="font-control-icon" id="fontPlusBtn" title="Increase font size">+</span>
+     </div>
+     <div id="fontSizeDisplay">10px</div> <!-- Initial size display -->
+
+    <script>
+        // --- Formula Copy Function ---
+        function copyFormulaLatex(element, latexStringWithColor) {
+            if (!latexStringWithColor) {
+                console.error('No LaTeX data found passed to copy function.');
+                return;
+            }
+            // The latexStringWithColor already has \color{white}{...}
+            // We need to extract the raw LaTeX from data-latex for navigator.clipboard.writeText
+            let rawLatexToCopy = element.dataset.latex;
+            // Remove equation number like (Eq. X.Y) if present for copying
+            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\(Eq\.\s*[\d\.]+\)$/, '');
+            // Also remove " Hz" or other units that might be part of the quad
+             rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\w+$/, '');
+
+
+            navigator.clipboard.writeText(rawLatexToCopy).then(() => {
+                element.classList.add('copied');
+                const originalTitle = element.title;
+                element.title = 'Copied: ' + rawLatexToCopy;
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                    element.title = originalTitle;
+                 }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy LaTeX: ', err);
+                alert('Failed to copy LaTeX. See console for details.');
+            });
+        }
+
+        // --- Font Size Control & Hold Functionality ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const minusBtn = document.getElementById('fontMinusBtn');
+            const plusBtn = document.getElementById('fontPlusBtn');
+            const display = document.getElementById('fontSizeDisplay');
+            const htmlEl = document.documentElement;
+            const bodyEl = document.body; // Target body for transition class
+
+            // Configuration
+            let currentSize = 10; // Initial size set to 10px
+            const minSize = 10;
+            const maxSize = 28; // Adjust max size if needed
+            const step = 1;
+            let displayTimeout = null;
+            let holdTimeout = null;
+            let holdInterval = null;
+            const initialHoldDelay = 400; // ms before repeat starts
+            const repeatInterval = 100;  // ms between repeats while holding
+            const mathJaxDebounceDelay = 350; // ms to wait after last change before re-typesetting
+
+            // --- Debounce Function ---
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // --- Debounced MathJax Typesetting ---
+            const queueMathJaxTypeset = debounce(() => {
+                if (window.MathJax && MathJax.typesetPromise) {
+                    console.log("Debounced: Typesetting MathJax");
+                    MathJax.typesetPromise([bodyEl]).catch((err) => console.error('MathJax typesetting error:', err));
+                 }
+            }, mathJaxDebounceDelay);
+
+            // --- Update Font Size and Display ---
+            function updateFontSize(newSize) {
+                const oldSize = currentSize;
+                currentSize = Math.max(minSize, Math.min(maxSize, newSize));
+
+                if (currentSize !== oldSize) {
+                    htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                    display.textContent = currentSize + 'px';
+                    display.classList.add('visible');
+
+                    if (displayTimeout) { clearTimeout(displayTimeout); }
+                    displayTimeout = setTimeout(() => {
+                        display.classList.remove('visible');
+                        displayTimeout = null;
+                    }, 1500);
+                    return true; // Indicate size changed
+                }
+                return false; // Indicate size hit limit
+            }
+
+            // --- Stop Holding Action ---
+            function stopHolding() {
+                bodyEl.classList.remove('no-font-transition'); // Re-enable transition
+                if (holdTimeout) { clearTimeout(holdTimeout); holdTimeout = null; }
+                if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+                queueMathJaxTypeset();
+            }
+
+            // --- Start Holding Action ---
+            function startHolding(direction) {
+                bodyEl.classList.add('no-font-transition');
+                updateFontSize(currentSize + direction * step);
+                stopHolding(); // Clear previous timers, especially if this is a new mousedown
+
+                holdTimeout = setTimeout(() => {
+                    holdInterval = setInterval(() => {
+                        if (!updateFontSize(currentSize + direction * step)) {
+                            stopHolding(); // Stop if size limit is reached
+                        }
+                    }, repeatInterval);
+                }, initialHoldDelay);
+            }
+
+            // --- Event Listeners ---
+            if (minusBtn && plusBtn && display) {
+                minusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(-1); });
+                plusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(1); });
+                window.addEventListener('mouseup', stopHolding); // Stop on release anywhere
+                minusBtn.addEventListener('mouseleave', stopHolding); // Stop if mouse leaves while holding
+                plusBtn.addEventListener('mouseleave', stopHolding);
+
+                // Set initial state
+                htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                display.textContent = currentSize + 'px';
+                console.log("Font control initialized. Current size:", currentSize);
+                 // Initial MathJax typeset on load (after ready)
+                 if (window.MathJax) {
+                     MathJax.startup.promise.then(() => {
+                         console.log("Queueing initial MathJax typeset");
+                         queueMathJaxTypeset(); // Use the debounced version even initially
+                     });
+                 }
+            } else {
+                console.error("Font control elements not found!");
+            }
+
+            // --- Horizontal Scroll Redirect for Formula Containers ---
+             const formulaContainers = document.querySelectorAll('.formula-container');
+             formulaContainers.forEach(container => {
+                 container.addEventListener('wheel', function(event) {
+                     const isScrollableHorizontally = this.scrollWidth > this.clientWidth;
+                     if (isScrollableHorizontally) {
+                         // Only prevent vertical scroll IF we are actually going to scroll horizontally
+                         if (event.deltaY !== 0) { // Check if there's vertical scroll input
+                             event.preventDefault();
+                             this.scrollLeft += event.deltaY;
+                         }
+                     }
+                 }, { passive: false });
+             });
+             console.log("Horizontal scroll override applied to formula containers.");
+
+        });
+    </script>
+
+</body>
+</html>

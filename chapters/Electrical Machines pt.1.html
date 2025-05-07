@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" style="--base-font-size: 10px;"> <!-- Default font size set to 10px -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 15: Machines</title>
+
+    <!-- Google Fonts - Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true, tags: 'ams' },
+          options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'], ignoreHtmlClass: 'tex2jax_ignore', processHtmlClass: 'tex2jax_process' },
+          svg: { fontCache: 'global' },
+          startup: {
+            ready: () => { console.log('MathJax ready.'); MathJax.startup.defaultReady(); MathJax.startup.promise.then(() => console.log('MathJax initial typeset complete.')); }
+          }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Keyframes for Animations (FadeIn) */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Fonts & Base Styling */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            color: #e0e0e0;
+            line-height: 1.7;
+            padding: 25px;
+            background-color: #1a1a1a;
+            min-height: 100vh;
+            font-size: var(--base-font-size); /* Controlled by JS */
+            transition: font-size 0.2s ease-in-out; /* Default smooth transition */
+            padding-bottom: 80px; /* Space for controls */
+            overflow-x: hidden;
+        }
+        /* Class to disable transition during rapid changes (e.g., hold) */
+        body.no-font-transition {
+            transition: none !important;
+        }
+
+        /* Headings */
+        h1, h2 { font-family: 'Roboto Mono', monospace; text-align: center; margin-bottom: 1.5em; }
+        h1 { font-size: 2.4em; color: #ffffff; font-weight: 700; padding-bottom: 12px; margin-top: 1.5em; margin-bottom: 1.5em; border-bottom: 2px solid #ffffff; animation: fadeIn 0.8s ease-out both; animation-delay: 0.1s; letter-spacing: -0.5px; }
+        h2 { font-size: 1.6em; color: #cccccc; font-weight: 500; margin-top: 30px; margin-bottom: 1.5em; border-bottom: 1px solid #555555; padding-bottom: 5px; animation: fadeIn 0.8s ease-out both; animation-delay: 0.3s; }
+        h3 { font-size: 1.2em; color: #bdbdbd; font-weight: 500; margin-top: 1.8em; margin-bottom: 0.8em; padding-bottom: 3px; border-bottom: 1px dotted #444; text-align: left; }
+        h4 { font-size: 1.1em; color: #b0b0b0; font-weight: 500; margin-top: 1.5em; margin-bottom: 0.7em; text-align: left; }
+
+
+        /* Main Content Area */
+        main { max-width: 800px; margin: 40px auto; background-color: rgba(30, 30, 30, 0.85); padding: 35px 45px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.1); animation: fadeIn 0.8s ease-out both; animation-delay: 0.2s; }
+        /* Paragraph and List styling */
+        p { margin-bottom: 1em; color: inherit; font-size: inherit; }
+        ul, ol { margin-left: 25px; list-style: disc; margin-bottom: 1em; }
+        ol { list-style: decimal; }
+        li { margin-bottom: 8px; font-size: inherit; }
+        strong { font-weight: 500; color: #ffffff; }
+
+        /* Formula Container Styling (with horizontal scroll) */
+        .formula-container {
+            margin: 15px 0 20px 0; padding: 10px 20px; background-color: rgba(45, 45, 45, 0.9);
+            border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-x: auto; overflow-y: hidden; /* Horizontal scroll, no vertical */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            cursor: pointer; color: #e0e0e0; border-left: 4px solid transparent;
+            font-family: 'Roboto Mono', monospace; position: relative; white-space: nowrap;
+        }
+        .formula-container:hover { background-color: rgba(60, 60, 60, 0.95); border-left-color: #a6e3a1; border-color: rgba(166, 227, 161, 0.5); }
+        .formula-container.copied { background-color: rgba(166, 227, 161, 0.2); border-color: #a6e3a1; border-left-color: #a6e3a1; }
+        /* Optional Scrollbar Style */
+        .formula-container::-webkit-scrollbar { height: 8px; }
+        .formula-container::-webkit-scrollbar-track { background: rgba(60, 60, 60, 0.5); border-radius: 4px; }
+        .formula-container::-webkit-scrollbar-thumb { background-color: #888; border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+        .formula-container::-webkit-scrollbar-thumb:hover { background-color: #aaa; }
+        /* MathJax display style */
+        .formula-container mjx-container[display="true"] { margin: 0.5em 0 !important; text-align: left !important; display: inline-block; vertical-align: middle; }
+
+        /* Footer Styling */
+        footer { text-align: center; margin-top: 70px; padding-bottom: 35px; font-size: 0.85em; color: #888888; animation: fadeIn 1s ease-out both; animation-delay: 0.7s; }
+
+        /* Simple Dark Theme Scrollbar for Page */
+        body::-webkit-scrollbar { width: 10px; }
+        body::-webkit-scrollbar-track { background: #2a2a2a; border-radius: 5px; }
+        body::-webkit-scrollbar-thumb { background-color: #777; border-radius: 5px; border: 2px solid #2a2a2a; background-clip: content-box; }
+        body::-webkit-scrollbar-thumb:hover { background-color: #999; }
+        html { scrollbar-width: thin; scrollbar-color: #777 #2a2a2a; }
+        @supports (scrollbar-gutter: stable) { html { scrollbar-gutter: stable; } }
+
+        /* Font Control Icons CSS */
+        .font-control { position: fixed; bottom: 0; left: 0; width: 100%; padding: 10px 25px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 10; }
+        .font-control-icon { font-size: 28px; font-weight: bold; color: #777; cursor: pointer; padding: 8px; transition: color 0.3s ease; pointer-events: auto; user-select: none; line-height: 1; display: inline-block; }
+        .font-control-icon:hover { color: #a6e3a1; }
+        #fontSizeDisplay { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background-color: rgba(45, 45, 45, 0.9); color: #e0e0e0; padding: 6px 12px; border-radius: 5px; font-size: 13px; font-family: 'Roboto Mono', monospace; z-index: 11; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; white-space: nowrap; }
+        #fontSizeDisplay.visible { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Chapter 15: Machines</h1>
+    </header>
+
+    <main>
+        <h2>Introduction (Pages 952-953)</h2>
+        <p>
+            This chapter covers <strong>electromechanical energy conversion</strong>: changing electrical energy to mechanical energy (motors) or vice-versa (generators), primarily focusing on devices using <strong>magnetic fields</strong>.
+        </p>
+        <p><strong>Roadmap:</strong></p>
+        <ol>
+            <li>
+                <strong>Transducers:</strong> Energy converters.
+                <ul>
+                    <li>
+                        <strong>Translational Transducers (Linear Motion):</strong>
+                        <ul>
+                            <li><strong>Moving-Coil Devices (Dynamic Transducers):</strong> Loudspeakers, microphones.</li>
+                            <li><strong>Moving-Iron Devices:</strong> Relays, solenoids.</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Rotating-Coil Devices:</strong>
+                        <ul>
+                            <li><strong>d'Arsonval movement:</strong> Core of analog meters.</li>
+                            <li><strong>Electrodynamometer:</strong> Another rotational meter device.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <strong>Rotating Machines:</strong> Major energy converters.
+                <ul>
+                    <li>General structure: Stationary part (<strong>stator</strong>), rotating part (<strong>rotor</strong>).</li>
+                    <li><strong>DC Machines:</strong> Use direct current. (DC motors & generators).</li>
+                    <li>
+                        <strong>AC Machines:</strong> Use alternating current.
+                        <ul>
+                            <li><strong>Induction Machines:</strong> AC often to both stator & rotor.</li>
+                            <li><strong>Synchronous Machines:</strong> AC to one part, DC to the other. (Alternators, synchronous motors, induction motors - three-phase & single-phase).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <p>
+            The chapter explains <strong>steady-state behavior</strong> with simplified models, based on the principle of conductors moving in a magnetic field.
+        </p>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>15.1 Transducers (Pages 953-956)</h2>
+        <p>
+            An <strong>electromechanical transducer</strong> converts between electrical and mechanical energy.
+        </p>
+        <p>
+            <strong>Faraday's Law Reminder:</strong> Changing magnetic flux ($\Phi$) through an N-turn coil induces an electromotive force (emf): $e = N \frac{d\Phi}{dt}$.
+            Change can be due to:
+        </p>
+        <ol>
+            <li>Time-varying flux, stationary conductor.</li>
+            <li>Constant flux, moving conductor.</li>
+            <li>Both varying.</li>
+        </ol>
+
+        <h3>A Simple Generator (Fig. 15.1)</h3>
+        <p>Converts mechanical to electrical energy.</p>
+        <ul>
+            <li><strong>Setup:</strong> Movable conductor (length $l$) on rails, forming a loop with resistor $R$. Uniform magnetic field $B$ (into page). Conductor moves right with velocity $u$.</li>
+            <li><strong>Operation:</strong> As area $A$ increases, flux $\Phi = BA$ changes. $d\Phi = B \cdot dA = B \cdot (l \cdot u dt)$.</li>
+            <li><strong>Induced EMF (e):</strong></li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{e = \\frac{d\\Phi}{dt} = Blu}}')"
+             data-latex="e = \frac{d\Phi}{dt} = Blu \quad (Eq. 15.1)"
+             title="Click to copy LaTeX">
+             $$ e = \frac{d\Phi}{dt} = Blu \quad (Eq. 15.1) $$
+        </div>
+        <ul>
+            <li><strong>Polarity (Lenz's Law):</strong> Induced current opposes flux change. Increasing flux (in) -&gt; induced field (out) -&gt; counterclockwise current. Top of conductor becomes positive.</li>
+        </ul>
+
+        <h3>A Simple Motor (Fig. 15.2)</h3>
+        <p>Converts electrical to mechanical energy.</p>
+        <ul>
+            <li><strong>Setup:</strong> Similar, but resistor replaced by a current source $i$ (clockwise, so $i$ is downward in movable conductor).</li>
+            <li><strong>Operation:</strong> Force on current-carrying conductor in $B$ field.
+            $df$ on segment $dl$ is $df = B i dl$.</li>
+            <li><strong>Developed Force (f):</strong> Total force</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f = Bli}}')"
+             data-latex="f = Bli \quad (Eq. 15.3)"
+             title="Click to copy LaTeX">
+             $$ f = Bli \quad (Eq. 15.3) $$
+        </div>
+        <ul>
+            <li><strong>Direction (Right-Hand Rule):</strong> $B$ (in), $i$ (down) -&gt; force $f$ (right).</li>
+        </ul>
+
+        <h3>A Bilateral Transducer (Fig. 15.3)</h3>
+        <p>Acts as motor or generator. System: movable conductor, track, series resistor $R$, voltage source $V$.</p>
+        <ul>
+            <li>Current: $i = (V - e) / R$, where $e = Blu$ (induced emf).</li>
+            <li>
+                <strong>Motor Mode:</strong> If $V > Blu$, then $i > 0$. Current flows from $V$.
+                <ul>
+                    <li>Electrical input power (to moving part): $P_e = ei = Blui$.</li>
+                    <li>Mechanical output power: $P_m = fu = (Bli)u = Blui$.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Generator Mode:</strong> If $Blu > V$, then $i < 0$. Current flows into $V$.
+                <ul>
+                    <li>Mechanical input power: $P_m = fu = Bliu$.</li>
+                    <li>Electrical output power: $P_e = ei = Blui$.</li>
+                </ul>
+            </li>
+            <li>Energy is conserved (ideal).</li>
+        </ul>
+
+        <p><strong>Example 15.1: Force between two parallel wires</strong></p>
+        <ul>
+            <li>Wires: $l = 3\text{m}$, separation $d = 4\text{mm} = 0.004\text{m}$, current $I = 5\text{A}$ each.</li>
+            <li>Magnetic field $B$ from one wire at distance $d$: $B = \frac{\mu_0I}{2\pi d}$.</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{B = \\frac{\\mu_0I}{2\\pi d}}}')"
+             data-latex="B = \frac{\mu_0I}{2\pi d}"
+             title="Click to copy LaTeX">
+             $$ B = \frac{\mu_0I}{2\pi d} $$
+        </div>
+        <p>
+            $B = \frac{(4\pi \times 10^{-7} \cdot 5)}{(2\pi \cdot 0.004)} = 2.5 \times 10^{-4} \text{ T} = 0.25 \text{ mT}$.
+        </p>
+        <ul>
+            <li>Force $f$ on second wire: $f = BIl$.</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f = BIl}}')"
+             data-latex="f = BIl"
+             title="Click to copy LaTeX">
+             $$ f = BIl $$
+        </div>
+        <p>
+            $f = (2.5 \times 10^{-4} \text{ T}) \cdot (5 \text{ A}) \cdot (3 \text{ m}) = 3.75 \times 10^{-3} \text{ N} = 3.75 \text{ mN}$.
+        </p>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>Mechanical Circuit Elements and Symbols (Pages 958-960)</h2>
+        <p>Analogies to electrical circuits, using <strong>force-current analogy</strong>:</p>
+        <ul>
+            <li>Force ($f$) ~ Current ($i$)</li>
+            <li>Velocity ($u$) ~ Voltage ($v$)</li>
+        </ul>
+        <ol>
+            <li>
+                <strong>Mass (M)</strong> (Fig. 15.4)
+                <ul>
+                    <li>Equation: $f = M \frac{du}{dt}$.</li>
+                    <li>Analogy: $i = C \frac{dv}{dt}$ (Capacitor). <strong>Mass (M) ~ Capacitance (C)</strong>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Sliding Friction (Damper, D)</strong> (Fig. 15.5)
+                <ul>
+                    <li>Equation: $f = Du$ ($D$ = coefficient of friction).</li>
+                    <li>Analogy: $i = Gv$ (Conductance). <strong>Damper (D) ~ Conductance (G)</strong>.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Spring (Compliance K)</strong> (Fig. 15.6)
+                <ul>
+                    <li>Equation: $f = \frac{1}{K} \int u dt$ or $u = K \frac{df}{dt}$.</li>
+                    <li>Analogy: $v = L \frac{di}{dt}$ (Inductor). <strong>Spring Compliance (K) ~ Inductance (L)</strong>.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <p><strong>Example 15.2: Mechanical System Analysis (Fig. 15.7)</strong></p>
+        <p>Mass $M$, friction $D$, spring $K$, applied force $f$.</p>
+        <ul>
+            <li>D'Alembert's Principle:</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{\\frac{1}{K}\\int u dt + Du + M\\frac{du}{dt} = f}}')"
+             data-latex="\frac{1}{K}\int u dt + Du + M\frac{du}{dt} = f \quad (Eq. 15.7)"
+             title="Click to copy LaTeX">
+             $$ \frac{1}{K}\int u dt + Du + M\frac{du}{dt} = f \quad (Eq. 15.7) $$
+        </div>
+        <ul>
+            <li><strong>Mechanical Circuit (Fig. 15.8a):</strong> $f$ (current source) feeds parallel $K$ (L), $D$ (G), $M$ (C). Velocity $u$ (voltage) is common.</li>
+            <li><strong>Electrical Analog (Fig. 15.8b):</strong> Current source $i$ feeding parallel $LGC$.</li>
+        </ul>
+
+        <h3>Model for a Motor (Generalized) (Fig. 15.9)</h3>
+        <p>Coupled electromechanical model.</p>
+        <ul>
+            <li>
+                <strong>Electrical Part:</strong> Voltage source $v$ supplies $i$ to series $R$, $L$, and back-emf $e = Blu$.
+                <ul>
+                    <li>KVL:</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v = Ri + L\\frac{di}{dt} + Blu}}')"
+             data-latex="v = Ri + L\frac{di}{dt} + Blu \quad (Eq. 15.8)"
+             title="Click to copy LaTeX">
+             $$ v = Ri + L\frac{di}{dt} + Blu \quad (Eq. 15.8) $$
+        </div>
+        <ul>
+            <li>
+                <strong>Mechanical Part:</strong> Electromagnetic force $Bli$ acts against external load $f$, friction $Du$, and accelerates mass $M$.
+                <ul>
+                    <li>Force balance: $f + Du + M\frac{du}{dt} = Bli$ (where $f$ is defined as the external loading force).</li>
+                    <li>Rewritten as:</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f = -Du - M\\frac{du}{dt} + Bli}}')"
+             data-latex="f = -Du - M\frac{du}{dt} + Bli \quad (Eq. 15.9)"
+             title="Click to copy LaTeX">
+             $$ f = -Du - M\frac{du}{dt} + Bli \quad (Eq. 15.9) $$
+        </div>
+        <ul>
+            <li>
+                <strong>Circuit Model (Fig. 15.9):</strong>
+                <ul>
+                    <li>Electrical: $v$ source, series $R$, $L$, dependent voltage source $Blu$.</li>
+                    <li>Mechanical (f-i analogy): Dependent force source $Bli$ (current source) feeds parallel $M$ (C), $D$ (G), and Load (experiencing force $f$, velocity $u$).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <hr style="border: 1px solid #444; margin: 2em 0;">
+
+        <h2>15.2 Moving-Coil and Moving-Iron Devices (Pages 960-969)</h2>
+        <p>Practical translational transducers.</p>
+
+        <h3>Moving-Coil (Dynamic) Transducer (Fig. 15.10)</h3>
+        <ul>
+            <li><strong>Structure:</strong> Permanent magnet with radial field in an annular air gap. N-turn coil on a sleeve moves axially in this gap.</li>
+            <li><strong>Principle:</strong> Current in coil + field -&gt; force (motor); Movement in field -&gt; voltage (generator).</li>
+        </ul>
+
+        <h4>Dynamic Loudspeakers (Model in Fig. 15.11)</h4>
+        <ul>
+            <li>
+                <strong>Operation:</strong> Moving coil attached to diaphragm. AC signal $v$ to coil.
+                <ul>
+                    <li>Current $i$ (in coil R, L often neglected) -&gt; force $Bli$ (where $l = N \cdot 2\pi r$).</li>
+                    <li>Force vibrates diaphragm -&gt; sound.</li>
+                </ul>
+            </li>
+            <li>
+                <strong>Equations (L=0):</strong>
+                <ul>
+                    <li>Electrical:</li>
+                </ul>
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v = Ri + e = Ri + Blu}}')"
+             data-latex="v = Ri + e = Ri + Blu \quad (Eq. 15.10)"
+             title="Click to copy LaTeX">
+             $$ v = Ri + e = Ri + Blu \quad (Eq. 15.10) $$
+        </div>
+        <ul>
+            <li>
+                Mechanical: Acoustic load $f = D_L u$. Coil friction $D$, mass $M$.
+                Developed force $Bli$ drives $Du + M\frac{du}{dt} + D_L u$.
+                If $f$ is acoustic load: $f = -Du - M\frac{du}{dt} + Bli$ from general model, so $D_L u = -Du - M\frac{du}{dt} + Bli$ if $f$ represents the force <em>on</em> the acoustic load. (The text models $Bli$ as source, feeding $D$, $M$, and $D_L$ in parallel).
+            </li>
+            <li>
+                <strong>Circuit Model (Fig. 15.11):</strong>
+                <ul>
+                    <li>Electrical: $v$ source, series $R$, back-emf $Blu$.</li>
+                    <li>Mechanical (f-i): Force $Bli$ feeds parallel $M$, $D$ (coil friction), $D_L$ (acoustic load).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <p><strong>Example 15.3: Loudspeaker Calculation</strong></p>
+        <ul>
+            <li>$B = 0.5 \text{ T}$, $r = 2 \text{ cm} = 0.02 \text{ m}$, $i(t) = 0.1 \cos(\omega t) \text{ A}$. Max force $Bli_{max} = 0.25 \text{ N}$. Find $N$.</li>
+            <li>$l_{total} = N \cdot 2\pi r$.</li>
+            <li>$0.25 \text{ N} = (0.5 \text{ T}) \cdot N \cdot (2\pi \cdot 0.02 \text{ m}) \cdot (0.1 \text{ A}) \Rightarrow N \approx 40 \text{ turns}$.</li>
+            <li>$D = 3 \text{ Ns/m}$, $D_L = 12 \text{ Ns/m}$. Ignore $M=0$. Find force $f_{load}$ on load ($D_L u$).</li>
+            <li>Force division: $f_{load} = \frac{D_L}{(D_L + D)} \cdot Bli_{max} = \frac{12}{(12 + 3)} \cdot 0.25 \text{ N} = 0.2 \text{ N}$.</li>
+        </ul>
+
+        <h4>Other Dynamic Transducers</h4>
+        <ol>
+            <li>
+                <strong>Dynamic Microphone:</strong>
+                <ul>
+                    <li>Converse of loudspeaker: Acoustic force $f$ (input) on diaphragm moves coil.</li>
+                    <li>Coil motion in field induces emf $e = Blu$ (output signal $v, i$).</li>
+                    <li>Equations:</li>
+                </ul>
+            </li>
+        </ol>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{v = -Ri + e = -Ri + Blu}}')"
+             data-latex="v = -Ri + e = -Ri + Blu \quad (Eq. 15.12)"
+             title="Click to copy LaTeX">
+             $$ v = -Ri + e = -Ri + Blu \quad (Eq. 15.12) $$
+        </div>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f = Du + M\\frac{du}{dt} + Bli}}')"
+             data-latex="f = Du + M\frac{du}{dt} + Bli \quad (Eq. 15.13)"
+             title="Click to copy LaTeX">
+             $$ f = Du + M\frac{du}{dt} + Bli \quad (Eq. 15.13) $$
+        </div>
+        <ol start="2">
+            <li>
+                <strong>Dynamic Phonograph Pickup (Fig. 15.12):</strong>
+                <ul>
+                    <li>Stylus tracks groove -&gt; vertical displacement $y(t)$ of coil -&gt; velocity $u = dy/dt$.</li>
+                    <li>Induced emf $e = Blu$. Output voltage $v$ across load $R_L$.</li>
+                    <li>$v = Blu \cdot \frac{R_L}{(R_L + R)}$ where $R$ is coil resistance.</li>
+                    <li>
+                        <strong>Frequency Dependence:</strong> If $y(t) = A \cos(\omega t + \theta)$, then $u(t) = -A\omega \sin(\omega t + \theta)$.
+                        Output $v$ amplitude is proportional to $\omega$ (increases with frequency). Phase shifted $90^\circ$.
+                        Requires <strong>equalizing networks</strong> in amplifiers.
+                    </li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Moving-Iron Transducers</h3>
+        <p>Utilize force on magnetic material in a magnetic field.</p>
+
+        <h4>A Relay (Fig. 15.13)</h4>
+        <p>Magnetically operated switch.</p>
+        <ul>
+            <li><strong>Structure:</strong> Coil on iron core with air gap. Movable armature held by spring.</li>
+            <li><strong>Operation:</strong> Current $i$ in coil -&gt; magnetic force attracts armature, closes contacts if force &gt; spring force.</li>
+            <li>
+                <strong>Force (simplified, const. flux $\Phi$ during virtual displacement $dl$ of gap):</strong>
+                Energy conservation: $(\text{Input Elec. Energy}) + (\text{Decrease in Stored Mag. Energy}) = (\text{Work Done}) + (\text{Heat Loss})$
+                $Ri^2 dt + \frac{B^2A}{2\mu_0} dl = f dl + Ri^2 dt$.
+                Force of attraction:
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f = \\frac{B^2A}{2\\mu_0}}}')"
+             data-latex="f = \frac{B^2A}{2\mu_0} \quad (Eq. 15.14)"
+             title="Click to copy LaTeX">
+             $$ f = \frac{B^2A}{2\mu_0} \quad (Eq. 15.14) $$
+        </div>
+        <p>($A$=gap area). Relating $B$ to $i$ and gap length $l$: $B \approx \frac{Ni\mu_0}{l}$. Force:</p>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f \\approx \\frac{\\mu_0N^2i^2A}{2l^2}}}')"
+             data-latex="f \approx \frac{\mu_0N^2i^2A}{2l^2} \quad (Eq. 15.15)"
+             title="Click to copy LaTeX">
+             $$ f \approx \frac{\mu_0N^2i^2A}{2l^2} \quad (Eq. 15.15) $$
+        </div>
+        <p>Proportional to $i^2$, inverse to $l^2$.</p>
+
+        <p><strong>Example 15.4: Relay Currents</strong></p>
+        <ul>
+            <li>$N = 400$, $A = 10 \text{ cm}^2$, spring force $f_s = 0.5 \text{ N}$.</li>
+            <li>$l_{open} = 1 \text{ cm}$, $l_{closed} = 0.4 \text{ cm}$.</li>
+            <li>
+                <strong>Pickup Current (to close):</strong> Magnetic force $f$ at $l_{open}$ must overcome $f_s$.
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{i_{pickup} = l_{open} \\sqrt{\\frac{2f_s}{\\mu_0N^2A}}}}')"
+             data-latex="i_{pickup} = l_{open} \sqrt{\frac{2f_s}{\mu_0N^2A}}"
+             title="Click to copy LaTeX">
+             $$ i_{pickup} = l_{open} \sqrt{\frac{2f_s}{\mu_0N^2A}} $$
+        </div>
+        <p>$i_{pickup} = 0.01 \cdot \sqrt{\frac{2 \cdot 0.5}{((4\pi \times 10^{-7}) \cdot 400^2 \cdot 10 \times 10^{-4})}} = 0.705 \text{ A}$.</p>
+        <ul>
+            <li><strong>Dropout Current (to hold):</strong> Min current at $l_{closed}$.
+            $i_{dropout} = \frac{l_{closed}}{l_{open}} \cdot i_{pickup} = \frac{0.4}{1.0} \cdot 0.705 \text{ A} = 0.282 \text{ A}$. (Assumes spring force is constant).
+            </li>
+        </ul>
+
+        <h4>A Plunger (Solenoid-Plunger, Fig. 15.14)</h4>
+        <ul>
+            <li><strong>Structure:</strong> N-turn coil (solenoid) with movable iron core (plunger).</li>
+            <li><strong>Operation:</strong> Current -&gt; field -&gt; force pulls plunger into coil.</li>
+            <li>
+                <strong>Force (const. current $i$ during virtual displacement $dx$):</strong>
+                Energy conservation: $(\text{Input Elec. Energy}) = (\text{Work Done}) + (\text{Increase in Stored Mag. Energy})$
+                $i^2 dL = f dx + \frac{1}{2}i^2 dL$ (ignoring losses). ($L$ is inductance, changes with $x$).
+                Force:
+            </li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this, '\\color{white}{f = \\frac{1}{2}i^2 \\frac{dL}{dx}}}')"
+             data-latex="f = \frac{1}{2}i^2 \frac{dL}{dx} \quad (Eq. 15.17)"
+             title="Click to copy LaTeX">
+             $$ f = \frac{1}{2}i^2 \frac{dL}{dx} \quad (Eq. 15.17) $$
+        </div>
+        <p>Acts to increase $L$.</p>
+
+    </main>
+
+    <footer>
+        <!-- Optional: Add footer text if needed -->
+    </footer>
+
+     <!-- Font Size Control Icons HTML -->
+     <div class="font-control">
+         <span class="font-control-icon" id="fontMinusBtn" title="Decrease font size">-</span>
+         <span class="font-control-icon" id="fontPlusBtn" title="Increase font size">+</span>
+     </div>
+     <div id="fontSizeDisplay">10px</div> <!-- Initial size display -->
+
+    <script>
+        // --- Formula Copy Function ---
+        function copyFormulaLatex(element, latexStringWithColor) {
+            if (!latexStringWithColor) {
+                console.error('No LaTeX data found passed to copy function.');
+                return;
+            }
+            // The latexStringWithColor already has \color{white}{...}
+            // We need to extract the raw LaTeX from data-latex for navigator.clipboard.writeText
+            let rawLatexToCopy = element.dataset.latex;
+            // Remove equation number like (Eq. X.Y) if present for copying
+            rawLatexToCopy = rawLatexToCopy.replace(/\s*\\quad\s*\(Eq\.\s*[\d\.]+\)$/, '');
+
+            navigator.clipboard.writeText(rawLatexToCopy).then(() => {
+                element.classList.add('copied');
+                const originalTitle = element.title;
+                element.title = 'Copied: ' + rawLatexToCopy;
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                    element.title = originalTitle;
+                 }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy LaTeX: ', err);
+                alert('Failed to copy LaTeX. See console for details.');
+            });
+        }
+
+        // --- Font Size Control & Hold Functionality ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const minusBtn = document.getElementById('fontMinusBtn');
+            const plusBtn = document.getElementById('fontPlusBtn');
+            const display = document.getElementById('fontSizeDisplay');
+            const htmlEl = document.documentElement;
+            const bodyEl = document.body; // Target body for transition class
+
+            // Configuration
+            let currentSize = 10; // Initial size set to 10px
+            const minSize = 10;
+            const maxSize = 28; // Adjust max size if needed
+            const step = 1;
+            let displayTimeout = null;
+            let holdTimeout = null;
+            let holdInterval = null;
+            const initialHoldDelay = 400; // ms before repeat starts
+            const repeatInterval = 100;  // ms between repeats while holding
+            const mathJaxDebounceDelay = 350; // ms to wait after last change before re-typesetting
+
+            // --- Debounce Function ---
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // --- Debounced MathJax Typesetting ---
+            const queueMathJaxTypeset = debounce(() => {
+                if (window.MathJax && MathJax.typesetPromise) {
+                    console.log("Debounced: Typesetting MathJax");
+                    MathJax.typesetPromise([bodyEl]).catch((err) => console.error('MathJax typesetting error:', err));
+                 }
+            }, mathJaxDebounceDelay);
+
+            // --- Update Font Size and Display ---
+            function updateFontSize(newSize) {
+                const oldSize = currentSize;
+                currentSize = Math.max(minSize, Math.min(maxSize, newSize));
+
+                if (currentSize !== oldSize) {
+                    htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                    display.textContent = currentSize + 'px';
+                    display.classList.add('visible');
+
+                    if (displayTimeout) { clearTimeout(displayTimeout); }
+                    displayTimeout = setTimeout(() => {
+                        display.classList.remove('visible');
+                        displayTimeout = null;
+                    }, 1500);
+                    return true; // Indicate size changed
+                }
+                return false; // Indicate size hit limit
+            }
+
+            // --- Stop Holding Action ---
+            function stopHolding() {
+                bodyEl.classList.remove('no-font-transition'); // Re-enable transition
+                if (holdTimeout) { clearTimeout(holdTimeout); holdTimeout = null; }
+                if (holdInterval) { clearInterval(holdInterval); holdInterval = null; }
+                queueMathJaxTypeset();
+            }
+
+            // --- Start Holding Action ---
+            function startHolding(direction) {
+                bodyEl.classList.add('no-font-transition');
+                updateFontSize(currentSize + direction * step);
+                stopHolding(); // Clear previous timers, especially if this is a new mousedown
+
+                holdTimeout = setTimeout(() => {
+                    holdInterval = setInterval(() => {
+                        if (!updateFontSize(currentSize + direction * step)) {
+                            stopHolding(); // Stop if size limit is reached
+                        }
+                    }, repeatInterval);
+                }, initialHoldDelay);
+            }
+
+            // --- Event Listeners ---
+            if (minusBtn && plusBtn && display) {
+                minusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(-1); });
+                plusBtn.addEventListener('mousedown', (e) => { e.preventDefault(); startHolding(1); });
+                window.addEventListener('mouseup', stopHolding); // Stop on release anywhere
+                minusBtn.addEventListener('mouseleave', stopHolding); // Stop if mouse leaves while holding
+                plusBtn.addEventListener('mouseleave', stopHolding);
+
+                // Set initial state
+                htmlEl.style.setProperty('--base-font-size', currentSize + 'px');
+                display.textContent = currentSize + 'px';
+                console.log("Font control initialized. Current size:", currentSize);
+                 // Initial MathJax typeset on load (after ready)
+                 if (window.MathJax) {
+                     MathJax.startup.promise.then(() => {
+                         console.log("Queueing initial MathJax typeset");
+                         queueMathJaxTypeset(); // Use the debounced version even initially
+                     });
+                 }
+            } else {
+                console.error("Font control elements not found!");
+            }
+
+            // --- Horizontal Scroll Redirect for Formula Containers ---
+             const formulaContainers = document.querySelectorAll('.formula-container');
+             formulaContainers.forEach(container => {
+                 container.addEventListener('wheel', function(event) {
+                     const isScrollableHorizontally = this.scrollWidth > this.clientWidth;
+                     if (isScrollableHorizontally) {
+                         // Only prevent vertical scroll IF we are actually going to scroll horizontally
+                         if (event.deltaY !== 0) { // Check if there's vertical scroll input
+                             event.preventDefault();
+                             this.scrollLeft += event.deltaY;
+                         }
+                     }
+                 }, { passive: false });
+             });
+             console.log("Horizontal scroll override applied to formula containers.");
+
+        });
+    </script>
+
+</body>
+</html>

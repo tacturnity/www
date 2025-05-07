@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer Concepts Summary</title>
+
+    <!-- Google Fonts - Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Keyframes for Animations (FadeIn) */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fonts & Base Styling (from index theme) */
+        body {
+            font-family: 'Roboto Mono', monospace;
+            color: #e0e0e0; /* Light grey text for readability */
+            line-height: 1.7;
+            padding: 25px;
+            background-color: #1a1a1a; /* Simple dark background */
+            min-height: 100vh;
+        }
+
+        /* Headings (from index theme) */
+        h1, h2 {
+            font-family: 'Roboto Mono', monospace;
+            text-align: center;
+            margin-bottom: 1.5em; /* Matches index */
+        }
+
+        h1 {
+            font-size: 2.4em; /* Matches index */
+            color: #ffffff; /* White heading */
+            font-weight: 700;
+            padding-bottom: 12px;
+            margin-top: 1.5em; /* Matches index */
+            margin-bottom: 1.5em; /* Matches index */
+            border-bottom: 2px solid #ffffff; /* White border */
+            animation: fadeIn 0.8s ease-out both;
+            animation-delay: 0.1s;
+            letter-spacing: -0.5px; /* Matches index */
+        }
+
+        h2 {
+            font-size: 1.6em; /* Matches index */
+            color: #cccccc; /* Lighter grey subheading */
+            font-weight: 500;
+            margin-top: 30px; /* Retain some top margin for sections */
+            margin-bottom: 1.5em; /* Consistent bottom margin */
+            border-bottom: 1px solid #555555; /* Darker border for contrast */
+            padding-bottom: 5px;
+            animation: fadeIn 0.8s ease-out both;
+            animation-delay: 0.3s; /* Staggered animation */
+        }
+
+        /* Main Content Area (from index theme) */
+        main {
+            max-width: 800px; /* Matches index */
+            margin: 40px auto; /* Matches index */
+            background-color: rgba(30, 30, 30, 0.85); /* Dark grey, slightly transparent */
+            padding: 35px 45px; /* Matches index */
+            border-radius: 10px; /* Matches index */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); /* Matches index */
+            backdrop-filter: blur(6px); /* Matches index */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle light border */
+            animation: fadeIn 0.8s ease-out both;
+            animation-delay: 0.2s;
+        }
+
+        /* Paragraph and List styling */
+        p {
+            margin-bottom: 1em;
+            color: inherit; /* Ensure uses body color */
+        }
+
+        ul {
+            margin-left: 25px; /* Slightly more indent */
+            list-style: disc; /* Use standard disc bullets */
+            margin-bottom: 1em;
+        }
+
+        li {
+            margin-bottom: 8px; /* Slightly more space between list items */
+        }
+
+        strong, .math-var { /* Style for emphasized text and math variables */
+            font-weight: 500; /* Consistent with index headings/links */
+            color: #ffffff; /* Brighter white for emphasis */
+        }
+        .math-var { /* Ensure italics for math variables */
+             font-style: italic;
+             margin: 0 2px; /* Consistent small spacing */
+        }
+
+
+        /* Formula Container Styling (Adapting index list item styles) */
+        .formula-container {
+            margin: 15px 0 20px 0; /* Adjusted margins */
+            padding: 15px 20px; /* Adjusted padding */
+            background-color: rgba(45, 45, 45, 0.9); /* Match index list item bg */
+            border-radius: 6px; /* Match index list item radius */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Default subtle border */
+            overflow-x: auto;
+            transition: background-color 0.3s ease, border-color 0.3s ease; /* Add border transition */
+            cursor: pointer;
+            font-size: 1.1em;
+            line-height: 1.5;
+            color: #e0e0e0; /* Text color inside formulas */
+            border-left: 4px solid transparent; /* Add placeholder for hover border like index list */
+        }
+
+        .formula-container:hover {
+            background-color: rgba(60, 60, 60, 0.95); /* Match index list item hover bg */
+            border-left-color: #a6e3a1; /* GREEN hover border like index list */
+            border-color: rgba(166, 227, 161, 0.5); /* Slightly green border on hover */
+        }
+
+        .formula-container.copied {
+            background-color: rgba(166, 227, 161, 0.2); /* Transparent green background on copy */
+            border-color: #a6e3a1; /* Green border on copy */
+            border-left-color: #a6e3a1; /* Ensure left border stays green */
+        }
+
+        /* Style for math elements within formula containers */
+        .formula-container i { /* General italics within formulas */
+            font-style: italic;
+            margin: 0 1px;
+        }
+        .formula-container sub, .formula-container sup {
+            line-height: 0;
+            font-size: 0.75em;
+            position: relative; /* Help positioning if needed */
+             top: -0.2em; /* Adjust baseline slightly for superscripts */
+        }
+         .formula-container sub {
+            top: 0.2em; /* Adjust baseline slightly for subscripts */
+        }
+        .formula-container .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            margin: 0 0.2em;
+        }
+        .formula-container .numerator {
+            display: block;
+            border-bottom: 1px solid #cccccc; /* Use light grey for fraction line */
+            padding-bottom: 2px;
+            line-height: 1.1;
+        }
+        .formula-container .denominator {
+            display: block;
+            padding-top: 2px;
+            line-height: 1.1;
+        }
+
+        /* Footer Styling (from index) */
+        footer {
+            text-align: center;
+            margin-top: 70px;
+            padding-bottom: 35px;
+            font-size: 0.85em;
+            color: #888888; /* Dim grey for footer */
+             animation: fadeIn 1s ease-out both;
+             animation-delay: 0.7s; /* Delay animation */
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <!-- Keep H1 within a header like index page -->
+        <h1>Transformer Concepts Summary</h1>
+    </header>
+
+    <main>
+        <!-- Content wrapped in main block like index page -->
+
+        <h2>1. Introduction and Basic Model (Page 929)</h2>
+        <p>
+            A transformer fundamentally consists of two coils (inductors) that are magnetically coupled. When a primary and secondary terminal are connected as shown in Figure 14.20a, this setup can be modeled by an equivalent circuit made of three uncoupled inductors, as shown in Figure 14.20b (the "T-equivalent" model).
+        </p>
+        <ul>
+            <li><strong>Figure 14.20a:</strong> Shows the basic representation of a transformer with two coupled coils, <span class="math-var">L</span><sub>1</sub> and <span class="math-var">L</span><sub>2</sub>, sharing a mutual inductance <span class="math-var">M</span>.</li>
+            <li><strong>Figure 14.20b:</strong> Presents an equivalent circuit using three separate inductors (<span class="math-var">L</span><sub>1</sub>−<span class="math-var">M</span>, <span class="math-var">L</span><sub>2</sub>−<span class="math-var">M</span>, and <span class="math-var">M</span>) which behaves the same way regarding terminals <span class="math-var">v</span><sub>1</sub>, <span class="math-var">i</span><sub>1</sub> and <span class="math-var">v</span><sub>2</sub>, <span class="math-var">i</span><sub>2</sub>.</li>
+        </ul>
+
+        <h2>2. Core Losses (Pages 929-930)</h2>
+        <p>
+            Transformers, especially those with magnetic cores like iron, experience power losses within the core material. There are two main types:
+        </p>
+        <ul>
+            <li>
+                <strong>Eddy Currents:</strong> Because the core material (like iron) is conductive, the time-varying magnetic flux inside it induces circulating currents within the core itself (depicted in Figure 14.21a). These currents cause resistive heating (<span class="math-var">RI</span><sup>2</sup>) loss. The power loss due to eddy currents (<span class="math-var">P</span><sub>e</sub>) is given by:
+                <div class="formula-container"
+                     onclick="copyFormulaLatex(this)"
+                     data-latex="P_e = K_e f^2 B_m^2"
+                     title="Click to copy LaTeX">
+                     <i>P</i><sub>e</sub> = <i>K</i><sub>e</sub> <i>f</i><sup>2</sup> <i>B</i><sub>m</sub><sup>2</sup>
+                </div>
+                Where <span class="math-var">B</span><sub>m</sub> is the maximum flux density, <span class="math-var">f</span> is the frequency, and <span class="math-var">K</span><sub>e</sub> is a constant.
+            </li>
+            <li>
+                <strong>Hysteresis Loss (<span class="math-var">P</span><sub>h</sub>):</strong> Related to the energy lost as the magnetic domains in the core reorient themselves with the changing magnetic field. (Detailed discussion referenced on page 929).
+            </li>
+        </ul>
+        <p>
+            <strong>Reducing Eddy Current Loss:</strong> To minimize these losses, transformer cores are often constructed from thin sheets, called <strong>laminations</strong> (Figure 14.21b), insulated from each other (e.g., by varnish). This increases the resistance path for eddy currents, significantly lowering <span class="math-var">P</span><sub>e</sub> loss (page 930).
+        </p>
+        <p>
+            <strong>Total Core Loss:</strong> The sum of hysteresis loss (<span class="math-var">P</span><sub>h</sub>) and eddy-current loss (<span class="math-var">P</span><sub>e</sub>) is the total core loss (<span class="math-var">P</span>). An expression is (page 930):
+            <div class="formula-container"
+                 onclick="copyFormulaLatex(this)"
+                 data-latex="P = P_h + P_e = K_h f B_m + K_e f^2 B_m^2"
+                 title="Click to copy LaTeX">
+                 <i>P</i> = <i>P</i><sub>h</sub> + <i>P</i><sub>e</sub> = <i>K</i><sub>h</sub> <i>f</i> <i>B</i><sub>m</sub> + <i>K</i><sub>e</sub> <i>f</i><sup>2</sup> <i>B</i><sub>m</sub><sup>2</sup>
+            </div>
+            <em>(Note: The PDF uses <span class="math-var">B</span><sub>m</sub> for <span class="math-var">P</span><sub>h</sub>, often an approximation. A general form uses <span class="math-var">B</span><sub>m</sub><sup>n</sup>, where n is the Steinmetz exponent. The copied LaTeX follows the text's formula.)</em>
+        </p>
+
+        <h2>3. The Ideal Transformer (Pages 930-934)</h2>
+        <p>
+            To simplify analysis, especially for iron-core transformers in power systems, the concept of an "ideal transformer" is used.
+        </p>
+        <p>
+            <strong>Coupling Coefficient (k):</strong> Quantifies the degree of magnetic coupling between primary (<span class="math-var">L</span><sub>1</sub>) and secondary (<span class="math-var">L</span><sub>2</sub>) coils sharing mutual inductance <span class="math-var">M</span>. Defined from non-negative energy storage (page 931): <span class="math-var">M</span> ≤ √(<span class="math-var">L</span><sub>1</sub> <span class="math-var">L</span><sub>2</sub>).
+        </p>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this)"
+             data-latex="k = \frac{M}{\sqrt{L_1 L_2}}"
+             title="Click to copy LaTeX">
+             <i>k</i> =
+             <span class="fraction">
+               <span class="numerator"><i>M</i></span>
+               <span class="denominator">√(<i>L</i><sub>1</sub> <i>L</i><sub>2</sub>)</span>
+             </span>
+        </div>
+        <ul>
+            <li>0 ≤ <span class="math-var">k</span> ≤ 1</li>
+            <li>k ≈ 0: Loosely coupled (e.g., air-core)</li>
+            <li>k ≈ 1: Tightly coupled (e.g., iron-core)</li>
+        </ul>
+        <p>
+            <strong>Perfect Coupling (k=1):</strong> Implies (Figure 14.22, page 932):
+        </p>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this)"
+             data-latex="M = \sqrt{L_1 L_2}"
+             title="Click to copy LaTeX">
+             <i>M</i> = √(<i>L</i><sub>1</sub> <i>L</i><sub>2</sub>)
+        </div>
+        <p>
+            <strong>Turns Ratio (N):</strong> Since inductance <span class="math-var">L</span> ∝ <span class="math-var">N</span><sup>2</sup> / ℛ, the turns ratio N is defined as (page 932):
+        </p>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this)"
+             data-latex="N = \sqrt{\frac{L_2}{L_1}} = \frac{N_2}{N_1}"
+             title="Click to copy LaTeX">
+              <i>N</i> = √(<i>L</i><sub>2</sub>/<i>L</i><sub>1</sub>) =
+              <span class="fraction">
+                <span class="numerator"><i>N</i><sub>2</sub></span>
+                <span class="denominator"><i>N</i><sub>1</sub></span>
+              </span>
+        </div>
+        <p>Where <span class="math-var">N</span><sub>1</sub> and <span class="math-var">N</span><sub>2</sub> are the number of turns on the primary and secondary coils.</p>
+        <p>
+            <strong>Ideal Transformer Definition:</strong> A transformer is ideal if (page 932):
+        </p>
+        <ul>
+            <li>Perfect coupling (<span class="math-var">k</span>=1).</li>
+            <li>Infinite self-inductances (<span class="math-var">L</span><sub>1</sub>, <span class="math-var">L</span><sub>2</sub> → ∞) such that their ratio (<span class="math-var">N</span>) remains constant.</li>
+        </ul>
+        <p>
+            <strong>Ideal Transformer Relationships:</strong> For an ideal transformer (schematic Figure 14.23, page 933), voltages (<span class="math-var">V</span><sub>1</sub>, <span class="math-var">V</span><sub>2</sub>) and currents (<span class="math-var">I</span><sub>1</sub>, <span class="math-var">I</span><sub>2</sub>) are related by the turns ratio <span class="math-var">N</span>:
+        </p>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this)"
+             data-latex="V_2 = N V_1"
+             title="Click to copy LaTeX">
+             <i>V</i><sub>2</sub> = <i>N</i> <i>V</i><sub>1</sub>
+        </div>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this)"
+             data-latex="I_2 = -\frac{I_1}{N}"
+             title="Click to copy LaTeX">
+             <i>I</i><sub>2</sub> = −<span class="fraction">
+                 <span class="numerator"><i>I</i><sub>1</sub></span>
+                 <span class="denominator"><i>N</i></span>
+               </span>
+        </div>
+        <em>(Note: The negative sign (−) in current arises from the dot convention for power conservation).</em>
+        <p>
+            An ideal transformer is a <strong>lossless device</strong> (absorbs zero instantaneous power, <span class="math-var">p</span> = <span class="math-var">v</span><sub>1</sub> <span class="math-var">i</span><sub>1</sub> + <span class="math-var">v</span><sub>2</sub> <span class="math-var">i</span><sub>2</sub> = 0, page 933) and stores zero average energy (page 934). Figures 14.24 and 14.25 (page 933) show equivalent circuit models using controlled sources.
+        </p>
+
+        <h2>4. Impedance Matching (Pages 935-937)</h2>
+        <p>
+            Ideal transformers are used for impedance matching, changing how a load impedance appears to the source. Consider Figure 14.27 (page 936): a source <span class="math-var">V</span><sub>g</sub> with internal impedance <span class="math-var">Z</span><sub>g</sub> connected via an ideal transformer to a load <span class="math-var">Z</span><sub>L</sub>.
+        </p>
+        <ul>
+            <li><strong>Reflected Impedance:</strong> The load impedance <span class="math-var">Z</span><sub>L</sub> connected to the secondary appears to the primary side as <span class="math-var">Z</span><sub>L</sub> / <span class="math-var">N</span><sup>2</sup>.</li>
+            <li><strong>Input Impedance:</strong> The total impedance seen by the source <span class="math-var">V</span><sub>g</sub> is (page 936):</li>
+        </ul>
+        <div class="formula-container"
+             onclick="copyFormulaLatex(this)"
+             data-latex="\frac{V_g}{I_1} = Z_g + \frac{Z_L}{N^2}"
+             title="Click to copy LaTeX">
+             <span class="fraction">
+               <span class="numerator"><i>V</i><sub>g</sub></span>
+               <span class="denominator"><i>I</i><sub>1</sub></span>
+             </span>
+              = <i>Z</i><sub>g</sub> +
+             <span class="fraction">
+               <span class="numerator"><i>Z</i><sub>L</sub></span>
+               <span class="denominator"><i>N</i><sup>2</sup></span>
+             </span>
+             &nbsp;&nbsp;&nbsp;(Impedance seen by source: <i>Z<sub>in</sub></i> = <i>Z</i><sub>g</sub> + <i>Z</i><sub>L</sub>/<i>N</i><sup>2</sup>)
+        </div>
+        <p>
+            <strong>Application:</strong> By choosing <span class="math-var">N</span> appropriately, the reflected impedance <span class="math-var">Z</span><sub>L</sub> / <span class="math-var">N</span><sup>2</sup> can be matched to the source impedance <span class="math-var">Z</span><sub>g</sub> (or its complex conjugate) for maximum power transfer (Example 14.11 context, page 937-938).
+        </p>
+
+        <h2>5. Nonideal-Transformer Models (Pages 938-941)</h2>
+        <p>
+            For accuracy, practical (nonideal) aspects are included. Figure 14.31 (page 939) shows a common model for a practical iron-core transformer (referred to the primary side).
+        </p>
+        <p><strong>Model Components:</strong></p>
+        <ul>
+            <li><strong><span class="math-var">R</span><sub>s</sub>:</strong> Equivalent series resistance (copper losses in windings).</li>
+            <li><strong><span class="math-var">X</span><sub>s</sub>:</strong> Equivalent series leakage reactance (flux linking only one coil).</li>
+            <li><strong><span class="math-var">R</span><sub>m</sub>:</strong> Core loss resistance (shunt branch - hysteresis & eddy currents).</li>
+            <li><strong><span class="math-var">X</span><sub>m</sub>:</strong> Magnetizing reactance (shunt branch - establishing core flux).</li>
+        </ul>
+        <p><strong>Currents:</strong></p>
+        <ul>
+            <li><strong><span class="math-var">I</span><sub>1</sub>:</strong> Primary current.</li>
+            <li><strong><span class="math-var">I</span><sub>2</sub>' = −<span class="math-var">NI</span><sub>2</sub>:</strong> Secondary current referred to the primary.</li>
+            <li><strong><span class="math-var">I</span><sub>e</sub>:</strong> Exciting current (through <span class="math-var">R</span><sub>m</sub> and <span class="math-var">X</span><sub>m</sub>). No-load primary current.</li>
+            <li><strong><span class="math-var">I</span><sub>m</sub>:</strong> Magnetizing current (component of <span class="math-var">I</span><sub>e</sub> through <span class="math-var">X</span><sub>m</sub>).</li>
+        </ul>
+        <p>
+            <strong>Parameter Determination:</strong> Model parameters are found using tests:
+        </p>
+        <ul>
+            <li><strong>Open-Circuit Test:</strong> Rated voltage on one side, other open (<span class="math-var">I</span><sub>2</sub>=0). Measures input V, I (<span class="math-var">I</span><sub>e</sub>), P. Primarily determines shunt parameters <span class="math-var">R</span><sub>m</sub> and <span class="math-var">X</span><sub>m</sub> (Figure 14.32, Pages 939-940).</li>
+            <li><strong>Short-Circuit Test:</strong> Reduced voltage on primary for rated current in shorted secondary. Measures input V, I (<span class="math-var">I</span><sub>1</sub>), P. Shunt current <span class="math-var">I</span><sub>e</sub> is negligible. Primarily determines series parameters <span class="math-var">R</span><sub>s</sub> and <span class="math-var">X</span><sub>s</sub> (Pages 940-941).</li>
+        </ul>
+
+        <h2>6. Transformer Properties (Page 942)</h2>
+        <p>Two important figures of merit:</p>
+        <ul>
+            <li>
+                <strong>Efficiency (Eff):</strong> Ratio of output power (<span class="math-var">P</span><sub>o</sub>) to input power (<span class="math-var">P</span><sub>i</sub>). <span class="math-var">P</span><sub>i</sub> = <span class="math-var">P</span><sub>o</sub> + <span class="math-var">P</span><sub>loss</sub>, where <span class="math-var">P</span><sub>loss</sub> = <span class="math-var">P</span><sub>copper</sub> + <span class="math-var">P</span><sub>core</sub>.
+                <div class="formula-container"
+                     onclick="copyFormulaLatex(this)"
+                     data-latex="\text{Eff} = \frac{P_o}{P_i}"
+                     title="Click to copy LaTeX">
+                     Eff = <span class="fraction">
+                        <span class="numerator"><i>P</i><sub>o</sub></span>
+                        <span class="denominator"><i>P</i><sub>i</sub></span>
+                      </span>
+                </div>
+                <div class="formula-container"
+                     onclick="copyFormulaLatex(this)"
+                     data-latex="\text{Eff} = \frac{P_o}{P_o + P_l} \quad \text{(using } P_l \text{ for loss)}"
+                     title="Click to copy LaTeX">
+                      Eff = <span class="fraction">
+                         <span class="numerator"><i>P</i><sub>o</sub></span>
+                         <span class="denominator"><i>P</i><sub>o</sub> + <i>P</i><sub>l</sub></span>
+                       </span> &nbsp;&nbsp;&nbsp;(using <i>P</i><sub>l</sub> for loss)
+                </div>
+                 <div class="formula-container"
+                      onclick="copyFormulaLatex(this)"
+                      data-latex="\text{Eff} = \frac{P_i - P_l}{P_i} = 1 - \frac{P_l}{P_i}"
+                      title="Click to copy LaTeX">
+                      Eff = <span class="fraction">
+                          <span class="numerator"><i>P</i><sub>i</sub> − <i>P</i><sub>l</sub></span>
+                          <span class="denominator"><i>P</i><sub>i</sub></span>
+                        </span> = 1 − <span class="fraction">
+                           <span class="numerator"><i>P</i><sub>l</sub></span>
+                           <span class="denominator"><i>P</i><sub>i</sub></span>
+                         </span>
+                </div>
+            </li>
+            <li>
+                <strong>Voltage Regulation (VR):</strong> Measures output voltage change from no load (<span class="math-var">V</span><sub>NL</sub>) to full load (<span class="math-var">V</span><sub>FL</sub>), as % of <span class="math-var">V</span><sub>FL</sub>.
+                <div class="formula-container"
+                     onclick="copyFormulaLatex(this)"
+                     data-latex="\text{VR} = \frac{V_{NL} - V_{FL}}{V_{FL}} \times 100\%"
+                     title="Click to copy LaTeX">
+                      VR = <span class="fraction">
+                         <span class="numerator"><i>V</i><sub>NL</sub> − <i>V</i><sub>FL</sub></span>
+                         <span class="denominator"><i>V</i><sub>FL</sub></span>
+                       </span> × 100%
+                </div>
+                Lower VR percentage is generally better (more stable output voltage).
+            </li>
+        </ul>
+
+        <h2>7. Frequency Considerations (Pages 944-945)</h2>
+        <p>
+            While power transformers operate at fixed frequency (e.g., 60 Hz), others (e.g., audio) operate over a range (e.g., 30 Hz - 15,000 Hz).
+        </p>
+        <ul>
+            <li><strong>Audio Transformer Model:</strong> Includes winding capacitances (<span class="math-var">C</span><sub>1</sub>, <span class="math-var">C</span><sub>2</sub> in Figure 14.34), significant at high frequencies.</li>
+            <li><strong>Frequency Response (Figure 14.35):</strong>
+                <ul>
+                    <li><strong>Low Frequencies:</strong> Small magnetizing impedance <span class="math-var">X</span><sub>m</sub> = 2π<span class="math-var">fL</span><sub>m</sub> shunts current, reducing output <span class="math-var">V</span><sub>2</sub>.</li>
+                    <li><strong>Mid-Frequencies (e.g., 100 Hz - 10 kHz):</strong> Output relatively constant.</li>
+                    <li><strong>High Frequencies:</strong> Leakage reactance <span class="math-var">X</span><sub>s</sub> increases, shunt capacitance impedance decreases, reducing output. Resonance between L and C can occur.</li>
+                </ul>
+            </li>
+            <li><strong>Good Audio Transformer:</strong> Needs large magnetizing inductance Lm (high permeability core) for good low-frequency performance.</li>
+        </ul>
+
+    </main>
+
+    <footer>
+        <!-- Empty Footer matching index style -->
+    </footer>
+
+    <script>
+        // Function to copy LaTeX code (remains unchanged)
+        function copyFormulaLatex(element) {
+            // Removed the \textcolor{white}{} wrapper as the theme now handles colors
+            const latexString = element.getAttribute('data-latex');
+            if (!latexString) {
+                console.error('No LaTeX data found for this element.');
+                return;
+            }
+            navigator.clipboard.writeText(latexString).then(() => {
+                element.classList.add('copied');
+                const originalTitle = element.title;
+                element.title = 'Copied!';
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                    element.title = originalTitle;
+                 }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy LaTeX: ', err);
+                alert('Failed to copy text. Check console (F12) for details.');
+            });
+        }
+    </script>
+
+</body>
+</html>
